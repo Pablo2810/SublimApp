@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y wget && \
     tar -xzvf jetty-distribution-${JETTY_VERSION}.tar.gz -C $JETTY_HOME --strip-components=1 && \
     rm jetty-distribution-${JETTY_VERSION}.tar.gz
 
-# Copia el archivo WAR al directorio webapps de Jetty
-COPY target/tallerwebi-base-1.0-SNAPSHOT.war $JETTY_HOME/webapps/
+# Copia el archivo WAR de tu proyecto al directorio webapps de Jetty
+COPY target/SublimApp.war $JETTY_HOME/webapps/ROOT.war
 
 # Expone el puerto en el que Jetty corre (por defecto 8080)
 EXPOSE 8080
@@ -23,3 +23,4 @@ WORKDIR $JETTY_HOME
 
 # Comando para iniciar Jetty y desplegar el archivo WAR
 CMD ["java", "-jar", "./start.jar"]
+

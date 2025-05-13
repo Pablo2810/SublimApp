@@ -120,6 +120,8 @@
 
     <build>
 
+        <finalName>SublimApp</finalName>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
