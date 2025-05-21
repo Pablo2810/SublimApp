@@ -8,7 +8,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class ControladorPedido {
 
-    @RequestMapping(path = "nuevo-pedido", method = RequestMethod.GET)
+    @RequestMapping(path = "/nuevo-pedido", method = RequestMethod.GET)
     public ModelAndView nuevoPedido() {
         return new ModelAndView("nuevo-pedido");
     }
