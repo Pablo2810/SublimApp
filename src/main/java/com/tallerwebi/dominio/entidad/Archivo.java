@@ -7,7 +7,8 @@ public class Archivo {
     private String nombre;
     private String tipoFormato;
     private Double pesoMB;
-    private InputStream datos;
+    private Double ancho;
+    private Double alto;
 
     public Long getId() {
         return id;
@@ -41,7 +42,11 @@ public class Archivo {
         this.pesoMB = pesoMB;
     }
 
-    public void setDatos(InputStream datos) { this.datos = datos; }
+    public Double getAncho() { return ancho; }
 
-    public InputStream getDatos() { return datos; }
+    public void setAncho(Double ancho) { this.ancho = ancho; }
+
+    public Double getAlto() { return alto; }
+
+    public void setAlto(Double alto) { this.alto = alto; }
 }

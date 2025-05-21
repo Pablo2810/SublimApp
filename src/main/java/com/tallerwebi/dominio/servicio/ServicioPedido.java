@@ -8,7 +8,6 @@ import java.io.IOException;
 
 public interface ServicioPedido {
     Pedido registrarPedido(Integer cantidadCopias, Archivo archivo);
-    String calcularMetros(Pedido pedido) throws IOException;
-    Double calcularCostoTotal(Double alto);
+    Double calcularCostoTotal(Double alto, Integer cantidadCopias);
     Double aplicarDescuento();
 }

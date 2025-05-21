@@ -4,13 +4,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Taller Web I</title>
-    <!-- font google -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
-    <!-- Boostrap core css -->
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
-    <!-- custom style -->
+    <!-- Custom CSS -->
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
     <style>
         body {
@@ -19,6 +19,7 @@
     </style>
 </head>
 <body class="p-0 m-0">
+
 <header class="p-3 bg-primary d-flex justify-content-around align-items-center">
     <h3 class="m-0 text-light text-center">SublimApp</h3>
     <p class="m-0 text-light text-center fs-5">Taller Web I - UNLaM</p>
@@ -39,6 +40,9 @@
     <div class="w-50 p-4">
         <form th:action="@{/detalle-pedido}" method="POST" enctype="multipart/form-data" th:object="${datosPedido}">
             <h3 class="mb-4 text-dark text-center">Nuevo Pedido</h3>
+
+            <p th:if="${error != null}" class="my-3 fs-5 text-danger text-center" th:text="${error}"></p>
+
             <div class="mb-3 fs-5">
                 <label for="nombre" class="form-label">Nombre:</label>
                 <input th:field="*{nombre}" class="form-control fw-light" id="nombre" placeholder="Ingrese su nombre">
@@ -75,7 +79,9 @@
     </div>
 </footer>
 
-<!-- Boostrap core js -->
+<!-- Bootstrap JS -->
 <script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
 </body>
 </html>
+
+

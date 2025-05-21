@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Controller
 public class ControladorPedido {
@@ -38,18 +39,28 @@ public class ControladorPedido {
                                        @RequestParam("file") MultipartFile file) throws IOException {
         ModelMap model = new ModelMap();
 
-        // Registrar archivo subido
-        Archivo archivo = servicioArchivo.registrarArchivo(datosPedido.getNombre(), file);
+        if (file == null || file.isEmpty()) {
+            model.put("error", "Debe subir un archivo");
+            return new ModelAndView("nuevo-pedido", model);
+        }
 
-        // Registrar pedido con la cantidad de copias y el archivo
+        if (datosPedido.getCantidadCopias() == null || datosPedido.getCantidadCopias() < 1) {
+            model.put("error", "Ingrese la cantidad de copias");
+            return new ModelAndView("nuevo-pedido", model);
+        }
+
+        if (!Objects.equals(file.getContentType(), "image/jpeg")) {
+            model.put("error", "Ingrese un archivo válido (.JPG o .JPEG)");
+            return new ModelAndView("nuevo-pedido", model);
+        }
+
+        Archivo archivo = servicioArchivo.registrarArchivo(datosPedido.getNombre(), file);
         Pedido pedido = servicioPedido.registrarPedido(datosPedido.getCantidadCopias(), archivo);
 
-        // Calcular metros totales y costo del servicio
-        pedido.setMetrosTotales(servicioPedido.calcularMetros(pedido));
-        pedido.setCostoServicio(servicioPedido.calcularCostoTotal(pedido.getAlto()));
-
         model.put("pedidoNuevo", pedido);
+
         return new ModelAndView("detalle-pedido", model);
     }
 }
+
 
