@@ -23,20 +23,20 @@
         <h3 class="m-0 text-light text-center">SublimApp</h3>
         <p class="m-0 text-light text-center fs-5">Taller Web I - UNLaM</p>
     </header>
-    <nav class="p-3 d-flex justify-content-evenly navbar bg-light sticky-top">
-        <a href="#" class="fs-5 text-dark text-decoration-none">Inicio</a>
-        <a href="#" class="fs-5 text-dark text-decoration-none">Nuevo Pedido</a>
-        <a href="#" class="fs-5 text-dark text-decoration-none">Mis Pedidos</a>
-        <a href="#" class="fs-5 text-dark text-decoration-none">Mis Telas</a>
-        <a href="#" class="fs-5 text-dark text-decoration-none">Perfil</a>
+    <nav class="p-3 d-flex justify-content-evenly navbar bg-dark sticky-top">
+        <a href="#" class="fs-5 text-light text-decoration-none">Inicio</a>
+        <a href="#" class="fs-5 text-light text-decoration-none">Nuevo Pedido</a>
+        <a href="#" class="fs-5 text-light text-decoration-none">Mis Pedidos</a>
+        <a href="#" class="fs-5 text-light text-decoration-none">Mis Telas</a>
+        <a href="#" class="fs-5 text-light text-decoration-none">Perfil</a>
     </nav>
     <main>
-        <section class="container my-4">
-            <div class="border p-3">
+        <section class="container p-4 my-4 shadow-lg">
+            <div class="border border-primary border-2 p-4 rounded-4 border-opacity-50">
                 <!-- Cabecera de la ficha -->
                 <div class="row">
                     <div class="col-8">
-                        <h4>Orden de Producción NRO: 100<span th:text="${pedidoNuevo.id}"></span></h4>
+                        <h4 class="fw-bold">Orden de Producción NRO: 100<span th:text="${pedidoNuevo.id}"></span></h4>
                     </div>
                 </div>
                 <div class="row mt-3">
@@ -59,7 +59,7 @@
                 <!-- Tabla de Archivo -->
                 <div class="row mt-4">
                     <div class="col-12">
-                        <table class="table table-bordered text-center">
+                        <table class="table table-hover text-center">
                             <thead>
                                 <tr>
                                     <th>Nombre</th>
@@ -73,40 +73,22 @@
                                     <td th:text="${pedidoNuevo.cantCopias}"></td>
                                     <td th:text="${pedidoNuevo.archivo.pesoMB}"></td>
                                 </tr>
+                                <tr>
+                                    <td class="fw-bold fst-italic">Metros totales + Costo del servicio</td>
+                                    <td th:text="${pedidoNuevo.metrosTotales}"></td>
+                                    <td th:text="${pedidoNuevo.costoServicio}"></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </section>
-    </main>
-    <!--<main>
-        <div class="container my-5">
-            <div class="card shadow rounded-4 p-4">
-                <h2 class="text-center mb-4">Detalle del Pedido</h2>
-                <div class="mb-3">
-                    <strong>Fecha de Creación:</strong> <span th:text="${pedidoNuevo.fechaCreacion}"></span>
-                </div>
-                <div class="mb-3">
-                    <strong>Estado:</strong> <span th:text="${pedidoNuevo.estado}"></span>
-                </div>
-                <div class="mb-3">
-                    <strong>Cantidad de Copias:</strong> <span th:text="${pedidoNuevo.cantCopias}"></span>
-                </div>
-
-                <h4 class="mt-4">Archivo</h4>
-                <div class="mb-2">
-                    <strong>Nombre:</strong> <span th:text="${pedidoNuevo.archivo.nombre}"></span>
-                </div>
-                <div class="mb-2">
-                    <strong>Formato:</strong> <span th:text="${pedidoNuevo.archivo.tipoFormato}"></span>
-                </div>
-                <div class="mb-2">
-                    <strong>Peso (MB):</strong> <span th:text="${pedidoNuevo.archivo.pesoMB}"></span>
-                </div>
-            </div>
+        <div class="container w-75 my-5 d-flex justify-content-center">
+            <a class="btn btn-primary p-3 mx-3 rounded-4"> Prueba nuestro simulador de impresion </a>
+            <a class="btn btn-outline-primary p-3 mx-3 rounded-4"> Ver lista de pedidos </a>
         </div>
-    </main>-->
+    </main>
     <footer class="footer bg-black bg-gradient text-white p-5">
         <div class="container d-flex justify-content-between align-items-center">
             <div>

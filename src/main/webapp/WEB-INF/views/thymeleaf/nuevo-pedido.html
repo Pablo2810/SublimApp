@@ -37,6 +37,7 @@
         <div class="w-50 p-4">
             <form th:action="@{/detalle-pedido}" method="POST" enctype="multipart/form-data" th:object="${datosPedido}">
                 <h3 class="mb-4 text-dark text-center">Nuevo Pedido</h3>
+                <p th:if="${error != null}" class="my-3 fs-5 text-danger fs-5 text-center" th:text="${error}"></p>
                 <div class="mb-3 fs-5">
                     <label for="nombre" class="form-label">Nombre:</label>
                     <input th:field="*{nombre}" class="form-control fw-light" id="nombre" placeholder="Ingrese su nombre">
@@ -49,7 +50,6 @@
                     <label for="file" class="form-label">Seleccione su archivo:</label>
                     <input name="file" class="form-control fw-light" id="file" type="file">
                 </div>
-
                 <button id="btn-detalle-pedido" class="py-2 px-4 btn btn-primary" type="submit">Realizar Pedido</button>
             </form>
         </div>
