@@ -4,6 +4,9 @@ import com.tallerwebi.dominio.entidad.Archivo;
 import com.tallerwebi.dominio.entidad.Pedido;
 import com.tallerwebi.presentacion.dto.DatosPedido;
 
+import java.util.List;
+
 public interface ServicioPedido {
     Pedido registrarPedido(Integer cantidadCopias, Archivo archivo);
+    List<Pedido> listarPedidosDelUsuario(Long idUsuario);
 }

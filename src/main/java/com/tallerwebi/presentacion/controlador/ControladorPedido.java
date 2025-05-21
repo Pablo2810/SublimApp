@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Controller
 public class ControladorPedido {
@@ -40,4 +41,15 @@ public class ControladorPedido {
         model.put("pedidoNuevo", pedido);
         return new ModelAndView("detalle-pedido", model);
     }
+
+    @RequestMapping("/historial-pedidos")
+    public ModelAndView historialPedidos() {
+        ModelMap model = new ModelMap();
+        List<Pedido> pedidos = servicioPedido.listarPedidosDelUsuario(1L);
+
+        model.put("pedidos", pedidos);
+
+        return new ModelAndView("historial-pedidos", model);
+    }
+
 }
