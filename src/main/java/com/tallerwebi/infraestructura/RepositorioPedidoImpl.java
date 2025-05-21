@@ -20,8 +20,22 @@ public class RepositorioPedidoImpl implements RepositorioPedido {
         pedido1.setCostoServicio(125.0);
         pedido1.setEstado(Estado.A_RETIRAR);
         pedido1.setFechaCreacion(LocalDate.now());
+        Pedido pedido2 = new Pedido();
+        pedido2.setId(2L);
+        pedido2.setCantCopias(5);
+        pedido2.setMetrosTotales("11200.0");
+        pedido2.setCostoServicio(2035.0);
+        pedido2.setEstado(Estado.EN_ESPERA);
+        pedido2.setFechaCreacion(LocalDate.now());
+        Pedido pedido3 = new Pedido();
+        pedido3.setId(3L);
+        pedido3.setCantCopias(21);
+        pedido3.setMetrosTotales("2300.0");
+        pedido3.setCostoServicio(3000.0);
+        pedido3.setEstado(Estado.SUBLIMANDO);
+        pedido3.setFechaCreacion(LocalDate.now());
 
-        this.pedidos = List.of(pedido1);
+        this.pedidos = List.of(pedido1, pedido2, pedido3);
     }
 
     @Override

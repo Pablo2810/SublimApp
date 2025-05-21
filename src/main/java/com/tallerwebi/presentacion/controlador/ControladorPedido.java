@@ -69,6 +69,7 @@ public class ControladorPedido {
         ModelMap model = new ModelMap();
         List<Pedido> pedidos = servicioPedido.listarPedidosDelUsuario(1L);
 
+        model.put("mensajeSinPedidos", "Todavia no tienes pedidos");
         model.put("pedidos", pedidos);
 
         return new ModelAndView("historial-pedidos", model);
