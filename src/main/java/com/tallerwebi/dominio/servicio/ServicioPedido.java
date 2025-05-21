@@ -4,9 +4,10 @@ import com.tallerwebi.dominio.entidad.Archivo;
 import com.tallerwebi.dominio.entidad.Pedido;
 import com.tallerwebi.presentacion.dto.DatosPedido;
 
-import java.util.List;
+import java.io.IOException;
 
 public interface ServicioPedido {
     Pedido registrarPedido(Integer cantidadCopias, Archivo archivo);
-    List<Pedido> listarPedidosDelUsuario(Long idUsuario);
+    Double calcularCostoTotal(Double alto, Integer cantidadCopias);
+    Double aplicarDescuento();
 }

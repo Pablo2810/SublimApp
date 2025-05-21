@@ -8,7 +8,7 @@ public class Pedido {
     private LocalDate fechaCreacion;
     private Estado estado;
     private Integer cantCopias;
-    private Double metrosTotales;
+    private String metrosTotales;
     private Double costoServicio;
     private Archivo archivo;
     private Usuario usuario; // falta agregar el list de tipo pedido en usuario
@@ -43,13 +43,11 @@ public class Pedido {
         this.cantCopias = cantCopias;
     }
 
-    public Double getMetrosTotales() {
+    public String getMetrosTotales() {
         return metrosTotales;
     }
 
-    public void setMetrosTotales(Double metrosTotales) {
-        this.metrosTotales = metrosTotales;
-    }
+    public void setMetrosTotales(String metrosTotales) { this.metrosTotales = metrosTotales; }
 
     public Double getCostoServicio() {
         return costoServicio;

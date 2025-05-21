@@ -26,8 +26,8 @@
   <nav class="p-3 d-flex justify-content-evenly navbar bg-light sticky-top">
     <a href="#" class="fs-5 text-dark text-decoration-none">Inicio</a>
     <a href="#" class="fs-5 text-dark text-decoration-none">Nuevo Pedido</a>
-    <a href="historial-pedidos" class="fs-5 text-dark text-decoration-none">Mis Pedidos</a>
-    <a href="#" class="fs-5 text-dark text-decoration-none">Mis Telas</a>
+    <a href="#" class="fs-5 text-dark text-decoration-none">Mis Pedidos</a>
+    <a th:href="@{/catalogo-telas}" class="fs-5 text-dark text-decoration-none">Mis Telas</a>
     <a href="#" class="fs-5 text-dark text-decoration-none">Perfil</a>
   </nav>
   <main style="position: relative; text-align: center; height: 100vh; overflow: hidden;" class="d-flex align-items-center justify-content-center">
@@ -36,8 +36,8 @@
       <h1 class="fs-1 mb-3 text-light">¡Hola, bienvenido a SublimApp!</h1>
       <p class="mb-4 text-light fs-5">Gestioná tus pedidos de sublimación de manera rápida, simple y eficiente. Desde impresión hasta calandrado, todo en un solo lugar.</p>
       <div class="d-flex justify-content-center gap-3 flex-wrap">
-        <a href="/pedido/nuevo-pedido" class="btn btn-primary">Realizar Pedido</a>
-        <a href="/nuevo-pedido" class="btn btn-primary">Realizar Pedido</a>
+        <a href="/pedido" class="btn btn-primary">Realizar Pedido</a>
+        <a href="/pedido" class="btn btn-primary">Realizar Pedido</a>
         <a href="/pedido" class="btn btn-primary">Realizar Pedido</a>
       </div>
     </div>
