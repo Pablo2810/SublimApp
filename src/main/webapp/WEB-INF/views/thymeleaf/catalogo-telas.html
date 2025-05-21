@@ -22,11 +22,15 @@
     <header th:insert="templates/header :: header"></header>
     <nav class="sticky-top" th:insert="templates/nav :: nav"></nav>
     <main role="main" class="container p-4">
-        <div class="cargar-propia-tela-btn">
-            <a href="/mis-telas/cargar-tela" class="btn btn-outline-primary">Cargar propia tela</a>
+        <div class="w-75 container d-flex flex-column justify-content-center align-items-center">
+            <h2 class="p-5 mb-3 text-center fw-semibold text-primary">Registra y mira tus telas...</h2>
+            <div class="p-3 w-100 text-center">
+                <a th:href="@{/cargar-tela}" class="mx-3 w-25 fw-semibold btn btn-primary btn-lg">Cargar tela</a>
+                <a href="#" class="mx-3 w-25 fw-semibold btn btn-primary btn-lg">Ver telas</a>
+            </div>
         </div>
         <section>
-            <h2 class="p-5 mb-3 text-center fw-semibold text-primary">Explora nuestro catalogo de telas</h2>
+            <h2 class="p-5 mb-3 text-center fw-semibold text-primary">...o explora nuestro Catalogo de Telas</h2>
             <div class="row g-4">
                 <div class="col-md-4" th:each="tela : ${telas}">
                     <div class="card shadow h-100 border border-2 border-light rounded-0 p-2">
