@@ -8,8 +8,6 @@ public class Pedido {
     private LocalDate fechaCreacion;
     private Estado estado;
     private Integer cantCopias;
-    private Double ancho;
-    private Double alto;
     private String metrosTotales;
     private Double costoServicio;
     private Archivo archivo;
@@ -43,14 +41,6 @@ public class Pedido {
     public void setCantCopias(Integer cantCopias) {
         this.cantCopias = cantCopias;
     }
-
-    public Double getAncho() { return ancho; }
-
-    public void setAncho(Double ancho) { this.ancho = ancho; }
-
-    public Double getAlto() { return alto; }
-
-    public void setAlto(Double alto) { this.alto = alto; }
 
     public String getMetrosTotales() {
         return metrosTotales;

@@ -19,35 +19,21 @@ public class ServicioPedidoImpl implements ServicioPedido {
     @Override
     public Pedido registrarPedido(Integer cantidadCopias, Archivo archivo) {
         Pedido nuevoPedido = new Pedido();
-        if (archivo != null && cantidadCopias >= 1){
-            nuevoPedido.setId(1L);
-            nuevoPedido.setFechaCreacion(LocalDate.now());
-            nuevoPedido.setEstado(Estado.EN_ESPERA);
-            nuevoPedido.setCantCopias(cantidadCopias);
-            nuevoPedido.setArchivo(archivo);
-            return nuevoPedido;
-        }
-        return null;
+        nuevoPedido.setId(1L);
+        nuevoPedido.setFechaCreacion(LocalDate.now());
+        nuevoPedido.setEstado(Estado.EN_ESPERA);
+        nuevoPedido.setCantCopias(cantidadCopias);
+        nuevoPedido.setCostoServicio(this.calcularCostoTotal(archivo.getAlto(), cantidadCopias));
+        archivo.setAlto(archivo.getAlto() * cantidadCopias);
+        nuevoPedido.setMetrosTotales(archivo.getAncho().toString() +"x"+ archivo.getAlto().toString());
+        nuevoPedido.setArchivo(archivo);
+        return nuevoPedido;
     }
 
     @Override
-    public String calcularMetros(Pedido pedido) throws IOException {
-        BufferedImage imagen = ImageIO.read(pedido.getArchivo().getDatos());
-        Integer anchoPix = imagen.getWidth();
-        Integer altoPix = imagen.getHeight();
-        Integer dpi = 300; //Resolucion profesional
-
-        Double ancho = (anchoPix / dpi) * 0.0254;
-        Double alto = (altoPix / dpi) * 0.0254;
-        pedido.setAncho(Math.round(ancho * 10.0) / 10.0);
-        pedido.setAlto((Math.round(alto * 10.0) / 10.0) * pedido.getCantCopias());
-        return pedido.getAncho().toString() +" x "+ pedido.getAlto().toString();
-    }
-
-    @Override
-    public Double calcularCostoTotal(Double alto) {
+    public Double calcularCostoTotal(Double alto, Integer cantidadCopias) {
         Double costoServicio = 1500.0;//Costo del servicio por defecto
-        return alto * costoServicio;
+        return (alto * cantidadCopias) * costoServicio;
     }
 
     @Override
