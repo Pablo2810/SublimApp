@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Taller Web I</title>
+    <!-- font google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Boostrap core css -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <!-- custom style -->
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <style>
+        body {
+            font-family: "Lexend Deca", sans-serif;
+        }
+    </style>
+</head>
+<body class="p-0 m-0">
+    <header class="p-3 bg-primary d-flex justify-content-around align-items-center">
+        <h3 class="m-0 text-light text-center">SublimApp</h3>
+        <p class="m-0 text-light text-center fs-5">Taller Web I - UNLaM</p>
+    </header>
+    <nav class="p-3 d-flex justify-content-evenly navbar bg-dark sticky-top">
+        <a href="#" class="fs-5 text-light text-decoration-none">Inicio</a>
+        <a href="#" class="fs-5 text-light text-decoration-none">Nuevo Pedido</a>
+        <a href="#" class="fs-5 text-light text-decoration-none">Mis Pedidos</a>
+        <a href="#" class="fs-5 text-light text-decoration-none">Mis Telas</a>
+        <a href="#" class="fs-5 text-light text-decoration-none">Perfil</a>
+    </nav>
+    <main>
+        <section class="container p-4 my-4 shadow-lg">
+            <div class="border border-primary border-2 p-4 rounded-4 border-opacity-50">
+                <!-- Cabecera de la ficha -->
+                <div class="row">
+                    <div class="col-8">
+                        <h4 class="fw-bold">Orden de Producción NRO: 100<span th:text="${pedidoNuevo.id}"></span></h4>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-6">
+                        <label><strong>Fecha:</strong></label>
+                        <input type="text" class="form-control" th:placeholder="${pedidoNuevo.fechaCreacion}" disabled>
+                    </div>
+                    <div class="col-6">
+                        <label><strong>Estado:</strong></label>
+                        <input type="text" class="form-control" th:placeholder="${pedidoNuevo.estado}" disabled>
+                    </div>
+                </div>
+                <!-- FALTAN ASIGNARSE -->
+                <div class="row mt-3">
+                    <div class="col-6">
+                        <label><strong>Tela:</strong></label>
+                        <input type="text" class="form-control" placeholder="Tela" disabled>
+                    </div>
+                </div>
+                <!-- Tabla de Archivo -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <table class="table table-hover text-center">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Copias (cantidad)</th>
+                                    <th>Peso</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td th:text="${pedidoNuevo.archivo.nombre}"></td>
+                                    <td th:text="${pedidoNuevo.cantCopias}"></td>
+                                    <td th:text="${pedidoNuevo.archivo.pesoMB}"></td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold fst-italic">Metros totales + Costo del servicio</td>
+                                    <td th:text="${pedidoNuevo.metrosTotales}"></td>
+                                    <td th:text="${pedidoNuevo.costoServicio}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="container w-75 my-5 d-flex justify-content-center">
+            <a class="btn btn-primary p-3 mx-3 rounded-4"> Prueba nuestro simulador de impresion </a>
+            <a class="btn btn-outline-primary p-3 mx-3 rounded-4"> Ver lista de pedidos </a>
+        </div>
+    </main>
+    <footer class="footer bg-black bg-gradient text-white p-5">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-1">Integrantes:</h4>
+                <p class="mb-1">Lautaro Saéz</p>
+                <p class="mb-1">Landín Iván Lautaro</p>
+                <p class="mb-1">Medina Jeremías</p>
+                <p class="mb-1">Forno Alan</p>
+                <p class="mb-0">Pablo Rocha</p>
+                <h4 class="mb-1 mt-3 fs-2">SublimApp</h4>
+            </div>
+            <div class="footer-right text-end fs-5">
+                <p class="mb-1">Universidad Nacional de La Matanza</p>
+                <p class="mb-1">Taller Web I</p>
+                <img src="/spring/img/unlam_logo.png" alt="Logo UNLaM" style="height: 40px;">
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

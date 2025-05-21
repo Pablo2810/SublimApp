@@ -1,10 +1,13 @@
 package com.tallerwebi.dominio.entidad;
 
+import java.io.InputStream;
+
 public class Archivo {
     private Long id;
     private String nombre;
     private String tipoFormato;
     private Double pesoMB;
+    private InputStream datos;
 
     public Long getId() {
         return id;
@@ -37,4 +40,8 @@ public class Archivo {
     public void setPesoMB(Double pesoMB) {
         this.pesoMB = pesoMB;
     }
+
+    public void setDatos(InputStream datos) { this.datos = datos; }
+
+    public InputStream getDatos() { return datos; }
 }
