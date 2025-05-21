@@ -1,49 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Taller Web I</title>
+    <!-- font google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
     <!-- Boostrap core css -->
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
-
     <!-- custom style -->
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <style>
+        body {
+            font-family: "Lexend Deca", sans-serif;
+        }
+    </style>
 </head>
-<body>
-
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand" href="#">UNLAM</a>
+<body class="p-0 m-0">
+    <header class="p-3 bg-primary d-flex justify-content-around align-items-center">
+    <h3 class="m-0 text-light text-center">SublimApp</h3>
+    <p class="m-0 text-light text-center fs-5">Taller Web I - UNLaM</p>
+</header>
+    <nav class="p-3 d-flex justify-content-evenly navbar bg-light sticky-top">
+    <a href="#" class="fs-5 text-dark text-decoration-none">Inicio</a>
+    <a href="#" class="fs-5 text-dark text-decoration-none">Nuevo Pedido</a>
+    <a href="#" class="fs-5 text-dark text-decoration-none">Mis Pedidos</a>
+    <a href="#" class="fs-5 text-dark text-decoration-none">Mis Telas</a>
+    <a href="#" class="fs-5 text-dark text-decoration-none">Perfil</a>
 </nav>
+    <main class="d-flex p-5">
+        <div class="w-50 rounded-4 shadow">
+            <img th:src="@{/img/fondo_pedido_nuevo.jpg}" class="img-fluid rounded-4 w-100 shadow" style="max-height: 500px; object-fit: cover;">
+        </div>
+        <div class="w-50 p-4">
+            <form th:action="@{/detalle-pedido}" method="POST" enctype="multipart/form-data" th:object="${datosPedido}">
+                <h3 class="mb-4 text-dark text-center">Nuevo Pedido</h3>
+                <div class="mb-3 fs-5">
+                    <label for="nombre" class="form-label">Nombre:</label>
+                    <input th:field="*{nombre}" class="form-control fw-light" id="nombre" placeholder="Ingrese su nombre">
+                </div>
+                <div class="mb-3 fs-5">
+                    <label for="cantidadCopias" class="form-label">Cantidad de copias:</label>
+                    <input th:field="*{cantidadCopias}" type="text" class="form-control fw-light" id="cantidadCopias">
+                </div>
+                <div class="mb-3 fs-5">
+                    <label for="file" class="form-label">Seleccione su archivo:</label>
+                    <input name="file" class="form-control fw-light" id="file" type="file">
+                </div>
 
-<main role="main" class="container">
-
-    <div class="w-50 mx-auto">
-        <form method="POST" enctype="multipart/form-data">
-            <h3 class="form-signin-heading text-center">Nuevo pedido</h3>
-            <hr class="colorgraph">
-            <br>
-            <div class="mb-2">
-                <label for="cantidad-copias">Cantidad de copias</label>
-                <input type="number" id="cantidad-copias" class="form-control" required />
+                <button id="btn-detalle-pedido" class="py-2 px-4 btn btn-primary" type="submit">Realizar Pedido</button>
+            </form>
+        </div>
+    </main>
+    <footer class="footer bg-black bg-gradient text-white p-5">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-1">Integrantes:</h4>
+                <p class="mb-1">Lautaro Saéz</p>
+                <p class="mb-1">Landín Iván Lautaro</p>
+                <p class="mb-1">Medina Jeremías</p>
+                <p class="mb-1">Forno Alan</p>
+                <p class="mb-0">Pablo Rocha</p>
+                <h4 class="mb-1 mt-3 fs-2">SublimApp</h4>
             </div>
-
-            <div class="mb-2">
-                <label for="foto">Imagen a imprimir</label>
-                <input type="file" id="foto" class="form-control" required />
+            <div class="footer-right text-end fs-5">
+                <p class="mb-1">Universidad Nacional de La Matanza</p>
+                <p class="mb-1">Taller Web I</p>
+                <img src="/spring/img/unlam_logo.png" alt="Logo UNLaM" style="height: 40px;">
             </div>
-
-            <button id="btn-registrarme" class="btn btn-lg btn-primary btn-block w-100 mt-4" Type="Submit">Hacer
-                pedido</button>
-            </p>
-        </form>
-    </div>
-
-</main>
-<!-- /.container -->
-
+        </div>
+    </footer>
 <!-- Boostrap core js -->
-<script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
-
+    <script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
 </body>
 </html>
