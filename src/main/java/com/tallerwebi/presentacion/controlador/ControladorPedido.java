@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 @Controller
@@ -33,10 +34,12 @@ public class ControladorPedido {
     }
 
     @RequestMapping(path = "/detalle-pedido", method = RequestMethod.POST)
-    public ModelAndView procesarPedido(@ModelAttribute("datosPedido") DatosPedido datosPedido, @RequestParam("file") MultipartFile file){
+    public ModelAndView procesarPedido(@ModelAttribute("datosPedido") DatosPedido datosPedido, @RequestParam("file") MultipartFile file) throws IOException {
         ModelMap model = new ModelMap();
         Archivo archivo = servicioArchivo.registrarArchivo(datosPedido.getNombre(), file);
         Pedido pedido = servicioPedido.registrarPedido(datosPedido.getCantidadCopias(), archivo);
+        pedido.setMetrosTotales(servicioPedido.calcularMetros(pedido));
+        pedido.setCostoServicio(servicioPedido.calcularCostoTotal(pedido.getAlto()));
         model.put("pedidoNuevo", pedido);
         return new ModelAndView("detalle-pedido", model);
     }
