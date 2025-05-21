@@ -19,45 +19,45 @@ import java.util.Objects;
 
 @Controller
 public class ControladorPedido {
-    private ServicioArchivo servicioArchivo;
-    private ServicioPedido servicioPedido;
+
+    private final ServicioArchivo servicioArchivo;
+    private final ServicioPedido servicioPedido;
 
     @Autowired
-    public ControladorPedido(ServicioArchivo servicioArchivo, ServicioPedido servicioPedido){
+    public ControladorPedido(ServicioArchivo servicioArchivo, ServicioPedido servicioPedido) {
         this.servicioArchivo = servicioArchivo;
         this.servicioPedido = servicioPedido;
     }
 
     @RequestMapping(path = "/nuevo-pedido", method = RequestMethod.GET)
-    public ModelAndView nuevoPedido(){
+    public ModelAndView nuevoPedido() {
         ModelMap model = new ModelMap();
         model.put("datosPedido", new DatosPedido());
         return new ModelAndView("nuevo-pedido", model);
     }
 
     @RequestMapping(path = "/detalle-pedido", method = RequestMethod.POST)
-    public ModelAndView procesarPedido(@ModelAttribute("datosPedido") DatosPedido datosPedido, @RequestParam("file") MultipartFile file) throws IOException {
+    public ModelAndView procesarPedido(@ModelAttribute("datosPedido") DatosPedido datosPedido,
+                                       @RequestParam("file") MultipartFile file) throws IOException {
         ModelMap model = new ModelMap();
-        Archivo archivo = new Archivo();
-        Pedido pedido = new Pedido();
 
         if (file == null || file.isEmpty()) {
             model.put("error", "Debe subir un archivo");
             return new ModelAndView("nuevo-pedido", model);
         }
 
-        if (datosPedido.getCantidadCopias() == null || datosPedido.getCantidadCopias() < 1){
+        if (datosPedido.getCantidadCopias() == null || datosPedido.getCantidadCopias() < 1) {
             model.put("error", "Ingrese la cantidad de copias");
             return new ModelAndView("nuevo-pedido", model);
         }
 
-        if (!Objects.equals(file.getContentType(), "image/jpeg")){
-            model.put("error", "Ingrese un archivo valido (.JPG o .JPEG)");
+        if (!Objects.equals(file.getContentType(), "image/jpeg")) {
+            model.put("error", "Ingrese un archivo válido (.JPG o .JPEG)");
             return new ModelAndView("nuevo-pedido", model);
         }
 
-        archivo = servicioArchivo.registrarArchivo(datosPedido.getNombre(), file);
-        pedido = servicioPedido.registrarPedido(datosPedido.getCantidadCopias(), archivo);
+        Archivo archivo = servicioArchivo.registrarArchivo(datosPedido.getNombre(), file);
+        Pedido pedido = servicioPedido.registrarPedido(datosPedido.getCantidadCopias(), archivo);
 
         model.put("pedidoNuevo", pedido);
 

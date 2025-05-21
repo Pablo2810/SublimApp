@@ -13,14 +13,24 @@ RUN apt-get update && apt-get install -y wget && \
     rm jetty-distribution-${JETTY_VERSION}.tar.gz
 
 # Copia el archivo WAR de tu proyecto al directorio webapps de Jetty
+# Mantenemos el nombre SublimApp.war para que se acceda vía /SublimApp
 COPY target/SublimApp.war $JETTY_HOME/webapps/ROOT.war
 
-# Expone el puerto en el que Jetty corre (por defecto 8080)
+# Expone el puerto por defecto
 EXPOSE 8080
 
-# Me paro en el directorio de Jetty
+# Me paro en el directorio Jetty
 WORKDIR $JETTY_HOME
 
-# Comando para iniciar Jetty y desplegar el archivo WAR
+# Ejecutar Jetty
 CMD ["java", "-jar", "./start.jar"]
+
+#construir imagen nueva: docker build -t sublimapp-jetty .
+#crear el contenedor con nombre: docker run -d -p 8080:8080 --name sublimapp-web sublimapp-jetty
+#verificar que este corriendo: docker ps
+#vista del contenedor: http://localhost:8080/
+#ver logs en tiempo real: docker logs -f sublimapp-web
+#Iniciar el contenedor: docker start sublimapp-web
+#Checkear que el contenedor este activo: docker ps
+
 
