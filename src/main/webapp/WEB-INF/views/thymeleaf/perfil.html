@@ -26,17 +26,17 @@
 
     <main class="d-flex p-5">
         <div class="w-50 rounded-4 shadow">
-            <img th:src="@{../../../resources/core/img/user_img.jpg}" class="img-fluid rounded-4 w-100 shadow" style="max-height: 500px; object-fit: cover;">
+            <img th:src="@{/img/user_img.jpg}" class="img-fluid rounded-4 w-100 shadow" style="max-height: 500px; object-fit: cover;">
         </div>
         <div class="w-50 p-4">
             <form th:action="@{/guardar-perfil}" method="POST" enctype="multipart/form-data" th:object="${datosUsuario}">
                 <div class="mb-3 fs-5">
                     <label for="nombre" class="form-label">Nombre:</label>
-                    <input th:field="*{nombre}" class="form-control fw-light" id="nombre" th:placeholder="${datosUsuario.nombre}">
+                    <input th:field="*{nombre}" class="form-control fw-light" id="nombre">
                 </div>
                 <div class="mb-3 fs-5">
                     <label for="email" class="form-label">Correo electrónico:</label>
-                    <input th:placeholder="${datosUsuario.email}" type="text" class="form-control fw-light" id="email">
+                    <input type="text" class="form-control fw-light" id="email" th:field="*{email}">
                 </div>
                 <input type="submit" class="py-2 px-4 btn btn-primary" value="Guardar">
             </form>

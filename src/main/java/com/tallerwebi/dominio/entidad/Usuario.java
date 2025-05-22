@@ -16,6 +16,7 @@ public class Usuario {
     private String rol;
     private Boolean activo = false;
     private String nombre;
+    private String urlImg;
 
     public Long getId() {
         return id;
@@ -56,6 +57,14 @@ public class Usuario {
         this.nombre = nombre;
     }
 
+    public String getUrlImg() {
+        return urlImg;
+    }
+
+    public void setUrlImg(String urlImg) {
+        this.urlImg = urlImg;
+    }
+
     public boolean activo() {
         return activo;
     }
@@ -74,6 +83,6 @@ public class Usuario {
 
     @Override
     public String toString() {
-        return email;
+        return email + ", " + nombre;
     }
 }

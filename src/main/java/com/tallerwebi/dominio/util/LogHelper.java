@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 public class LogHelper {
     public static void logToFile(String message) {
-        String path = "D:/Repositorios/taller_1/SublimApp/SublimApp/user-log.txt";
+        String path = "D:/Ivo/Taller1/SublimApp_fork/SublimApp/user-log.txt";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(path, true))) {
             writer.write(LocalDateTime.now() + " - " + message);
             writer.newLine();

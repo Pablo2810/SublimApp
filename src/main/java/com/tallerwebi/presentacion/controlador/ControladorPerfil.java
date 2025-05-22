@@ -2,6 +2,7 @@ package com.tallerwebi.presentacion.controlador;
 
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.servicio.ServicioUsuario;
+import com.tallerwebi.dominio.util.LogHelper;
 import com.tallerwebi.presentacion.dto.DatosUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,7 +40,13 @@ public class ControladorPerfil {
     public ModelAndView guardarPerfil(@ModelAttribute("datosUsuario") DatosUsuario datosUsuario,
                                     HttpSession session) {
         ModelMap model = new ModelMap();
-        Usuario usuario = servicioUsuario.consultarUsuario(session.getAttribute("userEmail").toString());
+
+        Object emailAttr = session.getAttribute("userEmail");
+        if (emailAttr == null) {
+            return new ModelAndView("redirect:/login");
+        }
+        Usuario usuario = servicioUsuario.consultarUsuario(emailAttr.toString());
+        usuario.setNombre(datosUsuario.getNombre());
         servicioUsuario.modificarUsuario(usuario);
         model.put("datosUsuario", datosUsuario);
         return new ModelAndView("perfil", model);

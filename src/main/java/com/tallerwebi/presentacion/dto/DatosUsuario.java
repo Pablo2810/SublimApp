@@ -3,6 +3,7 @@ package com.tallerwebi.presentacion.dto;
 public class DatosUsuario {
     private String email;
     private String nombre;
+    private String urlImg;
 
     public DatosUsuario() {
 
@@ -31,5 +32,13 @@ public class DatosUsuario {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public String getUrlImg() {
+        return urlImg;
+    }
+
+    public void setUrlImg(String urlImg) {
+        this.urlImg = urlImg;
     }
 }
