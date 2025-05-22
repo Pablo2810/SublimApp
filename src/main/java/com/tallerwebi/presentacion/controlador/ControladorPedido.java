@@ -66,7 +66,7 @@ public class ControladorPedido {
         }
 
         Archivo archivo = servicioArchivo.registrarArchivo(datosPedido.getNombre(), file);
-        Pedido pedido = servicioPedido.registrarPedido(datosPedido.getCantidadCopias(), archivo);
+        Pedido pedido = servicioPedido.registrarPedido(datosPedido.getCantidadCopias(), archivo, usuario);
 
         model.put("pedidoNuevo", pedido);
 

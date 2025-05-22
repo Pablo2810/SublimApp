@@ -114,7 +114,7 @@ public class ControladorPedidoTest {
         when(servicioPedidoMock.listarPedidosDelUsuario(any(Long.class)))
                 .thenReturn(List.of(pedidoMock));
 
-        ModelAndView modelAndView = controladorPedido.historialPedidos();
+        ModelAndView modelAndView = controladorPedido.mostrarHistorialPedidos(sessionMock);
 
         assertNotNull(modelAndView.getModel().get("pedidos").toString());
         assertNotEquals("", modelAndView.getModel().get("pedidos").toString());
@@ -122,7 +122,7 @@ public class ControladorPedidoTest {
 
     @Test
     public void queMuestreMensajeCuandoNoHayPedidos() {
-        ModelAndView modelAndView = controladorPedido.historialPedidos();
+        ModelAndView modelAndView = controladorPedido.mostrarHistorialPedidos(sessionMock);
 
         when(servicioPedidoMock.listarPedidosDelUsuario(any(Long.class)))
                 .thenReturn(List.of());

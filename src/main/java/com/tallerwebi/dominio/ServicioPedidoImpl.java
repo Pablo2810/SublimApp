@@ -64,4 +64,9 @@ public class ServicioPedidoImpl implements ServicioPedido {
         return repositorioPedido.listarPedidosDelUsuario(usuario);
     }
 
+    @Override
+    public List<Pedido> listarPedidosDelUsuario(Long idUsuario) {
+        return null;
+    }
+
 }
