@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,18 +56,30 @@ public class ControladorTela {
     }
 
     @GetMapping("/registrar-tela")
-    public String registrarTelaDesdeCatalogo(@RequestParam Long id) {
+    public String registrarTelaDesdeCatalogo(@RequestParam Long id, Model model) {
         MisTelas telaComprada = servicioTela.obtenerTelasDeFabrica().stream()
                 .filter(tela -> tela.getId().equals(id))
                 .findFirst()
                 .orElse(null);
 
-        if (telaComprada != null && telasDelUsuario.stream().noneMatch(t -> t.getId().equals(id))) {
+        if (telaComprada == null) {
+            model.addAttribute("mensajeError", "Tela no encontrada en el catálogo");
+        } else if (telasDelUsuario.stream().anyMatch(t -> t.getId().equals(id))) {
+            model.addAttribute("mensajeAdvertencia", "Ya has comprado esta tela");
+        } else {
             telasDelUsuario.add(telaComprada);
+            model.addAttribute("mensaje", "Tela comprada con éxito");
         }
 
-        return "redirect:/mis-telas/cargar-tela";
+        // Agregás nuevamente la lista para que se vuelva a mostrar
+        List<MisTelas> telas = servicioTela.obtenerTelasDeFabrica();
+        model.addAttribute("telas", telas);
+
+        return "catalogo-telas";
     }
+
+
+
 
     private Long generarId() {
         return (long) (telasDelUsuario.size() + 1000);

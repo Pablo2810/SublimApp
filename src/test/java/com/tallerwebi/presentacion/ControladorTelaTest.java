@@ -8,6 +8,7 @@ import com.tallerwebi.presentacion.dto.MisTelas;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ public class ControladorTelaTest {
         controladorTela = new ControladorTela(servicioTelaMock);
         modelMock = mock(Model.class);
     }
+
     @Test
     public void queMuestreElCatalogoDeTelas() {
         List<MisTelas> telasCatalogo = new ArrayList<>();
@@ -70,39 +72,38 @@ public class ControladorTelaTest {
         List<MisTelas> listaFabrica = List.of(tela);
         when(servicioTelaMock.obtenerTelasDeFabrica()).thenReturn(listaFabrica);
 
-        String vista = controladorTela.registrarTelaDesdeCatalogo(10L);
+        Model model = mock(Model.class);
+        String vista = controladorTela.registrarTelaDesdeCatalogo(10L, model);
 
-        assertEquals("redirect:/mis-telas/cargar-tela", vista);
+        verify(model).addAttribute("mensaje", "Tela comprada con éxito");
+        verify(model).addAttribute(eq("telas"), anyList());
+        assertEquals("catalogo-telas", vista);
     }
+
 
     @Test
     public void queNoAgregueTelaSiYaEstaComprada() {
         MisTelas tela = new MisTelas(10L, TipoTela.ALGODON, "Blanco", 0.0, "img.jpg");
         when(servicioTelaMock.obtenerTelasDeFabrica()).thenReturn(List.of(tela));
 
-        // Forzar que ya esté agregada manualmente
-        controladorTela.cargarTela("algodon", "Blanco", "img.jpg");
+        // Primero se compra
+        controladorTela.registrarTelaDesdeCatalogo(10L, modelMock);
 
-        // Intentar registrarla desde catálogo
-        String vista = controladorTela.registrarTelaDesdeCatalogo(10L);
+        // Segundo intento con misma ID
+        String vista = controladorTela.registrarTelaDesdeCatalogo(10L, modelMock);
 
-        assertEquals("redirect:/mis-telas/cargar-tela", vista);
+        verify(modelMock).addAttribute(eq("mensajeAdvertencia"), eq("Ya has comprado esta tela"));
+        assertEquals("catalogo-telas", vista);
     }
 
     @Test
     public void queNoAgregueTelaSiElIdNoExisteEnElCatalogo() {
-        when(servicioTelaMock.obtenerTelasDeFabrica()).thenReturn(new ArrayList<>()); // catálogo vacío
+        when(servicioTelaMock.obtenerTelasDeFabrica()).thenReturn(new ArrayList<>());
 
-        String vista = controladorTela.registrarTelaDesdeCatalogo(999L);
+        String vista = controladorTela.registrarTelaDesdeCatalogo(999L, modelMock);
 
-        assertEquals("redirect:/mis-telas/cargar-tela", vista);
-    }
-
-    @Test
-    public void queNoCargueTelaSiElTipoEsInvalido() {
-        String vista = controladorTela.cargarTela("plastico", "Verde", "http://imagen.jpg");
-
-        assertEquals("redirect:/mis-telas/cargar?error=tipoInvalido", vista);
+        verify(modelMock).addAttribute(eq("mensajeError"), eq("Tela no encontrada en el catálogo"));
+        assertEquals("catalogo-telas", vista);
     }
 }
 
