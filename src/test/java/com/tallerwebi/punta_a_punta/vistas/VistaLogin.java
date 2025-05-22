@@ -10,11 +10,11 @@ public class VistaLogin extends VistaWeb {
     }
 
     public String obtenerTextoDeLaBarraDeNavegacion(){
-        return this.obtenerTextoDelElemento("nav a.navbar-brand");
+        return this.obtenerTextoDelElemento("#titulo-app");
     }
 
     public String obtenerMensajeDeError(){
-        return this.obtenerTextoDelElemento("p.alert.alert-danger");
+        return this.obtenerTextoDelElemento("#mensaje-error-login");
     }
 
     public void escribirEMAIL(String email){
@@ -22,7 +22,7 @@ public class VistaLogin extends VistaWeb {
     }
 
     public void escribirClave(String clave){
-        this.escribirEnElElemento("#password", clave);
+        this.escribirEnElElemento("#contrasenia", clave);
     }
 
     public void darClickEnIniciarSesion(){

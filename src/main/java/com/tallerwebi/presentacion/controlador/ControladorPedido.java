@@ -13,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @Controller
@@ -61,6 +63,16 @@ public class ControladorPedido {
 
         return new ModelAndView("detalle-pedido", model);
     }
+
+    @RequestMapping("/historial-pedidos")
+    public ModelAndView historialPedidos() {
+        ModelMap model = new ModelMap();
+        List<Pedido> pedidos = servicioPedido.listarPedidosDelUsuario(1L);
+
+        model.put("mensajeSinPedidos", "Todavia no tienes pedidos");
+        model.put("pedidos", pedidos);
+
+        return new ModelAndView("historial-pedidos", model);
+    }
+
 }
-
-

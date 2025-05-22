@@ -1,6 +1,7 @@
 package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.entidad.Archivo;
+import com.tallerwebi.dominio.entidad.Estado;
 import com.tallerwebi.dominio.entidad.Pedido;
 import com.tallerwebi.dominio.servicio.ServicioArchivo;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
@@ -15,11 +16,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
 
 import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -87,7 +90,34 @@ public class ControladorPedidoTest {
         ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock, fileFormato);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-pedido"));
-        assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Ingrese un archivo valido (.JPG o .JPEG)"));
+        assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Ingrese un archivo válido (.JPG o .JPEG)"));
+    }
+
+    @Test
+    public void queMuestreListaDePedidos() {
+        when(pedidoMock.getId()).thenReturn(1L);
+        when(pedidoMock.getCantCopias()).thenReturn(10);
+        when(pedidoMock.getMetrosTotales()).thenReturn("100.0");
+        when(pedidoMock.getCostoServicio()).thenReturn(125.0);
+        when(pedidoMock.getEstado()).thenReturn(Estado.A_RETIRAR);
+
+        when(servicioPedidoMock.listarPedidosDelUsuario(any(Long.class)))
+                .thenReturn(List.of(pedidoMock));
+
+        ModelAndView modelAndView = controladorPedido.historialPedidos();
+
+        assertNotNull(modelAndView.getModel().get("pedidos").toString());
+        assertNotEquals("", modelAndView.getModel().get("pedidos").toString());
+    }
+
+    @Test
+    public void queMuestreMensajeCuandoNoHayPedidos() {
+        ModelAndView modelAndView = controladorPedido.historialPedidos();
+
+        when(servicioPedidoMock.listarPedidosDelUsuario(any(Long.class)))
+                .thenReturn(List.of());
+
+        assertNotNull(modelAndView.getModel().get("mensajeSinPedidos").toString());
     }
 
 }

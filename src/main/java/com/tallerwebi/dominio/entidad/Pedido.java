@@ -11,6 +11,7 @@ public class Pedido {
     private String metrosTotales;
     private Double costoServicio;
     private Archivo archivo;
+    private Usuario usuario; // falta agregar el list de tipo pedido en usuario
 
     public Long getId() {
         return id;
