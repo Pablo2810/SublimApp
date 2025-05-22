@@ -74,5 +74,35 @@ public class ControladorTelaTest {
 
         assertEquals("redirect:/mis-telas/cargar-tela", vista);
     }
+
+    @Test
+    public void queNoAgregueTelaSiYaEstaComprada() {
+        MisTelas tela = new MisTelas(10L, TipoTela.ALGODON, "Blanco", 0.0, "img.jpg");
+        when(servicioTelaMock.obtenerTelasDeFabrica()).thenReturn(List.of(tela));
+
+        // Forzar que ya esté agregada manualmente
+        controladorTela.cargarTela("algodon", "Blanco", "img.jpg");
+
+        // Intentar registrarla desde catálogo
+        String vista = controladorTela.registrarTelaDesdeCatalogo(10L);
+
+        assertEquals("redirect:/mis-telas/cargar-tela", vista);
+    }
+
+    @Test
+    public void queNoAgregueTelaSiElIdNoExisteEnElCatalogo() {
+        when(servicioTelaMock.obtenerTelasDeFabrica()).thenReturn(new ArrayList<>()); // catálogo vacío
+
+        String vista = controladorTela.registrarTelaDesdeCatalogo(999L);
+
+        assertEquals("redirect:/mis-telas/cargar-tela", vista);
+    }
+
+    @Test
+    public void queNoCargueTelaSiElTipoEsInvalido() {
+        String vista = controladorTela.cargarTela("plastico", "Verde", "http://imagen.jpg");
+
+        assertEquals("redirect:/mis-telas/cargar?error=tipoInvalido", vista);
+    }
 }
 
