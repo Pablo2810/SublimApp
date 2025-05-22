@@ -24,10 +24,7 @@
     <main>
         <section class="container my-4">
             <h2 class="text-center mb-4">Historial de Pedidos</h2>
-            <div th:if="${!pedidos.isEmpty()}">
-
-            </div>
-            <table class="table">
+            <table th:if="${!pedidos.isEmpty()}" class="table">
                 <thead>
                 <tr>
                     <th>Nro pedido</th>
