@@ -44,16 +44,21 @@ public class ControladorTela {
     @PostMapping("/mis-telas/cargar-tela")
     public String cargarTela(@RequestParam String tipoTela,
                              @RequestParam String color,
-                             @RequestParam String imagenUrl) {
+                             @RequestParam String imagenUrl,
+                             RedirectAttributes redirectAttributes) {
         try {
             TipoTela tipo = TipoTela.valueOf(tipoTela.toUpperCase());
             MisTelas nueva = new MisTelas(generarId(), tipo, color, 0.0, imagenUrl);
             telasDelUsuario.add(nueva);
         } catch (IllegalArgumentException e) {
-            return "redirect:/mis-telas/cargar?error=tipoInvalido";
+            return "redirect:/cargar-tela?error=tipoInvalido";
         }
-        return "redirect:/mis-telas/cargar-tela";
+
+        redirectAttributes.addFlashAttribute("mensaje", "Tela guardada con éxito");
+        return "redirect:/cargar-tela";
     }
+
+
 
     @GetMapping("/registrar-tela")
     public String registrarTelaDesdeCatalogo(@RequestParam Long id, Model model) {
