@@ -16,10 +16,13 @@ import java.util.stream.Collectors;
 @Controller
 public class ControladorTela {
 
-    @Autowired
-    private ServicioTela servicioTela;
-
+    private final ServicioTela servicioTela;
     private final List<MisTelas> telasDelUsuario = new ArrayList<>();
+
+    @Autowired
+    public ControladorTela(ServicioTela servicioTela) {
+        this.servicioTela = servicioTela;
+    }
 
     @GetMapping("/catalogo-telas")
     public String mostrarCatalogoTelas(Model model) {

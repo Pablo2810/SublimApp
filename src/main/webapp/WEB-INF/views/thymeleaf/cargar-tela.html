@@ -22,12 +22,10 @@
     <header th:insert="templates/header :: header"></header>
     <nav class="sticky-top" th:insert="templates/nav :: nav"></nav>
     <main class="container mt-5">
-        <h2 class="mb-4 text-center">Cargar nueva tela</h2>
-
+        <h2 class="mb-4 text-center">Registra una nueva tela</h2>
         <div th:if="${param.error}" class="alert alert-danger">
             El tipo de tela ingresado no es válido. Por favor, seleccioná uno de la lista disponible.
         </div>
-
         <form action="/mis-telas/cargar-tela" method="post" class="card p-4 mb-5 shadow-sm">
             <div class="row">
                 <div class="col-md-6 mb-3">
@@ -50,12 +48,10 @@
             </div>
             <button type="submit" class="btn btn-primary">Guardar tela</button>
         </form>
-
         <h3 class="mb-3">Telas Cargadas / Compradas</h3>
         <div th:if="${telasUsuario.isEmpty()}" class="alert alert-info">
             Aún no tienes telas cargadas.
         </div>
-
         <div class="row" th:if="${not telasUsuario.isEmpty()}">
             <div class="col-md-4 mb-4" th:each="tela : ${telasUsuario}">
                 <div class="card h-100 shadow-sm">
