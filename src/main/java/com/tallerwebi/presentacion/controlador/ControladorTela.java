@@ -29,7 +29,7 @@ public class ControladorTela {
     }
 
 
-    @GetMapping("/mis-telas/cargar-tela")
+    @GetMapping("/cargar-tela")
     public String mostrarFormularioCarga(Model model) {
         model.addAttribute("telasUsuario", telasDelUsuario);
         model.addAttribute("tiposTela", TipoTela.values());

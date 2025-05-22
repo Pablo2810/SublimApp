@@ -18,6 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @Controller
@@ -64,8 +66,7 @@ public class ControladorPedido {
         }
 
         Archivo archivo = servicioArchivo.registrarArchivo(datosPedido.getNombre(), file);
-
-        Pedido pedido = servicioPedido.registrarPedido(datosPedido.getCantidadCopias(), archivo, usuario);
+        Pedido pedido = servicioPedido.registrarPedido(datosPedido.getCantidadCopias(), archivo);
 
         model.put("pedidoNuevo", pedido);
 
@@ -80,5 +81,3 @@ public class ControladorPedido {
         return new ModelAndView("historial-pedidos", model);
     }
 }
-
-

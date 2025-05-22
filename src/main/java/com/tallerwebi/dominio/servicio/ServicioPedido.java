@@ -11,4 +11,5 @@ public interface ServicioPedido {
     Double calcularCostoTotal(Double alto, Integer cantidadCopias);
     Double aplicarDescuento();
     List<Pedido> listarPedidosDelUsuario(Usuario usuario);
+    List<Pedido> listarPedidosDelUsuario(Long idUsuario);
 }

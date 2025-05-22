@@ -9,23 +9,11 @@
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/cargarTelas.css}" />
 </head>
-
-<body>
-
-<header class="p-3 bg-primary d-flex justify-content-around align-items-center">
-    <h3 class="m-0 text-light text-center">SublimApp</h3>
-    <p class="m-0 text-light text-center fs-5">Taller Web I - UNLaM</p>
-</header>
-<nav class="p-3 d-flex justify-content-evenly navbar bg-light sticky-top">
-    <a th:href="@{/home}" class="fs-5 text-dark text-decoration-none">Inicio</a>
-    <a th:href="@{/nuevo-pedido}" class="fs-5 text-dark text-decoration-none">Nuevo Pedido</a>
-    <a th:href="@{/historial-pedidos}" class="fs-5 text-dark text-decoration-none">Mis Pedidos</a>
-    <a th:href="@{/catalogo-telas}" class="fs-5 text-dark text-decoration-none">Mis Telas</a>
-    <a th:href="@{/perfil}" class="fs-5 text-dark text-decoration-none">Perfil</a>
-</nav>
-
-<div class="container mt-5">
-    <h2 class="mb-4 text-center">Cargar nueva tela</h2>
+<body class="p-0 m-0">
+    <header th:insert="templates/header :: header"></header>
+    <nav class="sticky-top" th:insert="templates/nav :: nav"></nav>
+    <main class="container mt-5">
+        <h2 class="mb-4 text-center">Cargar nueva tela</h2>
 
     <div th:if="${param.error}" class="alert alert-danger">
         El tipo de tela ingresado no es válido. Por favor, seleccioná uno de la lista disponible.

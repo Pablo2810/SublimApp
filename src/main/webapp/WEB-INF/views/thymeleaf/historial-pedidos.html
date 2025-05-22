@@ -33,6 +33,9 @@
     <main>
         <section class="container my-4">
             <h2 class="text-center mb-4">Historial de Pedidos</h2>
+            <div th:if="${!pedidos.isEmpty()}">
+
+            </div>
             <table class="table">
                 <thead>
                 <tr>
@@ -55,35 +58,9 @@
                 </tr>
                 </tbody>
             </table>
+            <p th:if="${pedidos.isEmpty()}" th:text="${mensajeSinPedidos}" class="text-center text-muted"></p>
         </section>
     </main>
-    <!--<main>
-        <div class="container my-5">
-            <div class="card shadow rounded-4 p-4">
-                <h2 class="text-center mb-4">Detalle del Pedido</h2>
-                <div class="mb-3">
-                    <strong>Fecha de Creación:</strong> <span th:text="${pedidoNuevo.fechaCreacion}"></span>
-                </div>
-                <div class="mb-3">
-                    <strong>Estado:</strong> <span th:text="${pedidoNuevo.estado}"></span>
-                </div>
-                <div class="mb-3">
-                    <strong>Cantidad de Copias:</strong> <span th:text="${pedidoNuevo.cantCopias}"></span>
-                </div>
-
-                <h4 class="mt-4">Archivo</h4>
-                <div class="mb-2">
-                    <strong>Nombre:</strong> <span th:text="${pedidoNuevo.archivo.nombre}"></span>
-                </div>
-                <div class="mb-2">
-                    <strong>Formato:</strong> <span th:text="${pedidoNuevo.archivo.tipoFormato}"></span>
-                </div>
-                <div class="mb-2">
-                    <strong>Peso (MB):</strong> <span th:text="${pedidoNuevo.archivo.pesoMB}"></span>
-                </div>
-            </div>
-        </div>
-    </main>-->
     <footer class="footer bg-black bg-gradient text-white p-5">
         <div class="container d-flex justify-content-between align-items-center">
             <div>
