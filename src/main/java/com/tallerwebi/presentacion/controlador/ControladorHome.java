@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class ControladorHome {
 
-    @GetMapping("/inicio")
+    @GetMapping("/home")
     public String mostrarHome() {
-        return "thymeleaf/home";
+        return "home";
     }
 }
 

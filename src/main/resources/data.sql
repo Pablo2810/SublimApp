@@ -1,4 +1,4 @@
-INSERT INTO Usuario(id, email, password, rol, activo) VALUES(null, 'admin@unlam.edu.ar', 'test', 'ADMIN', true);
+INSERT INTO Usuario(id, email, password, rol, activo, nombre) VALUES(null, 'admin@unlam.edu.ar', 'test', 'ADMIN', true, '');
 
 /*
   CREATE TABLE Usuario (
