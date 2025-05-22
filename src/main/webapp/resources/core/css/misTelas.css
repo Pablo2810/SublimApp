@@ -1,0 +1,89 @@
+body {
+  font-family: 'Lexend Deca', sans-serif;
+  background-color: #f0f2f5;
+  color: #333;
+}
+
+h2 {
+  font-weight: 600;
+  color: #0d6efd;
+}
+
+.row.g-4 {
+  margin-bottom: 60px;
+}
+
+.card {
+  border-radius: 1rem;
+  border: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-title {
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #0d6efd;
+}
+
+.card-text {
+  font-size: 0.95rem;
+  color: #444;
+}
+
+/* Botones */
+.btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background-color: #084298;
+  border-color: #084298;
+}
+
+.btn-outline-primary {
+  border-width: 2px;
+  font-weight: 600;
+  color: #0d6efd;
+}
+
+.btn-outline-primary:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+
+/* Botón superior */
+.cargar-propia-tela-btn {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 30px;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .card-img-top {
+    height: 160px;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+  }
+
+  .btn {
+    font-size: 0.9rem;
+  }
+}
+

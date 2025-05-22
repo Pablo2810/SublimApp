@@ -3,32 +3,35 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
   <title>Taller Web I</title>
-
+  <!-- font google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
   <!-- Boostrap core css -->
   <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
-
   <!-- custom style -->
   <link rel="stylesheet" th:href="@{/css/main.css}"/>
-
+  <style>
+    body {
+      font-family: "Lexend Deca", sans-serif;
+    }
+  </style>
 </head>
-
-<body>
-
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-  <a class="navbar-brand" href="#">UNLAM</a>
-</nav>
-
-<main role="main" class="container">
-  <div class = "container">
-    <h1>Bienvenidos a Taller Web 1</h1>
-
-    <a href="login.html" class="btn btn-lg btn-primary btn-block">Volver</a>
-  </div>
-</main>
-<!-- /.container -->
-
+<body class="p-0 m-0">
+  <header th:insert="templates/header :: header"></header>
+  <nav class="sticky-top" th:insert="templates/nav :: nav"></nav>
+  <main style="position: relative; text-align: center; height: 100vh; overflow: hidden;" class="d-flex align-items-center justify-content-center">
+    <img th:src="@{/img/fondo_home.jpg}" class="img-fluid" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1;">
+    <div class="d-flex flex-column w-50 text-center bg-dark bg-opacity-75 p-5 rounded shadow-lg" style="max-height: 300px; position: relative; z-index: 2; display: flex; justify-content: center; align-items: center; height: 100%;">
+      <h1 class="fs-1 mb-3 text-light">¡Hola, bienvenido a SublimApp!</h1>
+      <p class="mb-4 text-light fs-5">Gestioná tus pedidos de sublimación de manera rápida, simple y eficiente. Desde impresión hasta calandrado, todo en un solo lugar.</p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap w-50">
+        <a th:href="@{/nuevo-pedido}" class="btn btn-outline-light fw-semibold w-100 p-2 fs-5">Realizar Pedido</a>
+      </div>
+    </div>
+  </main>
+  <footer th:insert="templates/footer :: footer"></footer>
 <!-- Boostrap core js -->
 <script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
 </body>
