@@ -2,8 +2,10 @@ package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.entidad.Archivo;
 import com.tallerwebi.dominio.entidad.Pedido;
+import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.servicio.ServicioArchivo;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
+import com.tallerwebi.dominio.servicio.ServicioUsuario;
 import com.tallerwebi.presentacion.controlador.ControladorPedido;
 import com.tallerwebi.presentacion.dto.DatosPedido;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +16,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 import static net.bytebuddy.matcher.ElementMatchers.is;
@@ -30,18 +33,24 @@ public class ControladorPedidoTest {
     private ControladorPedido controladorPedido;
     private ServicioPedido servicioPedidoMock;
     private ServicioArchivo servicioArchivoMock;
+    private ServicioUsuario servicioUsuarioMock;
+    private Usuario usuarioMock;
     private Pedido pedidoMock;
     private Archivo archivoMock;
     private MockMultipartFile fileMock;
+    private HttpSession sessionMock;
 
     @BeforeEach
     public void init(){
         datosPedidoMock = new DatosPedido("CamisetasDibuMartinez",30);
         pedidoMock = mock(Pedido.class);
         archivoMock = mock(Archivo.class);
+        usuarioMock = mock(Usuario.class);
         servicioPedidoMock = mock(ServicioPedido.class);
         servicioArchivoMock = mock(ServicioArchivo.class);
-        controladorPedido = new ControladorPedido(servicioArchivoMock, servicioPedidoMock);
+        servicioUsuarioMock = mock(ServicioUsuario.class);
+        sessionMock = mock(HttpSession.class);
+        controladorPedido = new ControladorPedido(servicioArchivoMock, servicioPedidoMock, servicioUsuarioMock);
         fileMock = new MockMultipartFile("file", "camiseta.jpg", "image/jpeg", "datos".getBytes());
     }
 
@@ -54,10 +63,11 @@ public class ControladorPedidoTest {
 
         when(servicioPedidoMock.registrarPedido(
                                             eq(datosPedidoMock.getCantidadCopias()),
-                                            eq(archivoMock)))
+                                            eq(archivoMock),
+                                            eq(usuarioMock)))
         .thenReturn(pedidoMock);
 
-        ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock, fileMock);
+        ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock, sessionMock, fileMock);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("detalle-pedido"));
         assertEquals(pedidoMock, modelAndView.getModel().get("pedidoNuevo"));
@@ -66,7 +76,7 @@ public class ControladorPedidoTest {
     @Test
     public void queDevuelvaUnErrorSiLaCantidadDeCopiasEsInvalida() throws IOException {
         datosPedidoMock.setCantidadCopias(0);
-        ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock, fileMock);
+        ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock, sessionMock, fileMock);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-pedido"));
         assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Ingrese la cantidad de copias"));
@@ -75,7 +85,7 @@ public class ControladorPedidoTest {
     @Test
     public void queDevuelvaUnErrorSiElFileNoEsValido() throws IOException {
         MockMultipartFile fileNulo = null;
-        ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock, fileNulo);
+        ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock, sessionMock, fileNulo);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-pedido"));
         assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Debe subir un archivo"));
@@ -84,7 +94,7 @@ public class ControladorPedidoTest {
     @Test
     public void queDevuelvaUnErrorSiElFormatoNoEsJPEG() throws IOException {
         MockMultipartFile fileFormato = new MockMultipartFile("file", "camiseta.jpg", "image/png", "datos".getBytes());
-        ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock, fileFormato);
+        ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock, sessionMock, fileFormato);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-pedido"));
         assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Ingrese un archivo valido (.JPG o .JPEG)"));

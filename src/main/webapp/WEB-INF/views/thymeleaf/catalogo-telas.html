@@ -12,23 +12,31 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand" href="#">UNLAM</a>
-</nav>
+    <header class="p-3 bg-primary d-flex justify-content-around align-items-center">
+        <h3 class="m-0 text-light text-center">SublimApp</h3>
+        <p class="m-0 text-light text-center fs-5">Taller Web I - UNLaM</p>
+    </header>
+    <nav class="p-3 d-flex justify-content-evenly navbar bg-light sticky-top">
+        <a th:href="@{/home}" class="fs-5 text-dark text-decoration-none">Inicio</a>
+        <a th:href="@{/nuevo-pedido}" class="fs-5 text-dark text-decoration-none">Nuevo Pedido</a>
+        <a th:href="@{/historial-pedidos}" class="fs-5 text-dark text-decoration-none">Mis Pedidos</a>
+        <a th:href="@{/catalogo-telas}" class="fs-5 text-dark text-decoration-none">Mis Telas</a>
+        <a th:href="@{/perfil}" class="fs-5 text-dark text-decoration-none">Perfil</a>
+    </nav>
 
 <main role="main" class="container mt-5 pt-5">
     <section>
         <h2 class="mb-4 text-center text-primary">Catálogo de Telas</h2>
 
         <div class="cargar-propia-tela-btn">
-            <a href="/mis-telas/cargar-tela" class="btn btn-outline-primary">Cargar propia tela</a>
+            <a th:href="@{/cargar-tela}" class="btn btn-outline-primary">Cargar propia tela</a>
 
         </div>
 
         <div class="row g-4">
             <div class="col-md-4" th:each="tela : ${telas}">
                 <div class="card h-100 shadow-lg border-0">
-                    <img th:src="@{${tela.imagenUrl}}" th:alt="'Imagen de tela ' + ${tela.tipoTela} + ' color ' + ${tela.color}" ... />
+                    <img th:src="@{tela.imagenUrl}" th:alt="'Imagen de tela ' + ${tela.tipoTela} + ' color ' + ${tela.color}" ... />
 
 
                     <div class="card-body d-flex flex-column justify-content-between">

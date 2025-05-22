@@ -3,15 +3,17 @@ package com.tallerwebi.dominio;
 import com.tallerwebi.dominio.entidad.Archivo;
 import com.tallerwebi.dominio.entidad.Estado;
 import com.tallerwebi.dominio.entidad.Pedido;
+import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.repositorio.RepositorioPedido;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
+import com.tallerwebi.dominio.util.LogHelper;
 import com.tallerwebi.infraestructura.RepositorioPedidoImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
 import javax.transaction.Transactional;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,15 +21,18 @@ import java.util.List;
 @Transactional
 public class ServicioPedidoImpl implements ServicioPedido {
 
+    private static final Logger log = LoggerFactory.getLogger(ServicioPedidoImpl.class);
     RepositorioPedidoImpl repositorioPedido;
 
-    public ServicioPedidoImpl() {
-        this.repositorioPedido = new RepositorioPedidoImpl();
+    @Autowired
+    public ServicioPedidoImpl(RepositorioPedidoImpl repositorioPedido) {
+        this.repositorioPedido = repositorioPedido;
     }
 
     @Override
-    public Pedido registrarPedido(Integer cantidadCopias, Archivo archivo) {
+    public Pedido registrarPedido(Integer cantidadCopias, Archivo archivo, Usuario usuario) {
         Pedido nuevoPedido = new Pedido();
+
         nuevoPedido.setId(1L);
         nuevoPedido.setFechaCreacion(LocalDate.now());
         nuevoPedido.setEstado(Estado.EN_ESPERA);
@@ -36,6 +41,10 @@ public class ServicioPedidoImpl implements ServicioPedido {
         archivo.setAlto(archivo.getAlto() * cantidadCopias);
         nuevoPedido.setMetrosTotales(archivo.getAncho().toString() +"x"+ archivo.getAlto().toString());
         nuevoPedido.setArchivo(archivo);
+        nuevoPedido.setUsuario(usuario);
+
+        //repositorioPedido.agregarPedido(nuevoPedido);
+
         return nuevoPedido;
     }
 
@@ -51,8 +60,8 @@ public class ServicioPedidoImpl implements ServicioPedido {
     }
 
     @Override
-    public List<Pedido> listarPedidosDelUsuario(Long idUsuario) {
-        return repositorioPedido.listarPedidosDelUsuario(idUsuario);
+    public List<Pedido> listarPedidosDelUsuario(Usuario usuario) {
+        return repositorioPedido.listarPedidosDelUsuario(usuario);
     }
 
 }

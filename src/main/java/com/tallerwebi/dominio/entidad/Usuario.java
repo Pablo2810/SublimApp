@@ -15,6 +15,7 @@ public class Usuario {
     private String password;
     private String rol;
     private Boolean activo = false;
+    private String nombre;
 
     public Long getId() {
         return id;
@@ -47,11 +48,32 @@ public class Usuario {
         this.activo = activo;
     }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
     public boolean activo() {
         return activo;
     }
 
     public void activar() {
         activo = true;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Usuario) {
+            return email.equals(((Usuario) obj).getEmail());
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return email;
     }
 }
