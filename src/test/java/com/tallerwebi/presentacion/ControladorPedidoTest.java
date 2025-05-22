@@ -90,7 +90,7 @@ public class ControladorPedidoTest {
         ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock, fileFormato);
 
         assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-pedido"));
-        assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Ingrese un archivo valido (.JPG o .JPEG)"));
+        assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Ingrese un archivo válido (.JPG o .JPEG)"));
     }
 
     @Test
