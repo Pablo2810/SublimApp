@@ -19,24 +19,12 @@
     </style>
 </head>
 <body class="p-0 m-0">
-    <header class="p-3 bg-primary d-flex justify-content-around align-items-center">
-        <h3 class="m-0 text-light text-center">SublimApp</h3>
-        <p class="m-0 text-light text-center fs-5">Taller Web I - UNLaM</p>
-    </header>
-    <nav class="p-3 d-flex justify-content-evenly navbar bg-light sticky-top">
-        <a th:href="@{/home}" class="fs-5 text-dark text-decoration-none">Inicio</a>
-        <a th:href="@{/nuevo-pedido}" class="fs-5 text-dark text-decoration-none">Nuevo Pedido</a>
-        <a th:href="@{/historial-pedidos}" class="fs-5 text-dark text-decoration-none">Mis Pedidos</a>
-        <a th:href="@{/catalogo-telas}" class="fs-5 text-dark text-decoration-none">Mis Telas</a>
-        <a th:href="@{/perfil}" class="fs-5 text-dark text-decoration-none">Perfil</a>
-    </nav>
+    <header th:insert="templates/header :: header"></header>
+    <nav class="sticky-top" th:insert="templates/nav :: nav"></nav>
     <main>
         <section class="container my-4">
             <h2 class="text-center mb-4">Historial de Pedidos</h2>
-            <div th:if="${!pedidos.isEmpty()}">
-
-            </div>
-            <table class="table">
+            <table th:if="${!pedidos.isEmpty()}" class="table">
                 <thead>
                 <tr>
                     <th>Nro pedido</th>
@@ -61,23 +49,6 @@
             <p th:if="${pedidos.isEmpty()}" th:text="${mensajeSinPedidos}" class="text-center text-muted"></p>
         </section>
     </main>
-    <footer class="footer bg-black bg-gradient text-white p-5">
-        <div class="container d-flex justify-content-between align-items-center">
-            <div>
-                <h4 class="mb-1">Integrantes:</h4>
-                <p class="mb-1">Lautaro Saéz</p>
-                <p class="mb-1">Landín Iván Lautaro</p>
-                <p class="mb-1">Medina Jeremías</p>
-                <p class="mb-1">Forno Alan</p>
-                <p class="mb-0">Pablo Rocha</p>
-                <h4 class="mb-1 mt-3 fs-2">SublimApp</h4>
-            </div>
-            <div class="footer-right text-end fs-5">
-                <p class="mb-1">Universidad Nacional de La Matanza</p>
-                <p class="mb-1">Taller Web I</p>
-                <img src="/spring/img/unlam_logo.png" alt="Logo UNLaM" style="height: 40px;">
-            </div>
-        </div>
-    </footer>
+    <footer th:insert="templates/footer :: footer"></footer>
 </body>
 </html>
