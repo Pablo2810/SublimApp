@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+                xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                layout:decorate="~{layout}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Taller Web I</title>
+    <!-- font google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Boostrap core css -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <!-- custom style -->
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <style>
+        body {
+            font-family: "Lexend Deca", sans-serif;
+        }
+    </style>
+</head>
+<body class="p-0 m-0">
+    <header th:insert="templates/header :: header"></header>
+    <nav class="sticky-top" th:insert="templates/nav :: nav"></nav>
+
+    <main class="d-flex p-5">
+        <div class="w-50 rounded-4 shadow">
+            <img th:src="@{/img/user_img.jpg}" class="img-fluid rounded-4 w-100 shadow" style="max-height: 500px; object-fit: cover;">
+        </div>
+        <div class="w-50 p-4">
+            <form th:action="@{/guardar-perfil}" method="POST" enctype="multipart/form-data" th:object="${datosUsuario}">
+                <div class="mb-3 fs-5">
+                    <label for="nombre" class="form-label">Nombre:</label>
+                    <input th:field="*{nombre}" class="form-control fw-light" id="nombre">
+                </div>
+                <div class="mb-3 fs-5">
+                    <label for="email" class="form-label">Correo electrónico:</label>
+                    <input type="text" class="form-control fw-light" id="email" th:field="*{email}">
+                </div>
+                <input type="submit" class="py-2 px-4 btn btn-primary" value="Guardar">
+            </form>
+
+            <button id="btn-logout" class="py-2 px-4 btn btn-danger" type="button"><a th:href="@{/logout}" class="text-white text-decoration-none"> Cerrar sesión </a></button>
+        </div>
+    </main>
+
+    <footer th:insert="templates/footer :: footer"></footer>
+
+    <script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+</body>
+</html>
+
