@@ -53,16 +53,18 @@ public class ControladorTelaTest {
 
     @Test
     public void queCargueUnaTelaCorrectamente() {
-        String resultado = controladorTela.cargarTela("lino", "verde", "http://imagen.com/tela.jpg");
+        // RedirectAttributes puede ser mockeado si se quiere verificar interacciones, pero no es obligatorio
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
 
-        assertEquals("redirect:/mis-telas/cargar-tela", resultado);
+        String resultado = controladorTela.cargarTela("lino", "verde", "http://imagen.com/tela.jpg", redirectAttributes);
+
+        assertEquals("redirect:/cargar-tela", resultado);
     }
-
     @Test
     public void queDevuelvaErrorSiTipoTelaEsInvalido() {
-        String resultado = controladorTela.cargarTela("tipoInvalido", "rojo", "img.jpg");
+        String resultado = controladorTela.cargarTela("tipoInvalido", "rojo", "img.jpg", null);
 
-        assertEquals("redirect:/mis-telas/cargar?error=tipoInvalido", resultado);
+        assertEquals("redirect:/cargar-tela?error=tipoInvalido", resultado);
     }
 
     @Test
