@@ -60,4 +60,26 @@ public class Pedido {
     public Archivo getArchivo() { return archivo; }
 
     public void setArchivo(Archivo archivo) { this.archivo = archivo; }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    @Override
+    public String toString() {
+        return "Pedido{" +
+                "id=" + id +
+                ", fechaCreacion=" + fechaCreacion +
+                ", estado=" + estado +
+                ", cantCopias=" + cantCopias +
+                ", metrosTotales='" + metrosTotales + '\'' +
+                ", costoServicio=" + costoServicio +
+                ", archivo=" + archivo.getNombre() +
+                ", usuario=" + usuario.toString() +
+                '}';
+    }
 }
