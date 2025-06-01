@@ -16,37 +16,35 @@ public class ServicioTelaImpl implements ServicioTela {
         List<MisTelas> telas = new ArrayList<>();
         long id = 1;
 
-        telas.add(new MisTelas(id++, TipoTela.ALGODON, "amarillo", 12000.0, "img/tela_algodon_amarillo.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.ALGODON, "azul", 12000.0, "img/tela_algodon_azul.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.ALGODON, "rojo", 12000.0, "img/tela_algodon_roja.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.ALGODON, "negro", 12000.0, "img/tela_algodon_negra.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.ALGODON, "blanco", 12000.0, "img/tela_algodon_blanca.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.LINO, "rojo", 13000.0, "img/tela_lino_roja.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.LINO, "azul", 13000.0, "img/tela_lino_azul.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.LINO, "amarillo", 13000.0, "img/tela_lino_amarillo.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.LINO, "negro", 13000.0, "img/tela_lino_negra.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.LINO, "blanco", 13000.0, "img/tela_lino_blanca.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.W15, "rojo", 10000.0, "img/tela_w15_roja.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.W15, "negro", 10000.0, "img/tela_w15_negra.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.W15, "blanco", 10000.0, "img/tela_w15_blanca.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.W15, "amarillo", 10000.0, "img/tela_w15_amarillo.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.W15, "azul", 10000.0, "img/tela_w15_azul.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.SET, "negro", 15000.0, "img/tela_set_negra.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.SET, "blanco", 15000.0, "img/tela_set_blanca.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.SET, "azul", 15000.0, "img/tela_set_azul.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.SET, "rojo", 15000.0, "img/tela_set_roja.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.SET, "amarillo", 18000.0, "img/tela_set_amarillo.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.NEOPRENO, "negro", 18000.0, "img/tela_neopreno_negra.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.NEOPRENO, "azul", 18000.0, "img/tela_neopreno_azul.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.NEOPRENO, "amarillo", 18000.0, "img/tela_neopreno_amarillo.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.NEOPRENO, "rojo", 18000.0, "img/tela_neopreno_roja.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.NEOPRENO, "blanco", 18000.0, "img/tela_neopreno_blanca.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.POLIESTER, "negro", 20000.0, "img/tela_poliester_negra.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.POLIESTER, "blanco", 20000.0, "img/tela_poliester_blanca.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.POLIESTER, "azul", 20000.0, "img/tela_poliester_azul.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.POLIESTER, "amarillo", 20000.0, "img/tela_poliester_amarillo.jpg"));
-        telas.add(new MisTelas(id++, TipoTela.POLIESTER, "rojo", 20000.0, "img/tela_poliester_roja.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.ALGODON, "rojo", 12000.0, "img/TELA_1.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.ALGODON, "azul", 12000.0, "img/TELA_2.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.ALGODON, "rosa", 12000.0, "img/TELA_3.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.ALGODON, "gris", 12000.0, "img/TELA_4.jpg"));
 
+        telas.add(new MisTelas(id++, TipoTela.LINO, "azul", 13000.0, "img/TELA_5.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.LINO, "celeste", 13000.0, "img/TELA_6.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.LINO, "verde", 13000.0, "img/TELA_7.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.LINO, "verde agua", 13000.0, "img/TELA_8.jpg"));
+
+        telas.add(new MisTelas(id++, TipoTela.W15, "marron", 10000.0, "img/TELA_9.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.W15, "naranja", 10000.0, "img/TELA_10.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.W15, "negro", 10000.0, "img/TELA_11.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.W15, "gris oscuro", 10000.0, "img/TELA_12.jpg"));
+
+        telas.add(new MisTelas(id++, TipoTela.SET, "amarillo", 15000.0, "img/TELA_13.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.SET, "amarillo oscuro", 15000.0, "img/TELA_14.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.SET, "rosa", 15000.0, "img/TELA_15.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.SET, "verde agua", 15000.0, "img/TELA_16.jpg"));
+
+        telas.add(new MisTelas(id++, TipoTela.NEOPRENO, "lila", 18000.0, "img/TELA_17.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.NEOPRENO, "rosa", 18000.0, "img/TELA_18.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.NEOPRENO, "marron", 18000.0, "img/TELA_19.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.NEOPRENO, "rosa oscuro", 18000.0, "img/TELA_20.jpg"));
+
+        telas.add(new MisTelas(id++, TipoTela.POLIESTER, "celes", 20000.0, "img/TELA_21.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.POLIESTER, "beige", 20000.0, "img/TELA_22.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.POLIESTER, "marron", 20000.0, "img/TELA_23.jpg"));
+        telas.add(new MisTelas(id++, TipoTela.POLIESTER, "blanco", 20000.0, "img/TELA_24.jpg"));
 
         return telas;
     }

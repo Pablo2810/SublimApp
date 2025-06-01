@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Taller Web I</title>
+    <!-- font google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Boostrap core css -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <!-- custom style -->
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <style>
+        body {
+            font-family: "Lexend Deca", sans-serif;
+        }
+    </style>
+</head>
+<body>
+<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
+<main class="main" style="height: fit-content;">
+    <div class="grid-disenios">
+        <!-- HACER LO MISMO QUE EL CATALOGO DE TELAS -->
+        <article class="rounded-4">
+            <div class="rounded-4">
+                <img th:src="@{/img/disenio_1.jpg}"
+                     class="w-100 catalogo-img rounded-4 p-2 bg-white shadow-lg">
+            </div>
+            <div class="bg-white pt-5 pb-3 px-3 rounded-4 catalogo-body">
+                <div>
+                    <h5 class="text-primary fw-semibold">Diseño  Milan 2008</h5>
+                    <p class="card-text"><strong>Color:</strong> <span>Rojo/Negro</span></p>
+                </div>
+                <a th:href="@{/nuevo-pedido}" class="btn btn-primary mt-3 w-100 shadow-lg"> Realizar Pedido de este Diseño </a>
+            </div>
+        </article>
+        <article class="rounded-4">
+            <div class="rounded-4">
+                <img th:src="@{/img/disenio_2.jpg}"
+                     class="w-100 catalogo-img rounded-4 p-2 bg-white">
+            </div>
+            <div class="bg-white pt-5 pb-3 px-3 rounded-4 catalogo-body shadow-lg">
+                <div>
+                    <h5 class="text-primary fw-semibold">Diseño  Argentina 1989</h5>
+                    <p class="card-text"><strong>Color:</strong> <span>Azul/Negro</span></p>
+                </div>
+                <a th:href="@{/nuevo-pedido}" class="btn btn-primary mt-3 w-100"> Realizar Pedido de este Diseño </a>
+            </div>
+        </article>
+        <article class="rounded-4">
+            <div class="rounded-4">
+                <img th:src="@{/img/disenio_3.jpg}"
+                     class="w-100 catalogo-img rounded-4 p-2 bg-white shadow-lg">
+            </div>
+            <div class="bg-white pt-5 pb-3 px-3 rounded-4 catalogo-body">
+                <div>
+                    <h5 class="text-primary fw-semibold">Diseño  Arsenal 2020</h5>
+                    <p class="card-text"><strong>Color:</strong> <span>Azul Oscuro/Amarillo</span></p>
+                </div>
+                <a th:href="@{/nuevo-pedido}" class="btn btn-primary mt-3 w-100"> Realizar Pedido de este Diseño </a>
+            </div>
+        </article>
+        <article class="rounded-4">
+            <div class="rounded-4">
+                <img th:src="@{/img/disenio_4.jpg}"
+                     class="w-100 catalogo-img rounded-4 p-2 bg-white shadow-lg">
+            </div>
+            <div class="bg-white pt-5 pb-3 px-3 rounded-4 catalogo-body">
+                <div>
+                    <h5 class="text-primary fw-semibold">Diseño  Brasil 2011</h5>
+                    <p class="card-text"><strong>Color:</strong> <span>Azul/Amarillo</span></p>
+                </div>
+                <a th:href="@{/nuevo-pedido}" class="btn btn-primary mt-3 w-100"> Realizar Pedido de este Diseño </a>
+            </div>
+        </article>
+        <article class="rounded-4">
+            <div class="rounded-4">
+                <img th:src="@{/img/disenio_5.jpg}"
+                     class="w-100 catalogo-img rounded-4 p-2 bg-white shadow-lg">
+            </div>
+            <div class="bg-white pt-5 pb-3 px-3 rounded-4 catalogo-body">
+                <div>
+                    <h5 class="text-primary fw-semibold">Diseño  Napoli 2024</h5>
+                    <p class="card-text"><strong>Color:</strong> <span>Negro</span></p>
+                </div>
+                <a th:href="@{/nuevo-pedido}" class="btn btn-primary mt-3 w-100"> Realizar Pedido de este Diseño </a>
+            </div>
+        </article>
+    </div>
+</main>
+<footer th:insert="templates/footer :: footer"></footer>
+</body>
+</html>
