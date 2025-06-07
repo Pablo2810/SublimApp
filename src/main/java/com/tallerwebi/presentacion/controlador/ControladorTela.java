@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +17,13 @@ import java.util.stream.Collectors;
 @Controller
 public class ControladorTela {
 
-    @Autowired
-    private ServicioTela servicioTela;
-
+    private final ServicioTela servicioTela;
     private final List<MisTelas> telasDelUsuario = new ArrayList<>();
+
+    @Autowired
+    public ControladorTela(ServicioTela servicioTela) {
+        this.servicioTela = servicioTela;
+    }
 
     @GetMapping("/catalogo-telas")
     public String mostrarCatalogoTelas(Model model) {
@@ -40,30 +44,47 @@ public class ControladorTela {
     @PostMapping("/mis-telas/cargar-tela")
     public String cargarTela(@RequestParam String tipoTela,
                              @RequestParam String color,
-                             @RequestParam String imagenUrl) {
+                             @RequestParam String imagenUrl,
+                             RedirectAttributes redirectAttributes) {
         try {
             TipoTela tipo = TipoTela.valueOf(tipoTela.toUpperCase());
             MisTelas nueva = new MisTelas(generarId(), tipo, color, 0.0, imagenUrl);
             telasDelUsuario.add(nueva);
         } catch (IllegalArgumentException e) {
-            return "redirect:/mis-telas/cargar?error=tipoInvalido";
+            return "redirect:/cargar-tela?error=tipoInvalido";
         }
-        return "redirect:/mis-telas/cargar-tela";
+
+        redirectAttributes.addFlashAttribute("mensaje", "Tela guardada con éxito");
+        return "redirect:/cargar-tela";
     }
 
+
+
     @GetMapping("/registrar-tela")
-    public String registrarTelaDesdeCatalogo(@RequestParam Long id) {
+    public String registrarTelaDesdeCatalogo(@RequestParam Long id, Model model) {
         MisTelas telaComprada = servicioTela.obtenerTelasDeFabrica().stream()
                 .filter(tela -> tela.getId().equals(id))
                 .findFirst()
                 .orElse(null);
 
-        if (telaComprada != null && telasDelUsuario.stream().noneMatch(t -> t.getId().equals(id))) {
+        if (telaComprada == null) {
+            model.addAttribute("mensajeError", "Tela no encontrada en el catálogo");
+        } else if (telasDelUsuario.stream().anyMatch(t -> t.getId().equals(id))) {
+            model.addAttribute("mensajeAdvertencia", "Ya has comprado esta tela");
+        } else {
             telasDelUsuario.add(telaComprada);
+            model.addAttribute("mensaje", "Tela comprada con éxito");
         }
 
-        return "redirect:/mis-telas/cargar-tela";
+        // Agregás nuevamente la lista para que se vuelva a mostrar
+        List<MisTelas> telas = servicioTela.obtenerTelasDeFabrica();
+        model.addAttribute("telas", telas);
+
+        return "catalogo-telas";
     }
+
+
+
 
     private Long generarId() {
         return (long) (telasDelUsuario.size() + 1000);
