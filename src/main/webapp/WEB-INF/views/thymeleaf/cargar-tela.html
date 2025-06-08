@@ -64,11 +64,15 @@
                     <div class="card-body">
                         <h5 class="card-title" th:text="${tela.tipoTela}">Tipo</h5>
                         <p class="card-text" th:text="'Color: ' + ${tela.color}">Color</p>
-                        <p class="card-text" th:if="${tela.precio > 0}" th:text="'Precio: $' + ${tela.precio}">Precio</p>
+                        <p class="card-text" th:text="'Precio: $' + ${tela.precio}">Precio</p>
+                        <p class="card-text" th:text="'Metros: ' + ${tela.metros}">Metros</p>
                     </div>
                 </div>
             </div>
         </div>
+
+        <a th:href="@{/catalogo-telas}" class="btn btn-secondary mb-4">Volver al Catálogo General</a>
+
     </main>
     <footer th:insert="templates/footer :: footer"></footer>
 <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
@@ -76,6 +80,7 @@
 </body>
 
 </html>
+
 
 
 

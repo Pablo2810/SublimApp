@@ -10,15 +10,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const body = document.body;
     const toggle = document.getElementById("modoOscuroToggle");
 
-    // Leer el modo guardado en localStorage
     const modoGuardado = localStorage.getItem("modo-oscuro");
 
-    // Si el modo guardado es "activado", aplicar modo oscuro
     if (modoGuardado === "activado") {
         body.classList.add("modo-oscuro");
     }
 
-    // Agregar el evento de clic al botón
     if (toggle) {
         toggle.addEventListener("click", () => {
             // Alternar la clase
@@ -33,3 +30,24 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+ function calcularPrecio() {
+     const precio = parseFloat(document.querySelector('input[name=precio]').value);
+     const metros = parseFloat(document.getElementById('metros')?.value || 0);
+     const totalElemento = document.getElementById('precioTotal');
+
+     if (totalElemento) {
+         totalElemento.innerText = 'Precio total: $' + (precio * metros).toFixed(2);
+     }
+ }
+
+ document.addEventListener('DOMContentLoaded', () => {
+     const metrosInput = document.getElementById('metros');
+     if (metrosInput) {
+         metrosInput.addEventListener('input', calcularPrecio);
+     }
+ });
+
+
+
+

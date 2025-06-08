@@ -1,5 +1,6 @@
 package com.tallerwebi.dominio;
 
+import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.TipoTela;
 import com.tallerwebi.dominio.servicio.ServicioTela;
 import com.tallerwebi.presentacion.dto.MisTelas;
@@ -50,6 +51,5 @@ public class ServicioTelaImpl implements ServicioTela {
 
         return telas;
     }
-
 
 }

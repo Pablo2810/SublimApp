@@ -1,5 +1,6 @@
 package com.tallerwebi.dominio.servicio;
 
+import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.TipoTela;
 import com.tallerwebi.presentacion.dto.MisTelas;
 
@@ -9,5 +10,6 @@ import java.util.List;
 public interface ServicioTela {
 
     List<MisTelas> obtenerTelasDeFabrica();
+
 
 }

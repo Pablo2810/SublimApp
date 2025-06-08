@@ -9,6 +9,7 @@ public class Tela {
     private String imagenUrl;
     private Boolean esPersonalizada;
 
+
     public Long getId() {
         return id;
     }

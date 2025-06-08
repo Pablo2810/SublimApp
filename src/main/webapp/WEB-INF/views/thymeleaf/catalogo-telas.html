@@ -33,15 +33,10 @@
         </div>
 
         <div class="w-75 container mt-3">
-            <div th:if="${mensaje}" class="alert alert-success text-center fw-semibold" role="alert">
-                <span th:text="${mensaje}"></span>
-            </div>
-            <div th:if="${mensajeAdvertencia}" class="alert alert-warning text-center fw-semibold" role="alert">
-                <span th:text="${mensajeAdvertencia}"></span>
-            </div>
-            <div th:if="${mensajeError}" class="alert alert-danger text-center fw-semibold" role="alert">
-                <span th:text="${mensajeError}"></span>
-            </div>
+            <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+            <div th:if="${mensajeAdvertencia}" class="alert alert-warning" th:text="${mensajeAdvertencia}"></div>
+            <div th:if="${mensajeError}" class="alert alert-danger" th:text="${mensajeError}"></div>
+
         </div>
 
         <section>
@@ -58,10 +53,7 @@
                                 <p class="card-text"><strong>Color:</strong> <span th:text="${tela.color}">Color</span></p>
                                 <p class="card-text"><strong>Precio por metro:</strong> $<span th:text="${tela.precio}">0.00</span></p>
                             </div>
-                            <a th:href="@{'/registrar-tela?id=' + ${tela.id}}" class="btn btn-primary mt-3 w-100">
-                                Comprar
-                            </a>
-
+                            <a th:href="@{'/detalle-tela-id/' + ${tela.id}}" class="btn btn-primary">Comprar</a>
                         </div>
                     </div>
                 </div>
@@ -69,7 +61,8 @@
         </section>
     </main>
     <footer th:insert="templates/footer :: footer"></footer>
-<script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+
     <script th:src="@{/js/main.js}"></script>
 </body>
 </html>

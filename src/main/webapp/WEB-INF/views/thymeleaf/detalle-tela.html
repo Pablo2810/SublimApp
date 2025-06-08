@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Taller Web I</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+  <!-- Custom styles -->
+  <link rel="stylesheet" th:href="@{/css/main.css}"/>
+  <link rel="stylesheet" th:href="@{/css/modoOscuro.css}">
+
+  <style>
+    body {
+        font-family: "Lexend Deca", sans-serif;
+    }
+  </style>
+</head>
+
+<body class="p-0 m-0">
+<header th:insert="header :: header"></header>
+<nav th:insert="nav :: nav"></nav>
+<main class="container py-5">
+</main>
+<footer th:insert="footer :: footer"></footer>
+</body>
+
+<h2 class="mb-4">Comprar Tela</h2>
+
+<form th:action="@{/procesar-compra}" method="post" class="border p-4 rounded bg-light">
+  <!-- Campos ocultos necesarios para guardar la tela correctamente -->
+  <input type="hidden" name="color" th:value="${tela.color}" />
+  <input type="hidden" name="precio" th:value="${tela.precio}" />
+  <input type="hidden" name="tipoTela" th:value="${tela.tipoTela}" />
+  <input type="hidden" name="imagenUrl" th:value="${tela.imagenUrl}" />
+
+  <div class="mb-3">
+    <img th:src="@{${tela.imagenUrl}}" alt="Imagen de la tela" class="img-fluid mb-3" style="max-width: 300px;">
+    <p><strong>Tipo de tela:</strong> <span th:text="${tela.tipoTela}"></span></p>
+    <p><strong>Color:</strong> <span th:text="${tela.color}"></span></p>
+    <p><strong>Precio por metro:</strong> $<span th:text="${tela.precio}"></span></p>
+  </div>
+
+  <div class="mb-3">
+    <label for="metros" class="form-label">Cantidad de metros:</label>
+    <input type="number" class="form-control" id="metros" name="metros" min="0.5" step="0.5" required oninput="calcularPrecio()">
+  </div>
+
+  <p id="precioTotal"><strong>Precio total:</strong> $0</p>
+
+  <button type="submit" class="btn btn-success">Pagar</button>
+  <a href="/catalogo-telas" class="btn btn-secondary ms-2">Cancelar</a>
+
+</form>
+
+<footer th:insert="templates/footer :: footer"></footer>
+<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>
