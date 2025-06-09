@@ -1,10 +1,7 @@
 package com.tallerwebi.dominio.entidad;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 public class Usuario {
@@ -33,7 +30,7 @@ public class Usuario {
 
     @ManyToMany
     @JoinTable(name = "usuario_promocion")
-    private HashSet<Promocion> promocionesAceptadas = new HashSet<>();
+    private Set<Promocion> promocionesAceptadas = new HashSet<>();
 
     private Double promedioItemsPorPedido;
 
@@ -125,7 +122,7 @@ public class Usuario {
         promocion.getUsuariosAceptaron().add(this);
     }
 
-    public HashSet<Promocion> getPromocionesAceptadas() {
+    public Set<Promocion> getPromocionesAceptadas() {
         return promocionesAceptadas;
     }
 

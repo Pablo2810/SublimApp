@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Pedido {
@@ -33,8 +34,7 @@ public class Pedido {
     private Usuario usuarioPedido; // falta agregar el list de tipo pedido en usuario
 
     @ManyToMany
-    @JoinTable(name = "producto_pedido")
-    private HashSet<Producto> productos = new HashSet<>();
+    private Set<Producto> productos = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -106,7 +106,7 @@ public class Pedido {
         this.promocionAplicada = promocionAplicada;
     }
 
-    public HashSet<Producto> getProductos() {
+    public Set<Producto> getProductos() {
         return productos;
     }
 

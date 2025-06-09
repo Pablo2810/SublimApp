@@ -1,10 +1,7 @@
 package com.tallerwebi.dominio.entidad;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 public class Promocion {
@@ -18,11 +15,11 @@ public class Promocion {
     private Integer cantidadUsuariosVisto;
 
     @ManyToMany(mappedBy = "promocionesAceptadas")
-    private HashSet<Usuario> usuariosAceptaron = new HashSet<>();
+    private Set<Usuario> usuariosAceptaron = new HashSet<>();
 
     private Double descuento;
 
-    @OneToMany(mappedBy = "promocion")
+    @OneToMany(mappedBy = "promocionAplicada")
     private List<Pedido> pedidos = new ArrayList<>();
 
     public Long getIdPromocion() {
@@ -54,7 +51,7 @@ public class Promocion {
         usuario.getPromocionesAceptadas().add(this);
     }
 
-    public HashSet<Usuario> getUsuariosAceptaron() {
+    public Set<Usuario> getUsuariosAceptaron() {
         return usuariosAceptaron;
     }
 

@@ -3,6 +3,7 @@ package com.tallerwebi.dominio.entidad;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Producto {
@@ -22,7 +23,7 @@ public class Producto {
     private Integer cantidad;
 
     @ManyToMany(mappedBy = "productos")
-    private HashSet<Pedido> pedidos = new HashSet<>();
+    private Set<Pedido> pedidos = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -56,7 +57,7 @@ public class Producto {
         this.cantidad = cantidad;
     }
 
-    public HashSet<Pedido> getPedidos() {
+    public Set<Pedido> getPedidos() {
         return pedidos;
     }
 
