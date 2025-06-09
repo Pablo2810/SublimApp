@@ -20,32 +20,56 @@
     </style>
 </head>
 <body class="p-0 m-0">
-    <header th:insert="templates/header :: header"></header>
-    <nav class="sticky-top" th:insert="templates/nav :: nav"></nav>
-    <main class="d-flex p-5">
-        <div class="w-50 rounded-4 shadow">
-            <img th:src="@{/img/fondo_pedido_nuevo.jpg}" class="img-fluid rounded-4 w-100 shadow" style="max-height: 500px; object-fit: cover;">
-        </div>
-        <div class="w-50 p-4">
-            <form th:action="@{/detalle-pedido}" method="POST" enctype="multipart/form-data" th:object="${datosPedido}">
+    <div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
+    <main class="d-flex align-items-center main pe-5" style="height: fit-content;">
+        <div class="w-50 py-5 ps-5 shadow-lg" style="height: fit-content;">
+            <form th:action="@{/detalle-pedido}" method="POST" enctype="multipart/form-data" th:object="${datosPedido}" class="formulario-pedido p-5 bg-white rounded-5">
                 <h3 class="mb-4 text-dark text-center">Nuevo Pedido</h3>
-
                 <p th:if="${error != null}" class="my-3 fs-5 text-danger text-center" th:text="${error}"></p>
-
-                <div class="mb-3 fs-5">
-                    <label for="nombre" class="form-label">Nombre:</label>
-                    <input th:field="*{nombre}" class="form-control fw-light" id="nombre" placeholder="Ingrese su nombre">
+                <div class="mb-3 w-100 d-flex flex-row justify-content-between">
+                    <div class="mb-3 me-3 fs-5 d-flex flex-column">
+                        <label for="nombre" class="mb-2">Nombre:</label>
+                        <input th:field="*{nombre}" class="p-2 border-top-0 border-start-0 border-end-0 rounded-0 fw-light" id="nombre" placeholder="Ingrese el pedido">
+                    </div>
+                    <div class="w-50 ms-3 mb-3 fs-5 d-flex flex-column">
+                        <label for="cantidadCopias" class="mb-2">Cantidad de camisetas:</label>
+                        <input th:field="*{cantidadCopias}" type="text" class="p-2 border-top-0 border-start-0 border-end-0 rounded-0 fw-light" id="cantidadCopias" name="cantidadCopias">
+                    </div>
                 </div>
-                <div class="mb-3 fs-5">
-                    <label for="cantidadCopias" class="form-label">Cantidad de copias:</label>
-                    <input th:field="*{cantidadCopias}" type="text" class="form-control fw-light" id="cantidadCopias">
+                <div class="mb-3 w-100 d-flex flex-row justify-content-between">
+                    <div class="w-50 me-3 mb-3 fs-5 d-flex flex-column justify-content-end">
+                        <label for="talle">Seleccioná el talle:</label>
+                        <select id="talle" name="talle" class="p-2 border-top-0 border-start-0 border-end-0 rounded-0 fw-light">
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="2XL">2XL</option>
+                        </select>
+                    </div>
+                    <div class="w-50 ms-3 mb-3 fs-5 d-flex flex-column justify-content-end">
+                        <label for="tela">Seleccioná una tela:</label>
+                        <select id="tela" name="tela" class="p-2 border-top-0 border-start-0 border-end-0 rounded-0 fw-light">
+                            <option value="W15">W15</option>
+                            <option value="SET">SET</option>
+                            <option value="LINO">LINO</option>
+                            <option value="ALGODON">ALGODÓN</option>
+                            <option value="POLIESTER">POLIÉSTER</option>
+                            <option value="NEOPRENO">NEOPRENO</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="mb-3 fs-5">
-                    <label for="file" class="form-label">Seleccione su archivo:</label>
-                    <input name="file" class="form-control fw-light" id="file" type="file">
+                <!--este DIV de seleccionar archivo es solo cuando el cliente tenga ya una camiseta diseñada y personalizada
+                    Si usa los diseños que tenemos este div ya no aparecia sino estaria el diseño que se va a usar-->
+                <div class="mb-3 fs-5 d-flex flex-column">
+                    <label for="file" class="mb-2">Seleccione su archivo:</label>
+                    <input name="file" class="p-2 border-top-0 border-start-0 border-end-0 rounded-0 fw-light" id="file" type="file">
                 </div>
-                <button id="btn-detalle-pedido" class="py-2 px-4 btn btn-primary" type="submit">Realizar Pedido</button>
+                <button id="btn-detalle-pedido" class="w-50 btn btn-lg btn-primary" type="submit">Realizar Pedido</button>
             </form>
+        </div>
+        <div class="w-50 rounded-5 img-pedido shadow-lg" style="height: 529.200px;">
+            <img th:src="@{/img/fondo_registro.jpg}" class="img-fluid rounded-5" style="height: 100%;">
         </div>
     </main>
     <footer th:insert="templates/footer :: footer"></footer>

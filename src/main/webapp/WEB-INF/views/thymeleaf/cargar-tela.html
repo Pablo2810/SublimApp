@@ -20,46 +20,52 @@
     </style>
 </head>
 <body class="p-0 m-0">
-    <header th:insert="templates/header :: header"></header>
-    <nav class="sticky-top" th:insert="templates/nav :: nav"></nav>
-    <main class="container mt-5">
-        <h2 class="mb-4 text-center">Registra una nueva tela</h2>
-        <div th:if="${param.error}" class="alert alert-danger">
-            El tipo de tela ingresado no es válido. Por favor, seleccioná uno de la lista disponible.
-        </div>
-
-        <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
-        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-
-        <form action="/mis-telas/cargar-tela" method="post" class="card p-4 mb-5 shadow-sm">
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Tipo de Tela</label>
-                    <select name="tipoTela" class="form-control" required>
-                        <option value="">-- Seleccioná un tipo --</option>
-                        <option th:each="tipo : ${tiposTela}"
-                                th:value="${tipo}"
-                                th:text="${tipo}"></option>
-                    </select>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Color</label>
-                    <input type="text" name="color" class="form-control" placeholder="Ej: rojo" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">URL de Imagen</label>
-                    <input type="text" name="imagenUrl" class="form-control" placeholder="/core/img/mi_imagen.jpg" required>
-                </div>
+<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
+<main class="p-5 main" style="height:fit-content;">
+    <h2 class="mb-5 text-center text-white">Registra una nueva tela</h2>
+    <div class="d-flex flex-row align-items-center">
+        <form th:action="@{/cargar-tela}" method="post" class="rounded-5 formulario-cargar-tela w-50 p-5 bg-white">
+            <div class="mb-3 fs-5 d-flex flex-column">
+                <label class="form-label">Tipo de Tela</label>
+                <select name="tipoTela" class="p-2 border-top-0 border-start-0 border-end-0 rounded-0 fw-light">
+                    <option value="">-- Seleccioná un tipo --</option>
+                    <option th:each="tipo : ${tiposTela}"
+                            th:value="${tipo}"
+                            th:text="${tipo}"></option>
+                </select>
             </div>
-            <button type="submit" class="btn btn-primary">Guardar tela</button>
+            <div class="mb-3 fs-5 d-flex flex-column">
+                <label class="mb-2">Metros:</label>
+                <input type="number" name="metros" class="p-2 border-top-0 border-start-0 border-end-0 rounded-0 fw-light">
+            </div>
+            <div class="mb-3 fs-5 d-flex flex-column">
+                <label class="mb-2">Color:</label>
+                <input type="text" name="color" class="p-2 border-top-0 border-start-0 border-end-0 rounded-0 fw-light" placeholder="Ej: rojo">
+            </div>
+            <div class="mb-5 fs-5 d-flex flex-column">
+                <label for="imagenUrl" class="mb-2">Seleccione la foto de su tela:</label>
+                <input name="imagenUrl" class="p-2 border-top-0 border-start-0 border-end-0 rounded-0 fw-light" id="imagenUrl" type="name">
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="w-50 btn btn-lg btn-primary">Guardar tela</button>
+            </div>
         </form>
-        <h3 class="mb-3">Telas Cargadas / Compradas</h3>
-        <div th:if="${telasUsuario.isEmpty()}" class="alert alert-info">
-            Aún no tienes telas cargadas.
+        <div class="w-50">
+            <img th:src="@{/img/fondo_cargar_tela.jpg}" class="img-fluid img-cargar-tela rounded-5">
         </div>
+    </div>
+
+    <div th:if="${param.error}" class="alert alert-danger">
+        El tipo de tela ingresado no es válido. Por favor, seleccioná uno de la lista disponible.
+    </div>
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+    <h2 class="my-5 text-center text-white">Telas Cargadas / Compradas</h2>
+    <div class="p-5 bg-white rounded-5 shadow">
+        <div th:if="${telasUsuario.isEmpty()}" class="alert alert-info m-0"> Aún no tienes telas cargadas.</div>
         <div class="row" th:if="${not telasUsuario.isEmpty()}">
             <div class="col-md-4 mb-4" th:each="tela : ${telasUsuario}">
-                <div class="card h-100 shadow-sm">
+                <div class="card h-100 shadow-lg">
                     <img th:src="@{${tela.imagenUrl}}" class="card-img-top img-fluid" style="height: 200px; object-fit: cover;">
                     <div class="card-body">
                         <h5 class="card-title" th:text="${tela.tipoTela}">Tipo</h5>
@@ -73,13 +79,14 @@
 
         <a th:href="@{/catalogo-telas}" class="btn btn-secondary mb-4">Volver al Catálogo General</a>
 
-    </main>
-    <footer th:insert="templates/footer :: footer"></footer>
+    </div>
+</main>
+<footer th:insert="templates/footer :: footer"></footer>
 <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
-    <script th:src="@{/js/main.js}"></script>
+<script th:src="@{/js/main.js}"></script>
 </body>
-
 </html>
+
 
 
 

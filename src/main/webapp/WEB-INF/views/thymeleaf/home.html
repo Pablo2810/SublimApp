@@ -22,17 +22,70 @@
   </style>
 </head>
 <body class="p-0 m-0">
-  <header th:insert="templates/header :: header"></header>
-  <nav class="sticky-top" th:insert="templates/nav :: nav"></nav>
-  <main style="position: relative; text-align: center; height: 100vh; overflow: hidden;" class="d-flex align-items-center justify-content-center">
-    <img th:src="@{/img/fondo_home.jpg}" class="img-fluid" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1;">
-    <div class="d-flex flex-column w-50 text-center bg-dark bg-opacity-75 p-5 rounded shadow-lg" style="max-height: 300px; position: relative; z-index: 2; display: flex; justify-content: center; align-items: center; height: 100%;">
-      <h1 class="fs-1 mb-3 text-light">¡Hola, bienvenido a SublimApp!</h1>
-      <p class="mb-4 text-light fs-5">Gestioná tus pedidos de sublimación de manera rápida, simple y eficiente. Desde impresión hasta calandrado, todo en un solo lugar.</p>
-      <div class="d-flex justify-content-center gap-3 flex-wrap w-50">
-        <a th:href="@{/nuevo-pedido}" class="btn btn-outline-light fw-semibold w-100 p-2 fs-5">Realizar Pedido</a>
+  <div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
+  <main style="height: fit-content;">
+    <section class="main w-100 d-flex p-5" style="height: 600px;">
+      <div class="p-0 w-50">
+        <h2 class="m-0 mb-4 text-white fw-bold fs-1">¡Bienvenido! Realiza pedidos de tus camisetas favoritas, personalizadas o deportivas</h2>
+        <p class="m-0 mb-4 text-white fs-4 pe-3">
+          Aqui podras realizar los pedidos de tus camisetas preferidas,
+          realiza tu pedido, observa el estado en el que se encuentra y
+          realiza el pago correspondiente todo desde el mismo sitio web.
+        </p>
+        <a th:href="@{/nuevo-pedido}" class="btn w-50 btn-lg btn-outline-light text-decoration-none">Realizar pedido</a>
       </div>
-    </div>
+    </section>
+    <section class="section-grid bg-dark bg-opacity-10 px-5" style="height: fit-content;">
+      <div class="d-flex justify-content-center">
+        <div class="ajuste mx-4 bg-white shadow-lg rounded-4">
+          <img th:src="@{/img/tarjeta_1.jpg}" class="img-fluid rounded-4">
+          <div class="p-4 fs-5 fw-light">
+            <p class="m-0">
+              Conocé los tipos de telas ideales
+              para tus camisetas deportivas. ¡Diseño unicos!
+            </p>
+          </div>
+        </div>
+        <div class="ajuste mx-4 bg-white shadow-lg rounded-4 ajuste">
+          <img th:src="@{/img/tarjeta_2.jpg}" class="img-fluid rounded-4">
+          <div class="p-4 fs-5 fw-light">
+            <p class="m-0">
+              Explorá nuestros diseños exclusivos o cargá el tuyo propio.
+            </p>
+          </div>
+        </div>
+        <div class="ajuste mx-4 bg-white shadow-lg rounded-4">
+          <img th:src="@{/img/tarjeta_3.jpg}" class="img-fluid rounded-4">
+          <div class="p-4 fs-5 fw-light">
+            <p class="m-0">
+              Elegí tu talle perfecto con nuestra guía detallada. ¡Ajuste ideal garantizado!
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="container text-dark text-center px-5">
+        <h1 class="mb-3">¿Quiénes Somos?</h1>
+        <p class="m-0 px-5 fw-light fs-4">
+          En nuestro taller combinamos pasión por el deporte y creatividad para ofrecer camisetas personalizadas
+          que se ajustan a tu estilo y necesidades. Nos especializamos en indumentaria deportiva de calidad,
+          cuidando cada detalle desde la elección de las telas hasta el diseño final. Creemos que cada equipo,
+          grupo o persona merece una prenda que lo represente con identidad y confort.
+        </p>
+      </div>
+      <div class="galeria pb-5 text-center mt-5">
+        <h1 class="my-5">Galeria</h1>
+        <article class="grid-galeria">
+          <img th:src="@{/img/galeria_1.jpg}" class="img-fluid">
+          <img th:src="@{/img/galeria_2.jpg}" class="img-fluid">
+          <img th:src="@{/img/galeria_3.jpg}" class="img-fluid">
+          <img th:src="@{/img/galeria_6.jpg}" class="img-fluid">
+          <img th:src="@{/img/galeria_5.jpg}" class="img-fluid">
+          <img th:src="@{/img/galeria_9.jpg}" class="img-fluid">
+          <img th:src="@{/img/galeria_7.jpg}" class="img-fluid">
+          <img th:src="@{/img/galeria_8.jpg}" class="img-fluid">
+        </article>
+      </div>
+    </section>
   </main>
   <footer th:insert="templates/footer :: footer"></footer>
 <!-- Boostrap core js -->
