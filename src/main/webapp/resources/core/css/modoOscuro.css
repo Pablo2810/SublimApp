@@ -1,0 +1,151 @@
+/* MODO OSCURO ACTIVADO SOLO SI EL BODY TIENE ESTA CLASE */
+body.modo-oscuro {
+    background-color: #121212;
+    color: #f0f0f0;
+}
+
+/* Textos */
+body.modo-oscuro h1,
+body.modo-oscuro h2,
+body.modo-oscuro h3,
+body.modo-oscuro h4,
+body.modo-oscuro h5,
+body.modo-oscuro h6,
+body.modo-oscuro label,
+body.modo-oscuro p,
+body.modo-oscuro span,
+body.modo-oscuro strong,
+body.modo-oscuro .text-dark {
+    color: #f5f5f5 !important;
+}
+
+/* Corregir textos poco visibles */
+body.modo-oscuro .text-secondary,
+body.modo-oscuro .text-muted {
+    color: #cccccc !important;
+}
+
+body.modo-oscuro .text-light,
+body.modo-oscuro p,
+body.modo-oscuro td,
+body.modo-oscuro li {
+    color: #f0f0f0 !important;
+}
+
+/* Links */
+body.modo-oscuro a {
+    color: #90caf9;
+}
+body.modo-oscuro a:hover {
+    color: #bbdefb;
+}
+
+/* Formularios */
+body.modo-oscuro input,
+body.modo-oscuro select,
+body.modo-oscuro textarea,
+body.modo-oscuro .form-control {
+    background-color: #1e1e1e !important;
+    color: #f0f0f0 !important;
+    border: 1px solid #444 !important;
+}
+body.modo-oscuro input::placeholder,
+body.modo-oscuro textarea::placeholder {
+    color: #bbbbbb;
+}
+
+/* Botones */
+body.modo-oscuro .btn {
+    border: none;
+}
+body.modo-oscuro .btn-primary {
+    background-color: #1976d2;
+    color: white;
+}
+body.modo-oscuro .btn-primary:hover {
+    background-color: #1565c0;
+}
+body.modo-oscuro .btn-outline-light {
+    color: #f0f0f0;
+    border-color: #f0f0f0;
+}
+body.modo-oscuro .btn-outline-light:hover {
+    background-color: #f0f0f0;
+    color: #121212;
+}
+
+/* Tarjetas y contenedores */
+body.modo-oscuro .card,
+body.modo-oscuro .shadow,
+body.modo-oscuro .shadow-lg,
+body.modo-oscuro .shadow-sm,
+body.modo-oscuro .bg-body-tertiary,
+body.modo-oscuro .bg-light,
+body.modo-oscuro .rounded-4,
+body.modo-oscuro .container,
+body.modo-oscuro .rounded,
+body.modo-oscuro .rounded-lg {
+    background-color: #1f1f1f !important;
+    color: #e0e0e0 !important;
+}
+
+/* Tablas */
+body.modo-oscuro table {
+    background-color: #1e1e1e;
+    color: #f0f0f0;
+    border-color: #333;
+}
+body.modo-oscuro th,
+body.modo-oscuro td {
+    background-color: #1e1e1e !important;
+    color: #f0f0f0 !important;
+    border-color: #333 !important;
+}
+
+/* Alertas Bootstrap */
+body.modo-oscuro .alert {
+    background-color: #2c2c2c;
+    border-color: #444;
+    color: #f0f0f0;
+}
+body.modo-oscuro .alert-danger {
+    background-color: #512424;
+    color: #f28b82;
+}
+body.modo-oscuro .alert-success {
+    background-color: #1e3e2f;
+    color: #81c784;
+}
+body.modo-oscuro .alert-warning {
+    background-color: #4e4320;
+    color: #ffeb3b;
+}
+
+/* Estados de pedido en tabla */
+body.modo-oscuro .text-success {
+    color: #81c784 !important;
+}
+body.modo-oscuro .text-danger {
+    color: #ef5350 !important;
+}
+body.modo-oscuro .text-warning {
+    color: #ffeb3b !important;
+}
+
+/* Fondo semi-transparente en home */
+body.modo-oscuro .bg-dark.bg-opacity-75 {
+    background-color: rgba(18, 18, 18, 0.85) !important;
+}
+
+/* Imagen con borde redondeado */
+body.modo-oscuro img {
+    border-radius: 0.5rem;
+}
+
+/* Texto claro que se sigue viendo claro en dark */
+body.modo-oscuro main .text-light {
+    color: #f5f5f5 !important;
+}
+
+
+

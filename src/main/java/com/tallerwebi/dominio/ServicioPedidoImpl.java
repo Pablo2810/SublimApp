@@ -31,11 +31,10 @@ public class ServicioPedidoImpl implements ServicioPedido {
         nuevoPedido.setId(1L);
         nuevoPedido.setFechaCreacion(LocalDate.now());
         nuevoPedido.setEstado(Estado.EN_ESPERA);
-        nuevoPedido.setCantCopias(cantidadCopias);
-        nuevoPedido.setCostoServicio(this.calcularCostoTotal(archivo.getAlto(), cantidadCopias));
+        //nuevoPedido.setCantCopias(cantidadCopias);
+        //nuevoPedido.setCostoServicio(this.calcularCostoTotal(archivo.getAlto(), cantidadCopias));
         archivo.setAlto(archivo.getAlto() * cantidadCopias);
-        nuevoPedido.setMetrosTotales(archivo.getAncho().toString() +"x"+ archivo.getAlto().toString());
-        nuevoPedido.setArchivo(archivo);
+        //nuevoPedido.setMetrosTotales(archivo.getAncho().toString() +"x"+ archivo.getAlto().toString());
         return nuevoPedido;
     }
 

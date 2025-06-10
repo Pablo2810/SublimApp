@@ -96,9 +96,9 @@ public class ControladorPedidoTest {
     @Test
     public void queMuestreListaDePedidos() {
         when(pedidoMock.getId()).thenReturn(1L);
-        when(pedidoMock.getCantCopias()).thenReturn(10);
-        when(pedidoMock.getMetrosTotales()).thenReturn("100.0");
-        when(pedidoMock.getCostoServicio()).thenReturn(125.0);
+        //when(pedidoMock.getCantCopias()).thenReturn(10);
+        //when(pedidoMock.getMetrosTotales()).thenReturn("100.0");
+        //when(pedidoMock.getCostoServicio()).thenReturn(125.0);
         when(pedidoMock.getEstado()).thenReturn(Estado.A_RETIRAR);
 
         when(servicioPedidoMock.listarPedidosDelUsuario(any(Long.class)))

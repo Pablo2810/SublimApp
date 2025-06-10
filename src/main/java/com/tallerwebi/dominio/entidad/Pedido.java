@@ -1,17 +1,40 @@
 package com.tallerwebi.dominio.entidad;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
+@Entity
 public class Pedido {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String codigoPedido; // Se puede generar un código único para cada pedido
+
     private LocalDate fechaCreacion;
+
     private Estado estado;
-    private Integer cantCopias;
-    private String metrosTotales;
-    private Double costoServicio;
-    private Archivo archivo;
-    private Usuario usuario; // falta agregar el list de tipo pedido en usuario
+
+    private Double montoTotal;
+
+    private Double montoFinal;
+
+    private LocalDate fechaEntrega;
+
+    @ManyToOne
+    @JoinColumn(name = "promocion", nullable = true)
+    private Promocion promocionAplicada;
+
+    @ManyToOne
+    private Usuario usuarioPedido; // falta agregar el list de tipo pedido en usuario
+
+    @ManyToMany
+    private Set<Producto> productos = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -35,29 +58,71 @@ public class Pedido {
         this.estado = estado;
     }
 
-    public Integer getCantCopias() {
-        return cantCopias;
+    public Usuario getUsuarioPedido() {
+        return usuarioPedido;
     }
 
-    public void setCantCopias(Integer cantCopias) {
-        this.cantCopias = cantCopias;
+    public void setUsuarioPedido(Usuario usuarioPedido) {
+        this.usuarioPedido = usuarioPedido;
     }
 
-    public String getMetrosTotales() {
-        return metrosTotales;
+    public String getCodigoPedido() {
+        return codigoPedido;
     }
 
-    public void setMetrosTotales(String metrosTotales) { this.metrosTotales = metrosTotales; }
-
-    public Double getCostoServicio() {
-        return costoServicio;
+    public void setCodigoPedido(String codigoPedido) {
+        this.codigoPedido = codigoPedido;
     }
 
-    public void setCostoServicio(Double costoServicio) {
-        this.costoServicio = costoServicio;
+    public Double getMontoTotal() {
+        return montoTotal;
     }
 
-    public Archivo getArchivo() { return archivo; }
+    public void setMontoTotal(Double montoTotal) {
+        this.montoTotal = montoTotal;
+    }
 
-    public void setArchivo(Archivo archivo) { this.archivo = archivo; }
+    public Double getMontoFinal() {
+        return montoFinal;
+    }
+
+    public void setMontoFinal(Double montoFinal) {
+        this.montoFinal = montoFinal;
+    }
+
+    public LocalDate getFechaEntrega() {
+        return fechaEntrega;
+    }
+
+    public void setFechaEntrega(LocalDate fechaEntrega) {
+        this.fechaEntrega = fechaEntrega;
+    }
+
+    public Promocion getPromocionAplicada() {
+        return promocionAplicada;
+    }
+
+    public void setPromocionAplicada(Promocion promocionAplicada) {
+        this.promocionAplicada = promocionAplicada;
+    }
+
+    public Set<Producto> getProductos() {
+        return productos;
+    }
+
+    public void setProductos(HashSet<Producto> productos) {
+        this.productos = productos;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Pedido pedido = (Pedido) o;
+        return Objects.equals(id, pedido.id) && Objects.equals(codigoPedido, pedido.codigoPedido);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, codigoPedido);
+    }
 }

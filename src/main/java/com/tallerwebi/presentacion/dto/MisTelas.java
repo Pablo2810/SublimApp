@@ -17,9 +17,11 @@ public class MisTelas {
     private String color;
     private Double precio;
     private String imagenUrl;
+    private Double metros;
 
     // Getters y setters
     public Long getId() { return id; }
+
     public void setId(Long id) { this.id = id; }
 
     public TipoTela getTipoTela() { return tipoTela; }
@@ -37,4 +39,9 @@ public class MisTelas {
     public String getImagenUrl() { return imagenUrl; }
 
     public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
+
+    public Double getMetros() { return metros; }
+
+    public void setMetros(Double metros) { this.metros = metros; }
+
 }

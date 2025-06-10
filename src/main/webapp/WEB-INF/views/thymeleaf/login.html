@@ -13,36 +13,33 @@
     <!-- custom style -->
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
     <style>
-        body {
-            font-family: "Lexend Deca", sans-serif;
-        }
+        body { font-family: "Lexend Deca", sans-serif; }
     </style>
 </head>
-<body class="p-0 m-0">
-    <header th:insert="templates/header :: header"></header>
-    <main>
-        <div class = "shadow-lg p-5 my-5 bg-body-tertiary rounded-4 container w-50">
-            <form action="#" th:action="@{/validar-login}" method="POST" th:object="${datosLogin}">
-                <h3 class="mb-4 text-dark text-center">Inicia Sesion</h3>
-                <div class="mb-3 fs-5">
-                    <label for="email" class="form-label">Email:</label>
-                    <input th:field="*{email}" type="email" class="form-control fw-light" id="email" placeholder="Ingrese su email">
-                </div>
-                <div class="mb-3 fs-5">
-                    <label for="contrasenia" class="form-label">Contraseña:</label>
-                    <input th:field="*{password}" type="password" class="form-control fw-light" id="contrasenia" placeholder="Ingrese su contraseña">
-                    <!-- CAMBIAR "password" POR "contrasenia" -->
-                </div>
-                <p th:if="${error != null}" id="mensaje-error-login" class="m-0 fs-5 text-danger text-center" th:text="'Error ' + ${error}"></p>
-                <div class="py-3 d-flex justify-content-between align-items-center">
-                    <button id="btn-login" class="py-2 px-4 btn btn-primary" type="submit">Iniciar Sesion</button>
-                    <p class="m-0 p-4">
-                        <a href="nuevo-usuario" class="text-decoration-none">Registrarse</a>
-                    </p>
-                </div>
-            </form>
-        </div>
-    </main>
+<body>
+<main class="d-flex main">
+    <div class="w-50 d-flex justify-content-center align-items-center">
+        <form action="#" th:action="@{/validar-login}" method="POST" th:object="${datosLogin}" class="form-login bg-white w-75 rounded-5 shadow-lg">
+            <h3 class="text-center text-dark mb-4">Inicia Sesion</h3>
+            <div class="d-flex flex-column fs-5 mb-4">
+                <label for="email" class="mb-2">Email:</label>
+                <input th:field="*{email}" type="email" id="email" placeholder="Ingrese su email" class="p-2 border-top-0 border-start-0 border-end-0 rounded-0 fw-light">
+            </div>
+            <div class="d-flex flex-column fs-5 mb-4">
+                <label for="password" class="mb-2">Contraseña:</label>
+                <input th:field="*{password}" type="password" id="password" placeholder="Ingrese su contraseña" class="p-2 border-top-0 border-start-0 border-end-0 rounded-0 fw-light">
+            </div>
+            <p th:if="${error != null}" id="mensaje-error-login" class="text-danger fs-5 text-center" th:text="'Error ' + ${error}"></p>
+            <div class="w-50 mt-5 container d-flex flex-column align-items-center">
+                <button id="btn-login" type="submit" class="w-100 btn btn-lg btn-primary">Iniciar Sesion</button>
+                <p class="mt-4 fs-5">
+                    <a th:href="@{/nuevo-usuario}" class="text-decoration-none">Registrarse</a>
+                </p>
+            </div>
+        </form>
+    </div>
+    <div class="w-50 img-login"></div>
+</main>
     <script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
     <script type="text/javascript" th:src="@{js/main.js}"></script>
 </body>

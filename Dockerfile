@@ -31,6 +31,6 @@ CMD ["java", "-jar", "./start.jar"]
 #vista del contenedor: http://localhost:8080/
 #ver logs en tiempo real: docker logs -f sublimapp-web
 #Iniciar el contenedor: docker start sublimapp-web
-#Checkear que el contenedor este activo: docker ps
+
 
 
