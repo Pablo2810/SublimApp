@@ -79,6 +79,7 @@
     <a th:href="@{/catalogo-telas}" class="btn btn-secondary mb-4">Volver al Catálogo General</a>
 </main>
 
+<div th:replace="fragments/toasts :: toasts"></div>
 <footer th:insert="templates/footer :: footer"></footer>
 
 <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>

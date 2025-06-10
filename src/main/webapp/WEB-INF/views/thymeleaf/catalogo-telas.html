@@ -30,12 +30,6 @@
         </a>
     </div>
 
-    <div class="w-75 container mb-3">
-        <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
-        <div th:if="${mensajeAdvertencia}" class="alert alert-warning" th:text="${mensajeAdvertencia}"></div>
-        <div th:if="${mensajeError}" class="alert alert-danger" th:text="${mensajeError}"></div>
-    </div>
-
     <section>
         <h2 class="p-5 mb-3 text-center fw-semibold text-primary">Explora nuestro Catálogo de Telas</h2>
         <div class="row g-4">
@@ -59,12 +53,17 @@
     </section>
 </main>
 
+
+
+<div th:replace="fragments/toasts :: toasts"></div>
 <footer th:insert="templates/footer :: footer"></footer>
 
+<!-- Scripts -->
 <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
 <script th:src="@{/js/main.js}"></script>
 </body>
 </html>
+
 
 
 
