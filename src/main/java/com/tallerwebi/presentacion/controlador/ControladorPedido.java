@@ -2,9 +2,12 @@ package com.tallerwebi.presentacion.controlador;
 
 import com.tallerwebi.dominio.entidad.Archivo;
 import com.tallerwebi.dominio.entidad.Pedido;
+import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.servicio.ServicioArchivo;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
+import com.tallerwebi.dominio.servicio.ServicioUsuario;
 import com.tallerwebi.presentacion.dto.DatosPedido;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -14,19 +17,23 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Controller
 public class ControladorPedido {
 
     private final ServicioArchivo servicioArchivo;
     private final ServicioPedido servicioPedido;
+    private final ServicioUsuario servicioUsuario;
 
     @Autowired
-    public ControladorPedido(ServicioArchivo servicioArchivo, ServicioPedido servicioPedido) {
+    public ControladorPedido(ServicioArchivo servicioArchivo, ServicioPedido servicioPedido, ServicioUsuario servicioUsuario) {
         this.servicioArchivo = servicioArchivo;
         this.servicioPedido = servicioPedido;
+        this.servicioUsuario = servicioUsuario;
     }
 
     @RequestMapping(path = "/nuevo-pedido", method = RequestMethod.GET)
@@ -56,8 +63,11 @@ public class ControladorPedido {
             return new ModelAndView("nuevo-pedido", model);
         }
 
+        Usuario usuarioConectado = servicioUsuario.consultarUsuario("admin@unlam.edu.ar"); // guardar email en session
+        // obtener hashset de productos
+
         Archivo archivo = servicioArchivo.registrarArchivo(datosPedido.getNombre(), file);
-        Pedido pedido = servicioPedido.registrarPedido(datosPedido.getCantidadCopias(), archivo);
+        Pedido pedido = servicioPedido.registrarPedido(UUID.randomUUID().toString(), usuarioConectado, new HashSet<>());
 
         model.put("pedidoNuevo", pedido);
 

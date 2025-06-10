@@ -3,6 +3,7 @@ package com.tallerwebi.infraestructura;
 import com.tallerwebi.dominio.entidad.Estado;
 import com.tallerwebi.dominio.entidad.Pedido;
 import com.tallerwebi.dominio.repositorio.RepositorioPedido;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -14,9 +15,12 @@ import java.util.List;
 public class RepositorioPedidoImpl implements RepositorioPedido {
 
     private List<Pedido> pedidos;
+    private SessionFactory sessionFactory;
 
     @Autowired
-    public RepositorioPedidoImpl() {
+    public RepositorioPedidoImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+
         Pedido pedido1 = new Pedido();
         pedido1.setId(1L);
         //pedido1.setCantCopias(10);

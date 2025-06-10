@@ -5,6 +5,7 @@ import com.tallerwebi.dominio.entidad.Estado;
 import com.tallerwebi.dominio.entidad.Pedido;
 import com.tallerwebi.dominio.servicio.ServicioArchivo;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
+import com.tallerwebi.dominio.servicio.ServicioUsuario;
 import com.tallerwebi.presentacion.controlador.ControladorPedido;
 import com.tallerwebi.presentacion.dto.DatosPedido;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,7 @@ public class ControladorPedidoTest {
     private Pedido pedidoMock;
     private Archivo archivoMock;
     private MockMultipartFile fileMock;
+    private ServicioUsuario servicioUsuarioMock;
 
     @BeforeEach
     public void init(){
@@ -44,7 +46,7 @@ public class ControladorPedidoTest {
         archivoMock = mock(Archivo.class);
         servicioPedidoMock = mock(ServicioPedido.class);
         servicioArchivoMock = mock(ServicioArchivo.class);
-        controladorPedido = new ControladorPedido(servicioArchivoMock, servicioPedidoMock);
+        controladorPedido = new ControladorPedido(servicioArchivoMock, servicioPedidoMock, servicioUsuarioMock);
         fileMock = new MockMultipartFile("file", "camiseta.jpg", "image/jpeg", "datos".getBytes());
     }
 
@@ -55,9 +57,9 @@ public class ControladorPedidoTest {
                                             any(MultipartFile.class)))
         .thenReturn(archivoMock);
 
-        when(servicioPedidoMock.registrarPedido(
-                                            eq(datosPedidoMock.getCantidadCopias()),
-                                            eq(archivoMock)))
+        when(servicioPedidoMock.registrarPedido(any(),
+                                            eq(servicioUsuarioMock.consultarUsuario(any())),
+                                            eq(any()))) // agregar hashset de productos en lugar de any
         .thenReturn(pedidoMock);
 
         ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock, fileMock);
