@@ -209,23 +209,76 @@ public class ControladorTelaTest {
         }
     }
 
+    @Test
+    public void queCargarTelaAgregaToastExito() {
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+
+        controladorTela.cargarTela("algodon", "amarillo", "url.jpg", redirectAttributes);
+
+        verify(redirectAttributes).addFlashAttribute(eq("mensaje"), eq("Tela guardada con éxito"));
+    }
 
     @Test
-    public void queProcesarCompraConTipoTelaInvalidoRedirigeConError() {
+    public void queCargarTelaAgregaToastErrorSiTipoInvalido() {
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+
+        controladorTela.cargarTela("tipoInvalido", "rojo", "img.jpg", redirectAttributes);
+
+        verify(redirectAttributes).addFlashAttribute(eq("mensajeError"), eq("Tipo de tela inválido"));
+    }
+
+    @Test
+    public void queRegistrarTelaDesdeCatalogoAgregaToastExito() {
+        MisTelas tela = new MisTelas(10L, TipoTela.ALGODON, "Azul", 50.0, "img.jpg");
+        when(servicioTelaMock.obtenerTelasDeFabrica()).thenReturn(List.of(tela));
+
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+        controladorTela.registrarTelaDesdeCatalogo(10L, redirectAttributes);
+
+        verify(redirectAttributes).addFlashAttribute(eq("mensaje"), eq("Tela comprada con éxito"));
+    }
+
+    @Test
+    public void queRegistrarTelaDesdeCatalogoAgregaToastAdvertenciaSiYaComprada() {
+        MisTelas tela = new MisTelas(10L, TipoTela.ALGODON, "Blanco", 0.0, "img.jpg");
+        when(servicioTelaMock.obtenerTelasDeFabrica()).thenReturn(List.of(tela));
+
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+
+        controladorTela.registrarTelaDesdeCatalogo(10L, redirectAttributes); // 1ra compra
+        controladorTela.registrarTelaDesdeCatalogo(10L, redirectAttributes); // 2da compra
+
+        verify(redirectAttributes).addFlashAttribute(eq("mensajeAdvertencia"), eq("Ya has comprado esta tela"));
+    }
+
+    @Test
+    public void queRegistrarTelaDesdeCatalogoAgregaToastErrorSiNoExiste() {
+        when(servicioTelaMock.obtenerTelasDeFabrica()).thenReturn(new ArrayList<>());
+
+        RedirectAttributes redirectAttributes = mock(RedirectAttributes.class);
+        controladorTela.registrarTelaDesdeCatalogo(999L, redirectAttributes);
+
+        verify(redirectAttributes).addFlashAttribute(eq("mensajeError"), eq("Tela no encontrada en el catálogo"));
+    }
+
+    @Test
+    public void queProcesarCompraAgregaToastExito() {
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
 
-        String resultado = controladorTela.procesarCompra(
-                "rojo",               // color
-                10.0,                 // precio
-                1.0,                  // metros
-                "tipoInvalido",       // tipoTela
-                "/img/tela_roja.jpg", // imagenUrl
-                redirectAttrs
-        );
+        controladorTela.procesarCompra("azul", 20.0, 3.5, "algodon", "/img/tela_azul.jpg", redirectAttrs);
 
-        assertEquals("redirect:/cargar-tela", resultado);
-        verify(redirectAttrs).addFlashAttribute("error", "Tipo de tela inválido");
+        verify(redirectAttrs).addFlashAttribute(eq("mensaje"), eq("Compra realizada con éxito"));
     }
+
+    @Test
+    public void queProcesarCompraAgregaToastErrorSiTipoInvalido() {
+        RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
+
+        controladorTela.procesarCompra("azul", 20.0, 3.5, "tipoInvalido", "/img/tela_azul.jpg", redirectAttrs);
+
+        verify(redirectAttrs).addFlashAttribute(eq("mensajeError"), eq("Tipo de tela inválido"));
+    }
+
 
 }
 
