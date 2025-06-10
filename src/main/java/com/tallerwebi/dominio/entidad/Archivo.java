@@ -1,14 +1,26 @@
 package com.tallerwebi.dominio.entidad;
 
-import java.io.InputStream;
+import javax.persistence.*;
 
+@Entity
 public class Archivo {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String nombre;
+
     private String tipoFormato;
+
     private Double pesoMB;
+
     private Double ancho;
+
     private Double alto;
+
+    @OneToOne(mappedBy = "archivo")
+    private Producto producto;
 
     public Long getId() {
         return id;
@@ -49,4 +61,12 @@ public class Archivo {
     public Double getAlto() { return alto; }
 
     public void setAlto(Double alto) { this.alto = alto; }
+
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+    }
 }

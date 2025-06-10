@@ -1,13 +1,27 @@
 package com.tallerwebi.dominio.entidad;
 
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
 public class Tela {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private TipoTela tipoTela;
+
     private Double metros;
+
     private String color;
+
     private Double precio;
+
     private String imagenUrl;
-    private Boolean esPersonalizada;
+
+    @ManyToMany(mappedBy = "telas")
+    private List<Prenda> prendas = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -45,7 +59,12 @@ public class Tela {
 
     public void setImagenUrl(String imagenUrl) { this.imagenUrl = imagenUrl; }
 
-    public Boolean getEsPersonalizada() { return esPersonalizada; }
+    public List<Prenda> getPrendas() {
+        return prendas;
+    }
 
-    public void setEsPersonalizada(Boolean esPersonalizada) { this.esPersonalizada = esPersonalizada; }
+    public void setPrendas(List<Prenda> prendas) {
+        this.prendas = prendas;
+    }
+
 }
