@@ -24,7 +24,7 @@ public class HibernateConfig {
         //dataSource.setUsername("sa");
         //dataSource.setPassword("");
         dataSource.setUsername("root");
-        //dataSource.setPassword("HattoriHanzo123"); usar password de mysql propia
+        dataSource.setPassword("HattoriHanzo123");
         return dataSource;
     }
 
