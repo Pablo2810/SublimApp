@@ -113,7 +113,7 @@ public class ControladorTela {
             try {
                 tipo = TipoTela.valueOf(tipoTela.toUpperCase());
             } catch (IllegalArgumentException e) {
-                redirectAttributes.addFlashAttribute("error", "Tipo de tela inválido");
+                redirectAttributes.addFlashAttribute("mensajeError", "Tipo de tela inválido");
                 return "redirect:/cargar-tela";
             }
         }
@@ -135,12 +135,12 @@ public class ControladorTela {
         return "redirect:/cargar-tela";
     }
 
-
     // Método auxiliar para generar ID
     private Long generarId() {
         return (long) (telasDelUsuario.size() + 1000);
     }
 }
+
 
 
 
