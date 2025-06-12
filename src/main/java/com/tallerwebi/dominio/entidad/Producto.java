@@ -27,6 +27,14 @@ public class Producto {
 
     private Double precio;
 
+    @ManyToOne
+    @JoinColumn(name = "tela")
+    private Tela tela;
+
+    @ManyToOne
+    @JoinColumn(name = "talle")
+    private Talle talle;
+
     public Long getId() {
         return id;
     }
@@ -73,6 +81,22 @@ public class Producto {
 
     public void setPedidos(HashSet<Pedido> pedidos) {
         this.pedidos = pedidos;
+    }
+
+    public Talle getTalle() {
+        return talle;
+    }
+
+    public void setTalle(Talle talle) {
+        this.talle = talle;
+    }
+
+    public Tela getTela() {
+        return tela;
+    }
+
+    public void setTela(Tela tela) {
+        this.tela = tela;
     }
 
     public void agregarPedido(Pedido pedido) {

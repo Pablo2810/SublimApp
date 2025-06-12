@@ -23,7 +23,15 @@ public class Prenda {
     @OneToMany(mappedBy = "prenda")
     private List<Producto> productos = new ArrayList<>();
 
-    private Integer cantidad;
+    private Double precioBase;
+
+    public Double getPrecioBase() {
+        return precioBase;
+    }
+
+    public void setPrecioBase(Double precioBase) {
+        this.precioBase = precioBase;
+    }
 
     public void agregarTela(Tela tela) {
         this.telas.add(tela);
@@ -66,14 +74,6 @@ public class Prenda {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
     }
 
     public void setTelas(List<Tela> telas) {
