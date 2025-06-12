@@ -20,7 +20,6 @@
     </style>
 </head>
 <body class="p-0 m-0">
-<header th:insert="templates/header :: header"></header>
 <nav class="sticky-top" th:insert="templates/nav :: nav"></nav>
 
 <main role="main" class="container p-4">
@@ -55,7 +54,7 @@
 
 
 
-<div th:replace="fragments/toasts :: toasts"></div>
+<div th:replace="templates/toasts :: toasts"></div>
 <footer th:insert="templates/footer :: footer"></footer>
 
 <!-- Scripts -->

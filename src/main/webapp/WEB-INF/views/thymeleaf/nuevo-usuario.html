@@ -20,7 +20,6 @@
   </style>
 </head>
 <body class="p-0 m-0">
-<header th:insert="templates/header :: header"></header>
 <main>
   <div class="shadow-lg p-5 my-5 bg-body-tertiary rounded-4 container w-50">
     <form action="#" th:action="@{/registrarme}" method="POST" th:object="${usuario}">
@@ -48,3 +47,20 @@
         </div>
       </div>
 
+  <p th:if="${error != null}" class="text-danger fs-5 text-center" th:text="'Error: ' + ${error}"></p>
+
+  <div class="text-center mt-4">
+    <button type="submit" class="btn btn-primary btn-lg px-5">Registrarse</button>
+  </div>
+  <div class="text-center mt-4 fs-5">
+    <a th:href="@{/login}" class="text-decoration-none">¿Ya tenés cuenta? Iniciá sesión</a>
+  </div>
+
+  </form>
+  </div>
+</main>
+
+<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/main.js}"></script>
+</body>
+</html>

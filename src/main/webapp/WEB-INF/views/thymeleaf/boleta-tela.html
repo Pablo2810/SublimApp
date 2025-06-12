@@ -5,8 +5,11 @@
   <title>Boleta de Compra</title>
   <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}">
   <link rel="stylesheet" th:href="@{/css/main.css}">
+  <link rel="stylesheet" th:href="@{/css/modoOscuro.css}" />
 </head>
 <body class="container py-5">
+<nav class="sticky-top" th:insert="templates/nav :: nav"></nav>
+
 <h2 class="mb-4">Boleta de Compra</h2>
 
 <div class="card p-4">
@@ -14,17 +17,23 @@
   <p><strong>Precio por metro:</strong> $<span th:text="${precio}"></span></p>
   <p><strong>Cantidad de metros:</strong> <span th:text="${metros}"></span></p>
   <p><strong>Total a pagar:</strong> $<span th:text="${total}"></span></p>
+
+  <!-- NUEVO: Detalle de cuotas si aplica -->
+  <div th:if="${cuotas != null and cuotas > 1}">
+    <p><strong>Pago en:</strong> <span th:text="${cuotas}"></span> cuotas de
+      $<span th:text="${valorCuota}"></span> cada una</p>
+  </div>
+
   <p><strong>Fecha de compra:</strong> <span th:text="${fecha}"></span></p>
 </div>
-
 
 <div class="mt-4">
   <a href="/catalogo-telas" class="btn btn-primary">Volver al Catálogo</a>
 </div>
 
-
-<div th:replace="fragments/toasts :: toasts"></div>
+<div th:replace="templates/toasts :: toasts"></div>
 <footer th:insert="templates/footer :: footer"></footer>
 <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
 </body>
 </html>
+

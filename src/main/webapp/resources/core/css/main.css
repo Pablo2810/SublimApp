@@ -1,139 +1,389 @@
-:root{
+/*============================*/
+/* VARIABLES Y RESET GLOBAL  */
+/*============================*/
+
+:root {
     --negro: #000000;
     --blanco: #ffffff;
     --azul-oscuro: #011640;
     --azul: #03588C;
     --naranja: #e73700;
-    --degradado: linear-gradient(180deg,rgba(1, 22, 64, 1) 0%,
-                                        rgba(1, 22, 64, 1) 32%,
-                                        rgba(3, 88, 140, 1) 73%,
-                                        rgba(3, 88, 140, 1) 100%);
+    --degradado: linear-gradient(180deg,
+        rgba(1, 22, 64, 1) 0%,
+        rgba(1, 22, 64, 1) 32%,
+        rgba(3, 88, 140, 1) 73%,
+        rgba(3, 88, 140, 1) 100%);
+}
+
+* {
+    box-sizing: border-box;
+    transition: all 0.3s ease-in-out;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 html, body {
     margin: 0;
     padding: 0;
     height: 100%;
+    background-color: var(--azul-oscuro);
+    color: var(--blanco);
+    animation: fadeIn 0.6s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-main {
-    height: 100vh; /* Ocupa el alto total de la ventana */
+/*============================*/
+/* ANIMACIONES                */
+/*============================*/
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-.header{
+/*============================*/
+/* ESTRUCTURA GENERAL         */
+/*============================*/
+
+.main {
+    flex: 1;
+    padding: 2rem;
+    background: var(--degradado);
+}
+
+footer.footer {
+    margin-top: auto;
+    width: 100%;
+}
+
+.header {
     background-color: var(--azul-oscuro);
 }
-.header h3,.header p{
+.header h3, .header p {
     color: var(--blanco);
     text-align: center;
 }
 
-.main{
-    background: var(--degradado);
+/*============================*/
+/* BOTONES                    */
+/*============================*/
+
+button {
+    background-color: var(--azul);
+    color: #ffffff;
+    font-weight: 600;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
 }
-.img-login{
-    background-image: url("../img/fondo_inicio_sesion.jpg");
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-}
-.form-login{
-    padding: 100px 50px;
-}
-.form-registro{
-    padding: 50px!important;
+button:hover {
+    background-color: var(--naranja);
+    transform: scale(1.05);
+    box-shadow: 0 0 10px var(--naranja);
 }
 
-.ajuste{
-    position: relative!important;
-    bottom: 90px!important;
-    width: 25%!important;
-    height: fit-content!important;
+/*============================*/
+/* FORMULARIOS (GENÉRICOS)    */
+/*============================*/
+
+.form-login,
+.form-registro,
+.formulario-cargar-tela {
+    padding: 100px 50px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(3px);
+    border-radius: 12px;
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2);
 }
-.ajuste img {
-    border-bottom-right-radius: 0px !important;
-    border-bottom-left-radius: 0px !important;
+
+/*============================*/
+/* VISTA LOGIN                */
+/*============================*/
+
+.img-login {
+    background-image: url("../img/fondo_inicio_sesion.jpg");
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    border-top-right-radius: 2rem;
+    border-bottom-right-radius: 2rem;
 }
-.ajuste:hover { transform: scale(1.03); }
-.ajuste div:hover { font-weight: normal !important; }
-.grid-galeria {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 1rem;
-}
-.grid-galeria img:nth-child(4) {
-    grid-column: 2 / 3;
-    grid-row: 2 / 3;
-}
-.grid-galeria img:nth-child(5) {
-    grid-column: 3 / 4;
-    grid-row: 2 / 3;
-}
-.grid-galeria img:nth-child(7) {
-    grid-column: 1 / 2;
-    grid-row: 1 / 3;
-}
-.grid-galeria img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-.grid-galeria img:hover {
-    transform: scale(1.03);
-}
-.formulario-pedido {
-    border-bottom-right-radius: 0px !important;
-    border-top-right-radius: 0px !important;
-}
-.img-pedido{
-    border-bottom-left-radius: 0px !important;
-    border-top-left-radius: 0px !important;
-}
-.img-pedido img {
-    border-bottom-left-radius: 0px !important;
-    border-top-left-radius: 0px !important;
-}
+
+/*============================*/
+/* CATÁLOGO DE TELAS          */
+/*============================*/
+
 .catalogo {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 1rem;
 }
-.catalogo-img {
-    border-bottom-left-radius: 0px !important;
-    border-bottom-right-radius: 0px !important;
+
+.catalogo article {
+    background-color: rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    overflow: hidden;
+    color: var(--blanco);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
 }
-.catalogo-body {
-    border-top-left-radius: 0px !important;
-    border-top-right-radius: 0px !important;
-}
+
 .catalogo article:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.catalogo article h5 {
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+    color: var(--blanco);
+}
+
+.catalogo article p {
+    font-size: 0.9rem;
+    color: #333333;
+}
+
+.catalogo article button {
+    margin-top: 0.5rem;
+}
+
+.catalogo-img {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.catalogo-body {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+/*============================*/
+/* DETALLE DE TELA            */
+/*============================*/
+
+.detalle-tela {
+    background-color: rgba(255, 255, 255, 0.07);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+}
+
+.detalle-tela h2 {
+    color: var(--naranja);
+}
+
+.detalle-tela p {
+    color: #f5f5f5;
+}
+
+.detalle-tela strong {
+    color: #ffffff;
+}
+
+/*============================*/
+/* MÉTODO DE PAGO             */
+/*============================*/
+
+.formulario-metodo-pago {
+    background-color: rgba(255, 255, 255, 0.08);
+    padding: 2rem;
+    border-radius: 10px;
+    color: var(--blanco);
+}
+
+.formulario-metodo-pago label {
+    font-weight: bold;
+}
+
+.formulario-metodo-pago input[type="text"],
+.formulario-metodo-pago select {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--blanco);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.5rem;
+    border-radius: 6px;
+}
+
+.formulario-metodo-pago button {
+    margin-top: 1rem;
+}
+
+/*============================*/
+/* BOLETA DE COMPRA           */
+/*============================*/
+
+.boleta-container {
+    background-color: rgba(255, 255, 255, 0.08);
+    padding: 2rem;
+    border-radius: 12px;
+    color: var(--blanco);
+}
+
+.boleta-container h2 {
+    color: var(--naranja);
+}
+
+.boleta-container p {
+    font-size: 1rem;
+    color: #f5f5f5;
+}
+
+.boleta-container strong {
+    color: #fff;
+}
+
+/*============================*/
+/* IMÁGENES VARIAS            */
+/*============================*/
+
+.catalogo-img img,
+.detalle-tela img,
+.boleta-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+/*============================*/
+/* GALERÍA                    */
+/*============================*/
+
+.grid-galeria {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.grid-galeria img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 1rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.grid-galeria img:hover {
     transform: scale(1.03);
-    box-shadow: 0px 0px 11px 0px rgba(255, 255, 255, 0.71);
-    -webkit-box-shadow: 0px 0px 11px 0px rgba(255, 255, 255, 0.71);
-    -moz-box-shadow: 0px 0px 11px 0px rgba(255,255,255,0.71);
+    box-shadow: 0 0 8px rgba(255,255,255,0.5);
 }
-.formulario-cargar-tela {
-    border-bottom-right-radius: 0px !important;
-    border-top-right-radius: 0px !important;
+
+/*============================*/
+/* IMAGEN AJUSTADA / HOME     */
+/*============================*/
+
+.ajuste {
+    width: 25%;
+    height: fit-content;
+    overflow: hidden;
+    border-radius: 2rem;
+    position: relative;
+    bottom: 90px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
 }
+
+.ajuste img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-radius: 2rem;
+}
+
+.ajuste:hover {
+    transform: scale(1.03);
+}
+
+/*============================*/
+/* FORMULARIO PEDIDO / TELAS */
+/*============================*/
+
+.formulario-pedido {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.img-pedido,
+.img-pedido img {
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+}
+
+/*============================*/
+/* IMAGEN CARGAR TELA         */
+/*============================*/
+
 .img-cargar-tela {
-    border-bottom-left-radius: 0px !important;
-    border-top-left-radius: 0px !important;
-    box-shadow: 10px 1px 58px -11px rgba(255,255,255,0.75);
-    -webkit-box-shadow: 10px 1px 58px -11px rgba(255,255,255,0.75);
-    -moz-box-shadow: 10px 1px 58px -11px rgba(255,255,255,0.75);
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+    box-shadow: 10px 1px 58px -11px rgba(255, 255, 255, 0.75);
 }
+
+/*============================*/
+/* TABLA DE TALLES            */
+/*============================*/
+
 .tabla-talles {
-    border-top-right-radius: 0px !important;
-    border-bottom-right-radius: 0px !important;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }
+
 .tabla-img {
-    border-top-left-radius: 0px !important;
-    border-bottom-left-radius: 0px !important;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
 }
+
+/*============================*/
+/* GRILLA DE DISEÑOS          */
+/*============================*/
+
 .grid-disenios {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 1rem;
+}
+
+/*============================*/
+/* TÍTULOS                    */
+/*============================*/
+
+h1, h2, h3, h4, h5 {
+    color: var(--naranja);
+}
+
+/*============================*/
+/* ESTILOS DE CARD (GENÉRICOS)*/
+/*============================*/
+
+.card {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #ddd;
+}
+
+.card h5,
+.card .card-title {
+    color: var(--azul);
+}
+
+.card p,
+.card .card-text {
+    color: #333333;
+}
+
+.card .btn {
+    background-color: var(--azul);
+    color: #ffffff;
+}
+
+.card .btn:hover {
+    background-color: var(--naranja);
+    box-shadow: 0 0 8px var(--naranja);
 }
