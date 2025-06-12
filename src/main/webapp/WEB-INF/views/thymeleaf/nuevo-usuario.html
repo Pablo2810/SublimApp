@@ -20,13 +20,11 @@
   </style>
 </head>
 <body class="p-0 m-0">
-<!--<header th:insert="templates/header :: header"></header>-->
 <main>
   <div class="shadow-lg p-5 my-5 bg-body-tertiary rounded-4 container w-50">
-    <form th:action="@{/registrarme}" method="POST" th:object="${usuario}">
+    <form action="#" th:action="@{/registrarme}" method="POST" th:object="${usuario}">
       <h3 class="mb-4 text-dark text-center">Registrate con Nosotros</h3>
 
-      <!--
       <div class="mb-4 d-flex justify-content-center">
         <div class="fs-5 d-flex flex-column pe-3 w-50">
           <label for="telefono" class="mb-2">Teléfono:</label>
@@ -37,7 +35,7 @@
           <input type="number" id="edad" placeholder="Ingrese su edad" class="w-100 p-2 border-top-0 border-start-0 border-end-0 rounded-0 fw-light" />
         </div>
       </div>
-      -->
+
       <div class="mb-4 fs-5 d-flex flex-row">
         <div class="fs-5 w-50 pe-3 d-flex flex-column">
           <label for="email" class="mb-2">Email:</label>
@@ -48,8 +46,21 @@
           <input th:field="*{password}" type="password" id="password" placeholder="Ingrese su contraseña" class="p-2 border-top-0 w-100 border-start-0 border-end-0 rounded-0 fw-light" />
         </div>
       </div>
-      <button class="btn btn-primary">Registrarse</button>
-      </form>
+
+  <p th:if="${error != null}" class="text-danger fs-5 text-center" th:text="'Error: ' + ${error}"></p>
+
+  <div class="text-center mt-4">
+    <button type="submit" class="btn btn-primary btn-lg px-5">Registrarse</button>
+  </div>
+  <div class="text-center mt-4 fs-5">
+    <a th:href="@{/login}" class="text-decoration-none">¿Ya tenés cuenta? Iniciá sesión</a>
+  </div>
+
+  </form>
   </div>
 </main>
+
+<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/main.js}"></script>
 </body>
+</html>
