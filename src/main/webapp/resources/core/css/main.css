@@ -387,3 +387,66 @@ h1, h2, h3, h4, h5 {
     background-color: var(--naranja);
     box-shadow: 0 0 8px var(--naranja);
 }
+
+/*============================*/
+/* OCULTAR PARA IMPRIMIR BOLETA*/
+/*============================*/
+
+@media print {
+  nav,
+  footer,
+  .btn,
+  .sticky-top,
+  .mt-4.d-flex {
+    display: none !important;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  #boleta {
+    box-shadow: none;
+    border: none;
+  }
+}
+
+/*===============================================*/
+/* SOBREESCRITURA PARA VISIBILIDAD DE LOS TEXTOS*/
+/*==============================================*/
+
+.formulario-fondo-claro {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+.formulario-fondo-claro label,
+.formulario-fondo-claro p,
+.formulario-fondo-claro strong,
+.formulario-fondo-claro span,
+.formulario-fondo-claro input,
+.formulario-fondo-claro select {
+  color: #000000 !important;
+}
+
+.ajuste.bg-white {
+  color: #222222 !important;
+}
+
+.text-dark {
+  color: #222222 !important;
+}
+
+.grid-disenios .catalogo-body p {
+    color: #333 !important;
+}
+
+.grid-disenios .catalogo-body p span {
+    color: #555 !important;
+}
+
+
+
+

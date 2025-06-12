@@ -25,13 +25,13 @@
 </head>
 
 <body class="p-0 m-0">
-<nav class="sticky-top" th:insert="templates/nav :: nav"></nav>
+<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
 
 <main class="container py-5">
   <h2 class="mb-4">Comprar Tela</h2>
 
-  <form th:action="@{/procesar-compra}" method="post" class="border p-4 rounded bg-light">
-    <!-- Campos ocultos necesarios para guardar la tela correctamente -->
+  <form th:action="@{/procesar-compra}" method="post" class="border p-4 rounded formulario-fondo-claro">
+  <!-- Campos ocultos necesarios para guardar la tela correctamente -->
     <input type="hidden" name="color" th:value="${tela.color}" />
     <input type="hidden" name="precio" th:value="${tela.precio}" />
     <input type="hidden" name="tipoTela" th:value="${tela.tipoTela}" />

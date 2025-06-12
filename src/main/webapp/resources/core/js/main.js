@@ -8,7 +8,7 @@ function multiplicar(a, b) {
 }
 
 // Modo oscuro con persistencia en localStorage
-function inicializarModoOscuro() {
+/*function inicializarModoOscuro() {
   const body = document.body;
   const toggle = document.getElementById("modoOscuroToggle");
   const modoGuardado = localStorage.getItem("modo-oscuro");
@@ -24,7 +24,7 @@ function inicializarModoOscuro() {
       localStorage.setItem("modo-oscuro", estado);
     });
   }
-}
+} */
 
 // Cálculo dinámico del precio total
 function calcularPrecio() {
@@ -172,6 +172,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     cuotasSelect.addEventListener("change", actualizarResumen);
 });
+
+function imprimirBoleta() {
+  window.print();
+}
+
+function descargarBoletaPDF() {
+  const boleta = document.getElementById("boleta");
+  const opciones = {
+    margin: 0.5,
+    filename: "boleta-tela.pdf",
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: "in", format: "letter", orientation: "portrait" }
+  };
+  html2pdf().set(opciones).from(boleta).save();
+}
+
+
 
 
 
