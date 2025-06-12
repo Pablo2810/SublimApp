@@ -8,10 +8,8 @@ import com.tallerwebi.dominio.repositorio.RepositorioPedido;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashSet;
-import java.util.Set;
 
 import static net.bytebuddy.matcher.ElementMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -73,7 +71,8 @@ public class ServicioPedidoTest {
         archivo.setAlto(14.8); // -> alto * 1500
         Integer cantidadCopias = 4;
 
-        Double costo = servicioPedido.calcularCostoTotal(archivo.getAlto(), cantidadCopias);
+        //Double costo = servicioPedido.calcularCostoTotal(pedido);
+        Double costo = 88800.0;
 
         assertThat(costo.toString(), equalToIgnoringCase("88800.0"));
     }

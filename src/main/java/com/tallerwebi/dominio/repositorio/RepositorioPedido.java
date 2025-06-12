@@ -8,4 +8,7 @@ import java.util.List;
 @Repository
 public interface RepositorioPedido {
     List<Pedido> listarPedidosDelUsuario(Long idUsuario);
+    Boolean eliminarPedido(Long idPedido);
+    Boolean actualizarPedido(Pedido pedido);
+    Boolean guardarPedido(Pedido pedido);
 }
