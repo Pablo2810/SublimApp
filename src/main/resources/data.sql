@@ -1,5 +1,15 @@
 INSERT INTO Usuario(id, email, password, rol, activo) VALUES(null, 'admin@unlam.edu.ar', 'test', 'ADMIN', true);
 
+INSERT INTO Prenda(descripcion, precioBase) VALUES ('Remera', '100.0');
+INSERT INTO Prenda(descripcion, precioBase) VALUES ('Campera', '200.0');
+INSERT INTO Prenda(descripcion, precioBase) VALUES ('Buzo', '150.0');
+INSERT INTO Prenda(descripcion, precioBase) VALUES ('Musculosa', '80.0');
+
+INSERT INTO Talle (descripcion, metrosTotales) VALUES ('S', 69);
+INSERT INTO Talle (descripcion, metrosTotales) VALUES ('M', 71);
+INSERT INTO Talle (descripcion, metrosTotales) VALUES ('L', 74);
+INSERT INTO Talle (descripcion, metrosTotales) VALUES ('XL', 77);
+INSERT INTO Talle (descripcion, metrosTotales) VALUES ('2XL', 79);
 /*
   CREATE TABLE Usuario (
     id BIGINT PRIMARY KEY,
