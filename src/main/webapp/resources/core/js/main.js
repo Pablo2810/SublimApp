@@ -189,6 +189,22 @@ function descargarBoletaPDF() {
   html2pdf().set(opciones).from(boleta).save();
 }
 
+// perfil-usuario.js
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("formulario-perfil");
+  form.addEventListener("submit", function (event) {
+    // Resetea clases de validación
+    form.classList.remove("was-validated");
+
+    // Validación manual simple
+    if (!form.checkValidity()) {
+      event.preventDefault();
+      event.stopPropagation();
+      form.classList.add("was-validated");
+    }
+  }, false);
+});
+
 
 
 

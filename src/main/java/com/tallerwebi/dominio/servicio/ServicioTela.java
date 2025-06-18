@@ -13,5 +13,4 @@ public interface ServicioTela {
 
     List<MisTelas> obtenerTelasDeFabrica();
 
-
 }
