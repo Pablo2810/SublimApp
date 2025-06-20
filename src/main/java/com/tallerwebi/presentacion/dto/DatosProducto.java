@@ -1,18 +1,40 @@
 package com.tallerwebi.presentacion.dto;
 
-import com.tallerwebi.dominio.entidad.*;
-
-import java.util.UUID;
+import org.springframework.web.multipart.MultipartFile;
 
 public class DatosProducto {
-    private Archivo archivo;
-    private Prenda prenda;
+    private Long prendaId;
+    private Long telaId;
+    private Long talleId;
     private Integer cantidad;
+    private MultipartFile archivo;
     private Double precio;
-    private Talle talle;
-    private Tela tela;
 
-    public Archivo getArchivo() {
+    public Long getPrendaId() { return prendaId; }
+
+    public void setPrendaId(Long prendaId) { this.prendaId = prendaId; }
+
+    public Long getTelaId() { return telaId; }
+
+    public void setTelaId(Long telaId) { this.telaId = telaId; }
+
+    public Long getTalleId() { return talleId; }
+
+    public void setTalleId(Long talleId) { this.talleId = talleId; }
+
+    public Integer getCantidad() { return cantidad; }
+
+    public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
+
+    public MultipartFile getArchivo() { return archivo; }
+
+    public void setArchivo(MultipartFile archivo) { this.archivo = archivo; }
+
+    public Double getPrecio() { return precio; }
+
+    public void setPrecio(Double precio) { this.precio = precio; }
+
+    /*public Archivo getArchivo() {
         return archivo;
     }
 
@@ -79,5 +101,5 @@ public class DatosProducto {
 
     public String generarNombre() {
         return UUID.randomUUID() + "-" + prenda.getDescripcion() + "-" + talle.getDescripcion();
-    }
+    }*/
 }

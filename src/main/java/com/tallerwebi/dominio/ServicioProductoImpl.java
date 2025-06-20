@@ -19,6 +19,11 @@ public class ServicioProductoImpl implements ServicioProducto {
 
     @Override
     public DatosProducto generarDatosProducto(Archivo archivo, Prenda prenda, Integer cantidad, Double precio, Talle talle, Tela tela) {
+        return null;
+    }
+
+    /*@Override
+    public DatosProducto generarDatosProducto(Archivo archivo, Prenda prenda, Integer cantidad, Double precio, Talle talle, Tela tela) {
         DatosProducto dtoProducto = new DatosProducto();
         dtoProducto.setCantidad(cantidad);
         dtoProducto.setPrecio(precio);
@@ -32,5 +37,5 @@ public class ServicioProductoImpl implements ServicioProducto {
 
     public void ingresarProducto(DatosProducto producto, Pedido pedido) {
 
-    }
+    }*/
 }

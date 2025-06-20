@@ -2,15 +2,30 @@ package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.TipoTela;
+import com.tallerwebi.dominio.repositorio.RepositorioTela;
 import com.tallerwebi.dominio.servicio.ServicioTela;
 import com.tallerwebi.presentacion.dto.MisTelas;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Service("servicioTela")
+@Transactional
 public class ServicioTelaImpl implements ServicioTela {
+    private RepositorioTela repositorioTela;
+
+    @Autowired
+    public ServicioTelaImpl(RepositorioTela repositorioTela) {
+        this.repositorioTela = repositorioTela;
+    }
+
+    @Override
+    public void agregarTelasDeFabrica() {
+
+    }
 
     @Override
     public List<MisTelas> obtenerTelasDeFabrica() {
@@ -48,6 +63,16 @@ public class ServicioTelaImpl implements ServicioTela {
         telas.add(new MisTelas(id++, TipoTela.POLIESTER, "blanco", 20000.0, "img/TELA_24.jpg"));
 
         return telas;
+    }
+
+    @Override
+    public void dejarSinStockTelaDeFabrica() {
+
+    }
+
+    @Override
+    public List<Tela> buscarPrendaPorId(Long prendaId) {
+        return repositorioTela.buscarTelasPorPrenda(prendaId);
     }
 
 }

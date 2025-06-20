@@ -10,8 +10,9 @@ import java.util.List;
 
 @Transactional
 public interface ServicioTela {
-
+    void agregarTelasDeFabrica();
     List<MisTelas> obtenerTelasDeFabrica();
+    void dejarSinStockTelaDeFabrica();
 
-
+    List<Tela> buscarPrendaPorId(Long prendaId);
 }
