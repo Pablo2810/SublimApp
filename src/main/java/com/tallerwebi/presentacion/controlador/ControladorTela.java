@@ -1,7 +1,9 @@
 package com.tallerwebi.presentacion.controlador;
 
+import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.TipoTela;
 import com.tallerwebi.dominio.servicio.ServicioTela;
+import com.tallerwebi.presentacion.dto.DatosTela;
 import com.tallerwebi.presentacion.dto.MisTelas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -239,6 +242,17 @@ public class ControladorTela {
     // 10. Utilidad para generar ID
     private Long generarId() {
         return (long) (telasDelUsuario.size() + 1000);
+    }
+
+
+    /*********************************************/
+    @GetMapping("/telas-por-prenda/{prendaId}")
+    @ResponseBody
+    public List<DatosTela> obtenerTelasPorPrenda(@PathVariable("prendaId") Long prendaId){
+        List<Tela> telas = servicioTela.buscarPrendaPorId(prendaId);
+        return telas.stream()
+                .map(t -> new DatosTela(t.getId(), t.getTipoTela().name()))
+                .collect(Collectors.toList());
     }
 }
 
