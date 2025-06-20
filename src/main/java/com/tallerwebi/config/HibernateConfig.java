@@ -20,11 +20,11 @@ public class HibernateConfig {
         //dataSource.setDriverClassName("org.hsqldb.jdbcDriver");
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         //dataSource.setUrl("jdbc:hsqldb:mem:db_");
-        dataSource.setUrl("jdbc:mysql://localhost:3306/sublimapp_db?useSSL=false&serverTimezone=UTC");
+        dataSource.setUrl("jdbc:mysql://localhost:3307/sublimapp_db?useSSL=false&serverTimezone=UTC");
         //dataSource.setUsername("sa");
         //dataSource.setPassword("");
-        dataSource.setUsername("root");
-        dataSource.setPassword("HattoriHanzo123");
+        dataSource.setUsername("user");
+        dataSource.setPassword("user");
         return dataSource;
     }
 

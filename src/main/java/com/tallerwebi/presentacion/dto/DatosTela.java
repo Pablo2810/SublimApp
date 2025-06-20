@@ -3,6 +3,7 @@ package com.tallerwebi.presentacion.dto;
 import com.tallerwebi.dominio.entidad.TipoTela;
 
 public class DatosTela {
+    private long id;
     private TipoTela tipoTela;
     private Double metros;
     private String color;
@@ -15,6 +16,14 @@ public class DatosTela {
         this.color = color;
         this.precio = precio;
         this.imagenUrl = imagenUrl;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public TipoTela getTipoTela() {

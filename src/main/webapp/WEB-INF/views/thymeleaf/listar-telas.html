@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
-    <!-- Bootstrap -->
+    <!-- Bootstrap core CSS -->
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
     <!-- Custom styles -->
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
@@ -20,12 +20,11 @@
     </style>
 </head>
 <body class="p-0 m-0">
-<header th:insert="templates/nav :: nav"></header>
-<nav class="sticky-top" th:insert="templates/nav :: nav"></nav>
+<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
 <main>
     <section class="container my-4">
         <h2 class="text-center mb-4">Telas</h2>
-        <table class="table">
+        <table th:if="${!telas.isEmpty()}" class="table table-light table-striped">
             <thead>
             <tr>
                 <th>#</th>
@@ -33,22 +32,30 @@
                 <th>Metros</th>
                 <th>Color</th>
                 <th>Precio</th>
+                <th>Accion</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="tela : ${telas}">
                 <td class="fw-bold" th:text="${tela.id}"></td>
                 <td th:text="${tela.tipoTela}"></td>
-                <td th:text="${tela.metros}"></td>
+                <td th:text="${tela.metros} + 'm'"></td>
                 <td th:text="${tela.color}"></td>
-                <td th:text="${tela.precio}"></td>
+                <td th:text="'$' + ${tela.precio}"></td>
+                <td>
+                    <a th:href="@{/admin/editar-tela/{id}(id=${tela.id})}" class="btn btn-info">Editar</a>
+                    <a th:href="@{/admin/borrar-tela/{id}(id=${tela.id})}" class="btn btn-danger">Borrar</a>
+                </td>
             </tr>
             </tbody>
         </table>
-        <p th:if="${telas.isEmpty()}" th:text="${mensajeSinPedidos}" class="text-center text-muted"></p>
+        <p th:if="${telas.isEmpty()}" th:text="${mensajeSinTelas}" class="text-center text-muted"></p>
+
+        <a th:href="@{/admin/editar-tela}" class="btn btn-lg btn-success">Agregar tela</a>
     </section>
 </main>
 
+<div th:replace="templates/toasts :: toasts"></div>
 <footer th:insert="templates/footer :: footer"></footer>
 <script th:src="@{/js/main.js}"></script>
 </body>
