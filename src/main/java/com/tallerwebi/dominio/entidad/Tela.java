@@ -10,7 +10,7 @@ public class Tela {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Enumerated(EnumType.STRING)
     private TipoTela tipoTela;
 
     private Double metros;
