@@ -84,20 +84,20 @@ public class ControladorPedidoTest {
 
     @Test
     public void queDevuelvaUnErrorSiElFileNoEsValido() throws IOException {
-        /*MockMultipartFile fileNulo = null;
-        ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock);
-
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-pedido"));
-        assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Debe subir un archivo"));*/
+//        MockMultipartFile fileNulo = null;
+//        ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock);
+//
+//        assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-pedido"));
+//        assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Debe subir un archivo"));
     }
 
     @Test
     public void queDevuelvaUnErrorSiElFormatoNoEsJPEG() throws IOException {
-        /*MockMultipartFile fileFormato = new MockMultipartFile("file", "camiseta.jpg", "image/png", "datos".getBytes());
-        ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock);
-
-        assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-pedido"));
-        assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Ingrese un archivo válido (.JPG o .JPEG)"));*/
+//        MockMultipartFile fileFormato = new MockMultipartFile("file", "camiseta.jpg", "image/png", "datos".getBytes());
+//        ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock);
+//
+//        assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-pedido"));
+//        assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Ingrese un archivo válido (.JPG o .JPEG)"));
     }
 
     @Test
