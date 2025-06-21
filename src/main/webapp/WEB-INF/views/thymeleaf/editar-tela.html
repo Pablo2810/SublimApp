@@ -25,12 +25,12 @@
 <div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center"
      th:insert="templates/nav :: nav"></div>
 <main class="container py-5">
-    <h2 class="mb-4" th:text="${tela.id != null ? 'Editar tela' : 'Crear tela'}"></h2>
 
     <div class="container w-75">
+        <h2 class="mb-4" th:text="${tela.id != null ? 'Editar tela' : 'Crear tela'}"></h2>
+
         <form th:action="@{${tela.id != null ? '/admin/editar-tela/' + tela.id : '/admin/editar-tela'}}"
               th:object="${tela}" method="post" enctype="multipart/form-data" class="border p-4 rounded bg-light">
-<!--            <input type="hidden" th:field="*{id}">-->
 
             <div class="mb-3">
                 <div class="row">

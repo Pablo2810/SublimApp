@@ -1,8 +1,11 @@
 package com.tallerwebi.presentacion.controlador;
 
+import com.tallerwebi.dominio.entidad.Talle;
 import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.TipoTela;
+import com.tallerwebi.dominio.servicio.ServicioTalle;
 import com.tallerwebi.dominio.servicio.ServicioTela;
+import com.tallerwebi.presentacion.dto.DatosTalle;
 import com.tallerwebi.presentacion.dto.DatosTela;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +24,8 @@ public class ControladorAdmin {
 
     @Autowired
     private ServicioTela servicioTela;
+    @Autowired
+    private ServicioTalle servicioTalle;
 
     @GetMapping("/dashboard")
     public ModelAndView irAlDashboard(HttpServletRequest request) {
@@ -35,6 +40,7 @@ public class ControladorAdmin {
         return new ModelAndView("home-admin");
     }
 
+    // ABM Telas
     @GetMapping("/listar-telas")
     public ModelAndView listarTelas() {
         ModelMap model = new ModelMap();
@@ -88,6 +94,60 @@ public class ControladorAdmin {
         }
 
         return new ModelAndView("redirect:/admin/listar-telas");
+    }
+
+    // ABM Talles
+    @GetMapping("/listar-talles")
+    public ModelAndView listarTalles() {
+        ModelMap model = new ModelMap();
+        List<Talle> talles = servicioTalle.obtenerTalles();
+
+        model.put("mensajeSinTalles", "No hay talles registrados");
+        model.addAttribute("talles", talles);
+
+        return new ModelAndView("listar-talles", model);
+    }
+
+    @PostMapping({"/editar-talle", "/editar-talle/{id}"})
+    public ModelAndView editarOCrearTalle(@PathVariable(required = false) Long id,
+                                          @ModelAttribute DatosTalle datosTalle,
+                                          RedirectAttributes redirectAttributes) {
+
+        try {
+            servicioTalle.crearOActualizar(datosTalle);
+            String mensajeExito = id != null ? "Se edito el talle " + id : "Se creo el talle con exito";
+            redirectAttributes.addFlashAttribute("mensaje", mensajeExito);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("mensajeError", "Ocurrio un error al crear o actualizar el talle");
+        }
+
+        return new ModelAndView("redirect:/admin/listar-talles");
+    }
+
+    @GetMapping({"/editar-talle", "/editar-talle/{id}"})
+    public ModelAndView editarOCrearTalle(@PathVariable(required = false) Long id) {
+        ModelMap model = new ModelMap();
+        Talle talle = new Talle();
+
+        if (id != null) {
+            talle = this.servicioTalle.obtenerTalle(id);
+        }
+
+        model.put("talle", talle);
+
+        return new ModelAndView("editar-talle", model);
+    }
+
+    @GetMapping("/borrar-talle/{id}")
+    public ModelAndView borrarTalle(@PathVariable() Long id, RedirectAttributes redirectAttributes) {
+        try {
+            servicioTalle.borrarTalle(id);
+            redirectAttributes.addFlashAttribute("mensaje", "Se borrado el talle" + id + "con exito");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("mensajeError", "Ocurrio un error al borrar el talle");
+        }
+
+        return new ModelAndView("redirect:/admin/listar-talles");
     }
 
 }
