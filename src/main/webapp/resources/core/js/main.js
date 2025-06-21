@@ -189,11 +189,3 @@ function descargarBoletaPDF() {
   html2pdf().set(opciones).from(boleta).save();
 }
 
-
-
-
-
-
-
-
-

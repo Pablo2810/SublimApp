@@ -78,7 +78,7 @@ public class ControladorAdmin {
         return new ModelAndView("editar-tela", model);
     }
 
-    @PostMapping("/borrar-tela/{id}")
+    @GetMapping("/borrar-tela/{id}")
     public ModelAndView borrarTela(@PathVariable() Long id, RedirectAttributes redirectAttributes) {
         try {
             servicioTela.borrarTela(id);

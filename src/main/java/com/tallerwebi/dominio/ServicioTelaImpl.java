@@ -86,7 +86,7 @@ public class ServicioTelaImpl implements ServicioTela {
     public void borrarTela(Long id) {
         try {
             Tela tela = obtenerTela(id);
-            repositorioTela.borrarTela(tela.getId());
+            repositorioTela.borrarTela(tela);
         } catch (Exception e) {
             throw new RuntimeException();
         }

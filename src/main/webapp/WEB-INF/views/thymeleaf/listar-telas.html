@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <!-- Bootstrap core CSS -->
+    <script rel="stylesheet" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.js}"></script>
     <!-- Custom styles -->
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
     <link rel="stylesheet" th:href="@{/css/modoOscuro.css}">
@@ -44,7 +46,10 @@
                 <td th:text="'$' + ${tela.precio}"></td>
                 <td>
                     <a th:href="@{/admin/editar-tela/{id}(id=${tela.id})}" class="btn btn-info">Editar</a>
-                    <a th:href="@{/admin/borrar-tela/{id}(id=${tela.id})}" class="btn btn-danger">Borrar</a>
+                    <a th:href="@{/admin/borrar-tela/{id}(id=${tela.id})}" class="btn btn-danger"
+                       onclick="return confirm('Estas seguro de eliminar esta tela?')">
+                        Borrar
+                    </a>
                 </td>
             </tr>
             </tbody>

@@ -8,5 +8,5 @@ public interface RepositorioTela {
     List<Tela> listarTelas();
     Tela obtenerTela(Long id);
     void crearOActualizarTela(Tela tela);
-    void borrarTela(Long id);
+    void borrarTela(Tela id);
 }

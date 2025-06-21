@@ -31,8 +31,8 @@ public class RepositorioTelaImpl implements RepositorioTela {
     }
 
     @Override
-    public void borrarTela(Long id) {
-        sessionFactory.getCurrentSession().delete(id);
+    public void borrarTela(Tela tela) {
+        sessionFactory.getCurrentSession().delete(tela);
     }
 
 }
