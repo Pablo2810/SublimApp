@@ -38,14 +38,15 @@
     <input type="hidden" name="imagenUrl" th:value="${tela.imagenUrl}" />
 
     <div class="mb-3">
-      <img th:src="@{${tela.imagenUrl}}" alt="Imagen de la tela" class="img-fluid mb-3" style="max-width: 300px;">
+      <img th:src="${tela.imagenUrl}" alt="Imagen de la tela" class="img-fluid mb-3" style="max-width: 300px;">
+
       <p><strong>Tipo de tela:</strong> <span th:text="${tela.tipoTela}"></span></p>
       <p><strong>Color:</strong> <span th:text="${tela.color}"></span></p>
       <p><strong>Precio por metro:</strong> $<span th:text="${tela.precio}"></span></p>
     </div>
 
     <div class="mb-3">
-      <label for="metros" class="form-label">Cantidad de metros:</label>
+      <label for="metros" class="form-label">Cantidad de metros: (cantidad minima 0.5 metros)</label>
       <input type="number" class="form-control" id="metros" name="metros" min="0.5" step="0.5" required oninput="calcularPrecio()">
     </div>
 
