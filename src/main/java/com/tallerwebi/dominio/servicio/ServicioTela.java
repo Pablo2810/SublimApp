@@ -2,6 +2,8 @@ package com.tallerwebi.dominio.servicio;
 
 import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.TipoTela;
+import com.tallerwebi.dominio.entidad.Usuario;
+import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
 import com.tallerwebi.presentacion.dto.MisTelas;
 
 import javax.transaction.Transactional;
@@ -15,4 +17,6 @@ public interface ServicioTela {
     void dejarSinStockTelaDeFabrica();
 
     List<Tela> buscarPrendaPorId(Long prendaId);
+
+    Tela buscarTelaPorId(Long telaId, Usuario usuario) throws TelaNoEncontrada;
 }

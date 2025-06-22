@@ -23,4 +23,9 @@ public class ServicioPrendaImpl  implements ServicioPrenda {
     public List<Prenda> obtenerTodas() {
         return repositorioPrenda.obtener();
     }
+
+    @Override
+    public Prenda buscarPrendaPorId(Long prendaId) {
+        return repositorioPrenda.buscarPorId(prendaId);
+    }
 }

@@ -17,5 +17,5 @@ public interface RepositorioProducto {
 
     Boolean actualizarProducto(Producto producto);
 
-    Boolean guardarProducto(Producto producto);
+    Producto guardarProducto(Producto producto);
 }

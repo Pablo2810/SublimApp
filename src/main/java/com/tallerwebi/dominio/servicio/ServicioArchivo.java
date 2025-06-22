@@ -9,6 +9,6 @@ import java.io.IOException;
 @Transactional
 public interface ServicioArchivo {
     Double transformarMB(Long bytes);
-    Archivo registrarArchivo(String nombreArchivo, MultipartFile file) throws IOException;
-    void obtenerDimensiones(MultipartFile file, Archivo archivo) throws IOException;
+    Archivo registrarArchivo(MultipartFile file);
+    //void obtenerDimensiones(MultipartFile file, Archivo archivo) throws IOException;
 }

@@ -21,14 +21,14 @@
 </head>
 <body class="p-0 m-0">
     <nav class="sticky-top" th:insert="templates/nav :: nav"></nav>
-    <main>
         <div th:object="${producto}">
-            <h3>Resumen del Producto</h3>
-            <p><strong>Prenda ID:</strong> <span th:text="*{prendaId}"></span></p>
-            <p><strong>Talle ID:</strong> <span th:text="*{talleId}"></span></p>
-            <p><strong>Tela ID:</strong> <span th:text="*{telaId}"></span></p>
-            <p><strong>Cantidad:</strong> <span th:text="*{cantidad}"></span></p>
-            <p><strong>Archivo:</strong> <span th:text="*{archivo}"></span></p>
+            <h3>Resumen del Prenda</h3>
+            <p><span th:text="*{id}"></span></p>
+            <p><span th:text="*{cantidad}"></span></p>
+            <p><span th:text="*{archivo}"></span></p>
+            <p><span th:text="*{prenda}"></span></p>
+            <p><span th:text="*{talle}"></span></p>
+            <p><span th:text="*{tela}"></span></p>
         </div>
         <!--<section class="container p-4 my-4 shadow-lg">
             <div class="border border-primary border-2 p-4 rounded-4 border-opacity-50">

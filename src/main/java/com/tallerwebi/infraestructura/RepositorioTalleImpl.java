@@ -28,4 +28,12 @@ public class RepositorioTalleImpl implements RepositorioTalle {
                 .list();
     }
 
+    @Override
+    public Talle buscarTallePorId(Long id) {
+        return (Talle) sessionFactory.getCurrentSession()
+                .createCriteria(Talle.class)
+                .add(Restrictions.eq("id", id))
+                .uniqueResult();
+    }
+
 }

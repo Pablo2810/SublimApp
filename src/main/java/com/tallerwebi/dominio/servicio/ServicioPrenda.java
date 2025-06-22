@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ServicioPrenda {
     List<Prenda> obtenerTodas();
+
+    Prenda buscarPrendaPorId(Long prendaId);
 }

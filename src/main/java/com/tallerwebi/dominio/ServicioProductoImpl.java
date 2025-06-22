@@ -18,8 +18,15 @@ public class ServicioProductoImpl implements ServicioProducto {
     }
 
     @Override
-    public DatosProducto generarDatosProducto(Archivo archivo, Prenda prenda, Integer cantidad, Double precio, Talle talle, Tela tela) {
-        return null;
+    public Producto registrarProducto(Integer cantidad, Archivo archivo, Prenda prenda, Talle talle, Tela tela) {
+        Producto producto = new Producto();
+        producto.setCantidad(cantidad);
+        /*producto.setPrecio(); //CALCULAR PRECIO EN BASE A LA PRENDA Y LA CANTIDAD*/
+        producto.setArchivo(archivo);//ANTES SE DEBE VALIDAR EL ARCHIVO CORRECTAMENTE
+        producto.setPrenda(prenda);
+        producto.setTalle(talle);
+        producto.setTela(tela);//ANTES DE ASIGNARLA VERIFICAR QUE LA TELA LA TENGA EL USUARIO LOGUEADO Y RESTAR LOS METROS EN BASE AL LARGO DE LA PRENDA POR CANTIDAD
+        return repositorioProducto.guardarProducto(producto);
     }
 
     /*@Override

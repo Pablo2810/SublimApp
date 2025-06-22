@@ -31,7 +31,7 @@ public class Pedido {
     private Promocion promocionAplicada;
 
     @ManyToOne
-    private Usuario usuarioPedido; // falta agregar el list de tipo pedido en usuario
+    private Usuario usuarioPedido;
 
     @ManyToMany
     private Set<Producto> productos = new HashSet<>();

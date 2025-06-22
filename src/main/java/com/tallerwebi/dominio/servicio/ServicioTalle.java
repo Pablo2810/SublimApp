@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ServicioTalle {
     List<Talle> buscarPrendaPorId(Long id);
+
+    Talle buscarTallePorId(Long talleId);
 }

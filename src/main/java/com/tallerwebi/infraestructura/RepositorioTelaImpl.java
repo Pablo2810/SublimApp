@@ -1,6 +1,8 @@
 package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.entidad.Tela;
+import com.tallerwebi.dominio.entidad.TelaUsuario;
+import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.repositorio.RepositorioTela;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -31,5 +33,14 @@ public class RepositorioTelaImpl implements RepositorioTela {
                 .createAlias("prendas", "p")
                 .add(Restrictions.eq("p.id", id))
                 .list();
+    }
+
+    @Override
+    public Tela buscarTelaPorId(Long id, Usuario usuario) {
+        return (TelaUsuario) sessionFactory.getCurrentSession()
+                .createCriteria(TelaUsuario.class)
+                .add(Restrictions.eq("id", id))
+                .add(Restrictions.eq("usuario", usuario))
+                .uniqueResult();
     }
 }

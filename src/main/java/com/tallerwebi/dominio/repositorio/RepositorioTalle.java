@@ -7,4 +7,5 @@ import java.util.List;
 public interface RepositorioTalle {
 
     List<Talle> buscarPorID(Long id);
+    Talle buscarTallePorId(Long id);
 }

@@ -23,4 +23,9 @@ public class ServicioTalleImpl implements ServicioTalle {
     public List<Talle> buscarPrendaPorId(Long id) {
         return repositorioTalle.buscarPorID(id);
     }
+
+    @Override
+    public Talle buscarTallePorId(Long talleId) {
+        return repositorioTalle.buscarTallePorId(talleId);
+    }
 }

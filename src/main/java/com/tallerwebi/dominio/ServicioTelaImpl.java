@@ -2,6 +2,9 @@ package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.TipoTela;
+import com.tallerwebi.dominio.entidad.Usuario;
+import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
+import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import com.tallerwebi.dominio.repositorio.RepositorioTela;
 import com.tallerwebi.dominio.servicio.ServicioTela;
 import com.tallerwebi.presentacion.dto.MisTelas;
@@ -73,6 +76,15 @@ public class ServicioTelaImpl implements ServicioTela {
     @Override
     public List<Tela> buscarPrendaPorId(Long prendaId) {
         return repositorioTela.buscarTelasPorPrenda(prendaId);
+    }
+
+    @Override
+    public Tela buscarTelaPorId(Long telaId, Usuario usuario) throws TelaNoEncontrada {
+        Tela telaEncontrada = repositorioTela.buscarTelaPorId(telaId, usuario);
+        if (telaEncontrada == null){
+            throw new TelaNoEncontrada();
+        }
+        return telaEncontrada;
     }
 
 }

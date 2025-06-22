@@ -34,7 +34,7 @@
             <p th:if="${error != null}" class="my-3 fs-5 text-danger text-center" th:text="${error}"></p>
             <div class="mb-3 w-100 d-flex flex-row justify-content-between">
                 <div class="w-50 p-2 input-group">
-                    <label class="text-dark input-group-text">Prenda:</label>
+                    <label class="text-dark input-group-text">Prenda</label>
                     <select th:field="*{prendaId}"
                             name="prendaId"
                             id="prendaSelect"
@@ -52,7 +52,7 @@
                             id="talleSelect"
                             name="talleId"
                             class="form-select">
-                        <option value="">Seleccione un talle</option>
+                        <option value="" disabled selected>Seleccione un talle</option>
                     </select>
                 </div>
             </div>
@@ -63,7 +63,7 @@
                             id="telaSelect"
                             name="telaId"
                             class="form-select">
-                        <option value="">Seleccione una tela</option>
+                        <option value="" disabled selected>Seleccione una tela</option>
                     </select>
                 </div>
                 <div class="w-50 p-2 form-floating">
