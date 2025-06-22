@@ -2,12 +2,15 @@ package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.repositorio.RepositorioTela;
+import com.tallerwebi.dominio.servicio.ServicioStorageImagen;
 import com.tallerwebi.dominio.servicio.ServicioTela;
 import com.tallerwebi.presentacion.dto.DatosTela;
 import com.tallerwebi.presentacion.dto.MisTelas;
+import io.imagekit.sdk.models.results.Result;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,6 +19,8 @@ public class ServicioTelaImpl implements ServicioTela {
 
     @Autowired
     private RepositorioTela repositorioTela;
+    @Autowired
+    private ServicioStorageImagen servicioStorageImagen;
 
     @Override
     public List<MisTelas> obtenerTelasDeFabrica() {
@@ -63,7 +68,7 @@ public class ServicioTelaImpl implements ServicioTela {
         return repositorioTela.obtenerTela(id);
     }
 
-    public void crearOActualizar(DatosTela datosTela) {
+    public void crearOActualizar(DatosTela datosTela, MultipartFile archivo) {
         Tela tela = new Tela();
 
         if (datosTela.getId() != 0) {
@@ -78,7 +83,11 @@ public class ServicioTelaImpl implements ServicioTela {
         tela.setTipoTela(datosTela.getTipoTela());
         tela.setPrecio(datosTela.getPrecio());
         tela.setColor(datosTela.getColor());
-        tela.setImagenUrl(datosTela.getImagenUrl());
+
+        if (!archivo.isEmpty()) {
+            Result imagenSubida = servicioStorageImagen.subirImagen(archivo, "tela-" + datosTela.getColor().toLowerCase());
+            tela.setImagenUrl(imagenSubida.getUrl());
+        }
 
         repositorioTela.crearOActualizarTela(tela);
     }

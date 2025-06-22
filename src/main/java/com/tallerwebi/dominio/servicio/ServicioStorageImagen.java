@@ -1,0 +1,8 @@
+package com.tallerwebi.dominio.servicio;
+
+import io.imagekit.sdk.models.results.Result;
+import org.springframework.web.multipart.MultipartFile;
+
+public interface ServicioStorageImagen {
+    Result subirImagen(MultipartFile archivo, String nombreArchivo);
+}

@@ -64,7 +64,7 @@
                         <input type="file" name="imagen" class="form-control">
                         <div class="mb-3">
                             <label for="precio" class="form-label text-dark">Precio:</label>
-                            <input type="number" th:field="*{precio}" class="form-control" id="precio" required>
+                            <input type="number" th:field="*{precio}" min="1" class="form-control" id="precio" required>
                         </div>
                     </div>
                 </div>

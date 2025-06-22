@@ -1,5 +1,6 @@
 package com.tallerwebi.presentacion.controlador;
 
+import com.tallerwebi.dominio.ServicioStorageImagenImpl;
 import com.tallerwebi.dominio.entidad.Talle;
 import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.TipoTela;
@@ -7,6 +8,10 @@ import com.tallerwebi.dominio.servicio.ServicioTalle;
 import com.tallerwebi.dominio.servicio.ServicioTela;
 import com.tallerwebi.presentacion.dto.DatosTalle;
 import com.tallerwebi.presentacion.dto.DatosTela;
+import io.imagekit.sdk.ImageKit;
+import io.imagekit.sdk.config.Configuration;
+import io.imagekit.sdk.models.FileCreateRequest;
+import io.imagekit.sdk.models.results.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -16,6 +21,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Controller
@@ -26,6 +34,8 @@ public class ControladorAdmin {
     private ServicioTela servicioTela;
     @Autowired
     private ServicioTalle servicioTalle;
+    @Autowired
+    private ServicioStorageImagenImpl servicioStorageImagen;
 
     @GetMapping("/dashboard")
     public ModelAndView irAlDashboard(HttpServletRequest request) {
@@ -59,9 +69,12 @@ public class ControladorAdmin {
                                          RedirectAttributes redirectAttributes) {
 
         try {
-            servicioTela.crearOActualizar(datosTela);
+            servicioTela.crearOActualizar(datosTela, archivo);
+
             String mensajeExito = id != null ? "Se edito la tela " + id : "Se creo la tela con exito";
             redirectAttributes.addFlashAttribute("mensaje", mensajeExito);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("mensajeAdvertencia", "No se pudo subir la imagen a la nube");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("mensajeError", "Ocurrio un error al crear o actualizar la tela");
         }
