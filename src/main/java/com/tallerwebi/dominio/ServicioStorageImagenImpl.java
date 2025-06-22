@@ -2,11 +2,9 @@ package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.servicio.ServicioStorageImagen;
 import io.imagekit.sdk.ImageKit;
-import io.imagekit.sdk.config.Configuration;
 import io.imagekit.sdk.models.FileCreateRequest;
 import io.imagekit.sdk.models.results.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

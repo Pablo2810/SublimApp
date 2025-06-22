@@ -39,14 +39,6 @@ public class ControladorAdmin {
 
     @GetMapping("/dashboard")
     public ModelAndView irAlDashboard(HttpServletRequest request) {
-        if (request.getSession().getAttribute("ROL_USUARIO") == null) {
-            return new ModelAndView("redirect:/login");
-        }
-
-        if (!request.getSession().getAttribute("ROL_USUARIO").equals("ADMIN")) {
-            return new ModelAndView("home");
-        }
-
         return new ModelAndView("home-admin");
     }
 
