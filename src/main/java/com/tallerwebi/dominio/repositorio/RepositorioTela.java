@@ -1,6 +1,7 @@
 package com.tallerwebi.dominio.repositorio;
 
 import com.tallerwebi.dominio.entidad.Tela;
+import com.tallerwebi.dominio.entidad.Usuario;
 
 import java.util.List;
 
@@ -9,4 +10,11 @@ public interface RepositorioTela {
     Tela obtenerTela(Long id);
     void crearOActualizarTela(Tela tela);
     void borrarTela(Tela id);
+    /*
+    void guardarTelaFabrica();
+
+    List<Tela> buscarTelasPorPrenda(Long id);
+
+    Tela buscarTelaPorId(Long id, Usuario usuario);
+     */
 }

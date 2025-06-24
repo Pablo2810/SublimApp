@@ -3,27 +3,49 @@ package com.tallerwebi.presentacion.dto;
 import com.tallerwebi.dominio.entidad.TipoTela;
 
 public class DatosTela {
-    private long id;
+    private Long id;
     private TipoTela tipoTela;
     private Double metros;
     private String color;
     private Double precio;
     private String imagenUrl;
+    private String descripcion;
 
-    public DatosTela(TipoTela tipoTela, Double metros, String color, Double precio, String imagenUrl) {
+    public DatosTela(){}
+
+    public DatosTela(TipoTela tipoTela, Double metros, String color, Double precio, String imagenUrl, String descripcion) {
         this.tipoTela = tipoTela;
         this.metros = metros;
         this.color = color;
         this.precio = precio;
         this.imagenUrl = imagenUrl;
+        this.descripcion = descripcion;
     }
 
-    public long getId() {
+    public DatosTela(Long id, TipoTela tipoTela, Double metros, String color, Double precio, String imagenUrl, String descripcion) {
+        this.id = id;
+        this.tipoTela = tipoTela;
+        this.metros = metros;
+        this.color = color;
+        this.precio = precio;
+        this.imagenUrl = imagenUrl;
+        this.descripcion = descripcion;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public TipoTela getTipoTela() {

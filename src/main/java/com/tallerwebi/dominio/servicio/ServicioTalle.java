@@ -12,4 +12,8 @@ public interface ServicioTalle {
     void crearOActualizar(DatosTalle datosTalle);
     Talle obtenerTalle(Long id);
     void borrarTalle(Long id);
+    /*
+    List<Talle> buscarPrendaPorId(Long id);
+    Talle buscarTallePorId(Long talleId);
+    */
 }

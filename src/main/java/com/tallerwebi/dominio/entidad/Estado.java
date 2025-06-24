@@ -1,7 +1,8 @@
 package com.tallerwebi.dominio.entidad;
 
 public enum Estado {
-    EN_ESPERA("En espera", "text-primary"),
+
+    EN_ESPERA("En espera", "text-danger"),
     SUBLIMANDO("Sublimado", "text-warning"),
     A_RETIRAR("Listo para retirar", "text-success");
 
