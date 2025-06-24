@@ -266,10 +266,10 @@ public class ControladorTela {
     @GetMapping("/telas-por-prenda/{prendaId}")
     @ResponseBody
     public List<DatosTela> obtenerTelasPorPrenda(@PathVariable("prendaId") Long prendaId){
-        List<Tela> telas = servicioTela.buscarPrendaPorId(prendaId);
+        List<Tela> telas = servicioTela.buscarTelasDePrendaPorIdPrenda(prendaId);
         return telas.stream()
-                .map(t -> new DatosTela(t.getId(), t.getTipoTela().name()))
-                .collect(Collectors.toList());
+                .map(t -> new DatosTela(t.getId(), t.getTipoTela()))
+                .collect(Collectors.toList()); // cambié t.getTipoTela().name() a t.getTipoTela()
     }
 }
 

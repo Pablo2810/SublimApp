@@ -21,6 +21,6 @@ public interface ServicioTela {
     void crearOActualizar(DatosTela datosTela, MultipartFile archivo);
     void borrarTela(Long id);
     void dejarSinStockTelaDeFabrica();
-    List<Tela> buscarPrendaPorId(Long prendaId);
-    Tela buscarTelaPorId(Long telaId, Usuario usuario) throws TelaNoEncontrada;
+    List<Tela> buscarTelasDePrendaPorIdPrenda(Long prendaId);
+    // Tela buscarTelaPorId(Long telaId, Usuario usuario) throws TelaNoEncontrada;
 }

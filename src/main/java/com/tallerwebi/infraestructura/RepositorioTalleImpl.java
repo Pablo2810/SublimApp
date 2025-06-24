@@ -43,9 +43,8 @@ public class RepositorioTalleImpl implements RepositorioTalle {
         sessionFactory.getCurrentSession().delete(talle);
     }
 
-    /*
     @Override
-    public List<Talle> buscarPorID(Long idPrenda) {
+    public List<Talle> buscarTallesDePrendaPorId(Long idPrenda) {
         final Session session = sessionFactory.getCurrentSession();
 
         return session.createCriteria(Talle.class)
@@ -53,6 +52,7 @@ public class RepositorioTalleImpl implements RepositorioTalle {
                 .list();
     }
 
+    /*
     @Override
     public Talle buscarTallePorId(Long id) {
         return (Talle) sessionFactory.getCurrentSession()
@@ -60,6 +60,5 @@ public class RepositorioTalleImpl implements RepositorioTalle {
                 .add(Restrictions.eq("id", id))
                 .uniqueResult();
     }
-     */
-
+    */
 }

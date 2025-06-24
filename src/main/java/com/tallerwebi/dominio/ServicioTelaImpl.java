@@ -118,17 +118,18 @@ public class ServicioTelaImpl implements ServicioTela {
         }
     }
 
-    /*
+
     @Override
     public void dejarSinStockTelaDeFabrica() {
 
     }
 
     @Override
-    public List<Tela> buscarPrendaPorId(Long prendaId) {
-        return repositorioTela.buscarTelasPorPrenda(prendaId);
+    public List<Tela> buscarTelasDePrendaPorIdPrenda(Long prendaId) {
+        return repositorioTela.buscarTelasDePrendaPorIdPrenda(prendaId);
     }
 
+    /*
     @Override
     public Tela buscarTelaPorId(Long telaId, Usuario usuario) throws TelaNoEncontrada {
         Tela telaEncontrada = repositorioTela.buscarTelaPorId(telaId, usuario);
@@ -136,6 +137,6 @@ public class ServicioTelaImpl implements ServicioTela {
             throw new TelaNoEncontrada();
         }
         return telaEncontrada;
-    }*/
-
+    }
+    */
 }

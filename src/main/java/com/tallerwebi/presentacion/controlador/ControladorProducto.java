@@ -57,17 +57,17 @@ public class ControladorProducto {
 
         ModelMap model = new ModelMap();
         Prenda prenda = servicioPrenda.buscarPrendaPorId(datosProducto.getPrendaId());
-        Talle talle = servicioTalle.buscarTallePorId(datosProducto.getTalleId());
+        Talle talle = servicioTalle.obtenerTalle(datosProducto.getTalleId()); // cambio buscarTallePorId por obtenerTalle
         Tela tela = null;
-        try {
-            tela = servicioTela.buscarTelaPorId(datosProducto.getTelaId(), usuario);
-        } catch (TelaNoEncontrada e) {
-            List<Prenda> prendas = servicioPrenda.obtenerTodas();
-            model.put("producto", new DatosProducto());
-            model.put("prendas", prendas);
-            model.put("error", "No tienes esta tela disponible");
-            return new ModelAndView("nuevo-pedido", model);
-        }
+//        try {
+            tela = servicioTela.obtenerTela(datosProducto.getTelaId()); // cambio buscarTelaPorId por obtenerTela y saco try-catch ya que no devuelve Exception
+//        } catch (TelaNoEncontrada e) {
+//            List<Prenda> prendas = servicioPrenda.obtenerTodas();
+//            model.put("producto", new DatosProducto());
+//            model.put("prendas", prendas);
+//            model.put("error", "No tienes esta tela disponible");
+//            return new ModelAndView("nuevo-pedido", model);
+//        }
         Archivo archivo = servicioArchivo.registrarArchivo(datosProducto.getArchivo());
 
         //Pedido PENDIENTE asociar al PRODUCTO NUEVO

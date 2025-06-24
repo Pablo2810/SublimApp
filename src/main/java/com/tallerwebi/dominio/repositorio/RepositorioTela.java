@@ -10,11 +10,7 @@ public interface RepositorioTela {
     Tela obtenerTela(Long id);
     void crearOActualizarTela(Tela tela);
     void borrarTela(Tela id);
-    /*
     void guardarTelaFabrica();
-
-    List<Tela> buscarTelasPorPrenda(Long id);
-
-    Tela buscarTelaPorId(Long id, Usuario usuario);
-     */
+    List<Tela> buscarTelasDePrendaPorIdPrenda(Long id);
+    // Tela buscarTelaPorId(Long id, Usuario usuario);
 }

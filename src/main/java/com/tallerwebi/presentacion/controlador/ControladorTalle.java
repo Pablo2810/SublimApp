@@ -21,7 +21,7 @@ public class ControladorTalle {
     @GetMapping("/talles-por-prenda/{prendaId}")
     @ResponseBody
     public List<DatosTalle> obtenerTallesPorPrenda(@PathVariable("prendaId") Long prendaId) {
-        List<Talle> talles = servicioTalle.buscarPrendaPorId(prendaId);
+        List<Talle> talles = servicioTalle.buscarTallesDePrendaPorId(prendaId);
         return talles.stream()
                 .map(t -> new DatosTalle(t.getId(), t.getDescripcion()))
                 .collect(Collectors.toList());

@@ -44,14 +44,14 @@ public class RepositorioTelaImpl implements RepositorioTela {
         sessionFactory.getCurrentSession().delete(tela);
     }
 
-    /*
+
     @Override
     public void guardarTelaFabrica() {
 
     }
 
     @Override
-    public List<Tela> buscarTelasPorPrenda(Long id) {
+    public List<Tela> buscarTelasDePrendaPorIdPrenda(Long id) {
         final Session session = sessionFactory.getCurrentSession();
         return session.createCriteria(Tela.class)
                 .createAlias("prendas", "p")
@@ -59,6 +59,7 @@ public class RepositorioTelaImpl implements RepositorioTela {
                 .list();
     }
 
+    /*
     @Override
     public Tela buscarTelaPorId(Long id, Usuario usuario) {
         return (TelaUsuario) sessionFactory.getCurrentSession()
@@ -67,6 +68,6 @@ public class RepositorioTelaImpl implements RepositorioTela {
                 .add(Restrictions.eq("usuario", usuario))
                 .uniqueResult();
     }
-     */
+    */
 
 }

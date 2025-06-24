@@ -5,6 +5,11 @@ public class DatosTalle {
     private String descripcion;
     private Double metrosTotales;
 
+    public DatosTalle(Long id, String descripcion) {
+        this.id = id;
+        this.descripcion = descripcion;
+    }
+
     public DatosTalle(Long id, String descripcion, Double metrosTotales) {
         this.id = id;
         this.descripcion = descripcion;
