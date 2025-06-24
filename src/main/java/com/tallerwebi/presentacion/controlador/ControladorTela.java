@@ -1,7 +1,9 @@
 package com.tallerwebi.presentacion.controlador;
 
+import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.TipoTela;
 import com.tallerwebi.dominio.servicio.ServicioTela;
+import com.tallerwebi.presentacion.dto.DatosTela;
 import com.tallerwebi.presentacion.dto.MisTelas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -26,6 +29,15 @@ public class ControladorTela {
     public ControladorTela(ServicioTela servicioTela) {
         this.servicioTela = servicioTela;
     }
+
+    private void cargarDatosTela(Model model, String color, String tipoTela, Double precio, Double metros, String imagenUrl) {
+        model.addAttribute("color", color);
+        model.addAttribute("tipoTela", tipoTela);
+        model.addAttribute("precio", precio);
+        model.addAttribute("metros", metros);
+        model.addAttribute("imagenUrl", imagenUrl);
+    }
+
 
     // 1. Mostrar catálogo de telas
     @GetMapping("/catalogo-telas")
@@ -110,7 +122,7 @@ public class ControladorTela {
     // 6. Paso 2: Mostrar formulario de método de pago
     @GetMapping("/metodo-pago-tela")
     public String mostrarVistaPago() {
-        return "metodo-pago-tela"; // Esta vista DEBE existir
+        return "metodo-pago-tela";
     }
 
     // 7. Paso 3: Confirmar pago y registrar tela
@@ -126,20 +138,24 @@ public class ControladorTela {
                                 @RequestParam Double metros,
                                 @RequestParam String tipoTela,
                                 @RequestParam String imagenUrl,
+                                Model model,
                                 RedirectAttributes redirectAttributes) {
 
         // Validar datos de la tarjeta
         if (numeroTarjeta == null || !numeroTarjeta.matches("\\d{16}")) {
-            redirectAttributes.addFlashAttribute("mensajeError", "Número de tarjeta inválido.");
-            return "redirect:/metodo-pago-tela";
+            model.addAttribute("mensajeError", "Número de tarjeta inválido.");
+            cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
+            return "metodo-pago-tela";
         }
         if (cvv == null || !cvv.matches("\\d{3}")) {
-            redirectAttributes.addFlashAttribute("mensajeError", "CVV inválido.");
-            return "redirect:/metodo-pago-tela";
+            model.addAttribute("mensajeError", "CVV inválido.");
+            cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
+            return "metodo-pago-tela";
         }
         if (nombreTitular == null || nombreTitular.trim().isEmpty()) {
-            redirectAttributes.addFlashAttribute("mensajeError", "El nombre del titular es obligatorio.");
-            return "redirect:/metodo-pago-tela";
+            model.addAttribute("mensajeError", "El nombre del titular es obligatorio.");
+            cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
+            return "metodo-pago-tela";
         }
 
         // Validar fecha de vencimiento con YearMonth (formato esperado: "yyyy-MM")
@@ -147,26 +163,30 @@ public class ControladorTela {
             YearMonth fechaVencimiento = YearMonth.parse(vencimiento);
             YearMonth ahora = YearMonth.now();
             if (fechaVencimiento.isBefore(ahora)) {
-                redirectAttributes.addFlashAttribute("mensajeError", "La tarjeta está vencida.");
-                return "redirect:/metodo-pago-tela";
+                model.addAttribute("mensajeError", "La tarjeta está vencida.");
+                cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
+                return "metodo-pago-tela";
             }
         } catch (DateTimeParseException e) {
-            redirectAttributes.addFlashAttribute("mensajeError", "Fecha de vencimiento inválida.");
-            return "redirect:/metodo-pago-tela";
+            model.addAttribute("mensajeError", "Fecha de vencimiento inválida.");
+            cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
+            return "metodo-pago-tela";
         }
 
         // Validación del método de pago
         if (!metodoPago.equalsIgnoreCase("credito") && !metodoPago.equalsIgnoreCase("debito")) {
-            redirectAttributes.addFlashAttribute("mensajeError", "Método de pago inválido.");
-            return "redirect:/metodo-pago-tela";
+            model.addAttribute("mensajeError", "Método de pago inválido.");
+            cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
+            return "metodo-pago-tela";
         }
 
         // Cuotas
         if (metodoPago.equalsIgnoreCase("debito")) {
             cuotas = 1;
         } else if (cuotas == null || !(cuotas == 1 || cuotas == 2 || cuotas == 3 || cuotas == 6 || cuotas == 12)) {
-            redirectAttributes.addFlashAttribute("mensajeError", "Debe seleccionar una cantidad de cuotas válida.");
-            return "redirect:/metodo-pago-tela";
+            model.addAttribute("mensajeError", "Debe seleccionar una cantidad de cuotas válida.");
+            cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
+            return "metodo-pago-tela";
         }
 
         // Cálculo de intereses
@@ -239,6 +259,17 @@ public class ControladorTela {
     // 10. Utilidad para generar ID
     private Long generarId() {
         return (long) (telasDelUsuario.size() + 1000);
+    }
+
+
+    /*********************************************/
+    @GetMapping("/telas-por-prenda/{prendaId}")
+    @ResponseBody
+    public List<DatosTela> obtenerTelasPorPrenda(@PathVariable("prendaId") Long prendaId){
+        List<Tela> telas = servicioTela.buscarTelasDePrendaPorIdPrenda(prendaId);
+        return telas.stream()
+                .map(t -> new DatosTela(t.getId(), t.getTipoTela()))
+                .collect(Collectors.toList()); // cambié t.getTipoTela().name() a t.getTipoTela()
     }
 }
 

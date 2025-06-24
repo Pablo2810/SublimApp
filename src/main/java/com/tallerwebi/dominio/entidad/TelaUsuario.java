@@ -8,7 +8,7 @@ import javax.persistence.ManyToOne;
 public class TelaUsuario extends Tela {
 
     @ManyToOne
-    @JoinColumn(name = "fk_usuario", nullable = false)
+    @JoinColumn(name = "fk_usuario")
     private Usuario usuario;
 
     public Usuario getUsuario() {

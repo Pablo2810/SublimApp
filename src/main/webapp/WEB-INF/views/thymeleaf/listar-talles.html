@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Taller Web I</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <!-- Bootstrap core CSS -->
+    <script rel="stylesheet" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.js}"></script>
+    <!-- Custom styles -->
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/modoOscuro.css}">
+    <style>
+        body {
+            font-family: "Lexend Deca", sans-serif;
+        }
+    </style>
+</head>
+<body class="p-0 m-0">
+<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
+<main>
+    <section class="container my-4">
+        <h2 class="text-center mb-4">Talles</h2>
+        <table th:if="${!talles.isEmpty()}" class="table table-light table-striped">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Descripcion</th>
+                <th>Metros totales</th>
+                <th>Accion</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="talle : ${talles}">
+                <td class="fw-bold" th:text="${talle.id}"></td>
+                <td th:text="${talle.descripcion}"></td>
+                <td th:text="${talle.metrosTotales} + 'm'"></td>
+                <td>
+                    <a th:href="@{/admin/editar-talle/{id}(id=${talle.id})}" class="btn btn-info">Editar</a>
+                    <a th:href="@{/admin/borrar-talle/{id}(id=${talle.id})}" class="btn btn-danger"
+                       onclick="return confirm('Estas seguro de eliminar este talle?')">
+                        Borrar
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p th:if="${talles.isEmpty()}" th:text="${mensajeSinTalles}" class="text-center text-muted"></p>
+
+        <a th:href="@{/admin/editar-talle}" class="btn btn-lg btn-success">Agregar talle</a>
+    </section>
+</main>
+
+<div th:replace="templates/toasts :: toasts"></div>
+<footer th:insert="templates/footer :: footer"></footer>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

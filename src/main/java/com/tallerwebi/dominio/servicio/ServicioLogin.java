@@ -2,7 +2,6 @@ package com.tallerwebi.dominio.servicio;
 
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
-
 import javax.transaction.Transactional;
 
 @Transactional

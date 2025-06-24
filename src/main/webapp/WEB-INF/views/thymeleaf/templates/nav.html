@@ -9,6 +9,9 @@
 <nav class="w-50 p-0">
   <h3 class="m-0">
     <a th:href="@{/home}" class="text-decoration-none text-white">SublimApp</a>
+    <a th:if="${session.ROL_USUARIO == 'ADMIN'}" th:href="@{/admin/dashboard}" class="btn btn-outline-success ms-3">
+      Dashboard
+    </a>
   </h3>
 </nav>
 <nav class="p-3 d-flex justify-content-evenly navbar bg-dark w-50 align-items-center">

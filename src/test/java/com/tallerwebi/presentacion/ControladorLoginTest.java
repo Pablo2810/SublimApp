@@ -48,7 +48,7 @@ public class ControladorLoginTest {
 		// validacion
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
 		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Usuario o clave incorrecta"));
-		verify(sessionMock, times(0)).setAttribute("ROL", "ADMIN");
+		verify(sessionMock, times(0)).setAttribute("ROL_USUARIO", "ADMIN");
 	}
 	
 	@Test
@@ -64,8 +64,8 @@ public class ControladorLoginTest {
 		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
 		
 		// validacion
-		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/home"));
-		verify(sessionMock, times(1)).setAttribute("ROL", usuarioEncontradoMock.getRol());
+		assertThat(modelAndView.getViewName(), equalToIgnoringCase("home-admin"));
+		verify(sessionMock, times(1)).setAttribute("ROL_USUARIO", usuarioEncontradoMock.getRol());
 	}
 
 	@Test

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Taller Web I</title>
+    <!-- font google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Boostrap core css -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <!-- custom style -->
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <style>
+        body {
+            font-family: "Lexend Deca", sans-serif;
+        }
+    </style>
+</head>
+<body>
+<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center"
+     th:insert="templates/nav :: nav"></div>
+
+<div class="container py-4">
+
+    <div class="d-flex flex-column align-items-center gap-3">
+        <div class="row">
+            <div class="col-4">
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img p-1" src="https://images-cdn.ubuy.co.in/6353170d9244a94a1355fae3-sjiamjj-faux-leather-leatherette-fabric.jpg">
+                    <div class="card-body">
+                        <a th:href="@{/admin/listar-telas}" class="btn btn-primary w-100">ABM de telas</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img p-1" src="https://images-cdn.ubuy.co.in/6353170d9244a94a1355fae3-sjiamjj-faux-leather-leatherette-fabric.jpg">
+                    <div class="card-body">
+                        <a href="#" class="btn btn-primary w-100">ABM de promociones</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img p-1" src="https://images-cdn.ubuy.co.in/6353170d9244a94a1355fae3-sjiamjj-faux-leather-leatherette-fabric.jpg">
+                    <div class="card-body">
+                        <a th:href="@{/admin/listar-talles}" class="btn btn-primary w-100">ABM de talles</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img p-1" src="https://images-cdn.ubuy.co.in/6353170d9244a94a1355fae3-sjiamjj-faux-leather-leatherette-fabric.jpg">
+                    <div class="card-body">
+                        <a href="#" class="btn btn-primary w-100">Pedidos de usuarios</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer th:insert="templates/footer :: footer"></footer>
+</body>
+</html>

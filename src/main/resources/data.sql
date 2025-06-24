@@ -1,72 +1,20 @@
 INSERT INTO Usuario(id, email, password, rol, activo) VALUES(null, 'admin@unlam.edu.ar', 'test', 'ADMIN', true);
+INSERT INTO Usuario(id, email, password, rol, activo) VALUES(null, 'pab@mail.com', 'pab', 'CLIENTE', true);
 
-/*
-  CREATE TABLE Usuario (
-    id BIGINT PRIMARY KEY,
-    rol VARCHAR(50),
-    nombre VARCHAR(100),
-    apellido VARCHAR(100),
-    telefono BIGINT,
-    email VARCHAR(150) UNIQUE,
-    contrasenia VARCHAR(255),
-    nivelPromocional INTEGER,
-    metrosTotalesHistoricos DOUBLE,
-    frecuenciaPedidos DOUBLE
-);
+INSERT INTO Tela(DTYPE, color, imagenUrl, metros, precio, tipoTela) VALUES('Tela', 'Azul', 'img/TELA_1.jpg', 150.0, 30000.0, 'SET');
+INSERT INTO Tela(DTYPE, color, imagenUrl, metros, precio, tipoTela) VALUES('Tela', 'Rojo', 'img/TELA_2.jpg', 200.0, 20000.0, 'W15');
+INSERT INTO Tela(DTYPE, color, imagenUrl, metros, precio, tipoTela, fk_usuario) VALUES('TelaUsuario', 'Negro', 'img/TELA_3.jpg', 90.0, 17000.0, 'LINO', 2);
 
-CREATE TABLE Promocion (
-    id BIGINT PRIMARY KEY,
-    descripcion TEXT,
-    tipo VARCHAR(50),
-    nivelPromocion INTEGER
-);
+INSERT INTO Prenda(descripcion, precioBase) VALUES ('Camiseta', '7000.0');
+INSERT INTO Prenda(descripcion, precioBase) VALUES ('Short', '5500.0');
 
-CREATE TABLE Pedido (
-    id BIGINT PRIMARY KEY,
-    fechaCreacion DATE,
-    estado VARCHAR(50),
-    cantidadCopias INTEGER,
-    metros_totales DOUBLE,
-    costoServicio DOUBLE,
-    usuario_id BIGINT,
-    FOREIGN KEY (usuario_id) REFERENCES Usuario(id)
-);
+INSERT INTO prenda_tela (prendas_id, telas_id) VALUES (1, 1);
+INSERT INTO prenda_tela (prendas_id, telas_id) VALUES (1, 2);
+INSERT INTO prenda_tela (prendas_id, telas_id) VALUES (2, 2);
+INSERT INTO prenda_tela (prendas_id, telas_id) VALUES (2, 3);
 
-CREATE TABLE Archivo (
-    id BIGINT PRIMARY KEY,
-    nombre VARCHAR(150),
-    tipo VARCHAR(50),
-    peso DOUBLE,
-    pedido_id BIGINT,
-    FOREIGN KEY (pedido_id) REFERENCES Pedido(id)
-);
-
-CREATE TABLE Tela (
-    id BIGINT PRIMARY KEY,
-    tipoTela VARCHAR(50),
-    metros DOUBLE,
-    archivo_id BIGINT,
-    FOREIGN KEY (archivo_id) REFERENCES Archivo(id)
-);
-
-CREATE TABLE Simulacion (
-    id BIGINT PRIMARY KEY,
-    tiempoEstimadoTotal DOUBLE,
-    tiempoRipeo DOUBLE,
-    tiempoImpresion DOUBLE,
-    requiereClean BOOLEAN,
-    fechaSimulacion DATE,
-    archivo_id BIGINT,
-    FOREIGN KEY (archivo_id) REFERENCES Archivo(id)
-);
-
-CREATE TABLE Maquina (
-    id BIGINT PRIMARY KEY,
-    nombre VARCHAR(100),
-    velocidadImpresion DOUBLE,
-    requiereClean BOOLEAN,
-    tiempoUltimaLimpieza TIMESTAMP,
-    activo BOOLEAN
-);
-*/
-
+INSERT INTO Talle (descripcion, metrosTotales, prenda) VALUES ('S', 69, 1);
+INSERT INTO Talle (descripcion, metrosTotales, prenda) VALUES ('L', 74, 1);
+INSERT INTO Talle (descripcion, metrosTotales, prenda) VALUES ('2XL', 79, 1);
+INSERT INTO Talle (descripcion, metrosTotales, prenda) VALUES ('M', 46, 2);
+INSERT INTO Talle (descripcion, metrosTotales, prenda) VALUES ('XL', 50, 2);
