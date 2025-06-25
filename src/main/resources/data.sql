@@ -40,6 +40,13 @@ INSERT INTO Tela(id, color, imagenUrl, metros, precio, tipoTela) VALUES (122, 'b
 INSERT INTO Tela(id, color, imagenUrl, metros, precio, tipoTela) VALUES (123, 'marron', 'img/TELA_23.jpg', 100.0, 20000.0, 'POLIESTER');
 INSERT INTO Tela(id, color, imagenUrl, metros, precio, tipoTela) VALUES (124, 'blanco', 'img/TELA_24.jpg', 100.0, 20000.0, 'POLIESTER');
 
+/*
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES('Azul', 'img/TELA_1.jpg', 150.0, 30000.0, 'SET');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES('Rojo', 'img/TELA_2.jpg', 200.0, 20000.0, 'W15');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES('Negro', 'img/TELA_3.jpg', 90.0, 17000.0, 'LINO');
+
+INSERT INTO TelaUsuario (id, fk_usuario) VALUES (3, 2);
+*/
 
 -- Telas del usuario (hereda de Tela: misma ID)
 INSERT INTO TelaUsuario(id, fk_usuario) VALUES (3, 2);

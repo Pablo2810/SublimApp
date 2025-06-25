@@ -65,6 +65,15 @@ public class RepositorioTelaImpl implements RepositorioTela {
         return sessionFactory.getCurrentSession().createQuery(hql, Tela.class).getResultList();
     }
 
+    @Override
+    public Tela buscarTelasDelUsuario(Long id, Usuario usuario) {
+        return (TelaUsuario) sessionFactory.getCurrentSession()
+                .createCriteria(TelaUsuario.class)
+                .add(Restrictions.eq("id", id))
+                .add(Restrictions.eq("usuario", usuario))
+                .uniqueResult();
+    }
+
     /*
     @Override
     public Tela buscarTelaPorId(Long id, Usuario usuario) {

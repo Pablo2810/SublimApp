@@ -15,4 +15,7 @@ public interface RepositorioTela {
     List<Tela> listarTelasDeFabrica();
 
     // Tela buscarTelaPorId(Long id, Usuario usuario);
+
+
+    Tela buscarTelasDelUsuario(Long id, Usuario usuario);
 }

@@ -52,8 +52,7 @@ public class ServicioPedidoImpl implements ServicioPedido {
         Double precioTotal = 0.0;
         for (Producto producto : pedido.getProductos()) {
             precioTotal += producto.getPrecio();
-        }
-        ;
+        };
         return precioTotal;
     }
 
@@ -74,13 +73,38 @@ public class ServicioPedidoImpl implements ServicioPedido {
     }
 
     @Override
+    public Pedido buscarPedidoEstadoPendiente(Usuario usuario){
+        Pedido pedido = repositorioPedido.buscarPedidoPendientePorUsuario(usuario);
+        if (pedido == null){
+            pedido = new Pedido();
+            pedido.setEstado(Estado.PENDIENTE);
+            pedido.setUsuarioPedido(usuario);
+            pedido.setProductos(new HashSet<>());
+            repositorioPedido.guardar(pedido);
+        }
+        return pedido;
+    }
+
+    @Override
     public Pedido obtenerPedido(Long id) {
         return repositorioPedido.obtenerPedido(id);
     }
 
     @Override
+    public void asociarProductoPedido(Pedido pedido){
+        repositorioPedido.actualizar(pedido);
+    }
+
+    @Override
     public boolean cambiarEstadoPedido(Long id, Estado nuevoEstado) {
         try {
+            /* Desarrollo anterior, evaluar
+            Pedido pedido = repositorioPedido.buscarPorId(id);
+            pedido.setEstado(Estado.EN_ESPERA);
+            pedido.setFechaCreacion(LocalDate.now());
+            repositorioPedido.actualizar(pedido);
+            */
+
             Pedido pedido = obtenerPedido(id);
 
             if (puedeCambiarElEstado(pedido.getEstado(), nuevoEstado)) {

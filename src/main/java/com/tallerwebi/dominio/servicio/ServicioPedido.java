@@ -16,4 +16,8 @@ public interface ServicioPedido {
     Pedido obtenerPedido(Long id);
     boolean cambiarEstadoPedido(Long id, Estado nuevoEstado);
     void aplicarPromocion(Pedido pedido, Promocion promocion);
+
+
+    Pedido buscarPedidoEstadoPendiente(Usuario usuario);
+    void asociarProductoPedido(Pedido pedido);
 }
