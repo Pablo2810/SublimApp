@@ -136,7 +136,6 @@
             <version>2.15.2</version> <!-- o la que uses -->
         </dependency>
 
-
         <!-- compile only, deployed container will provide this -->
         <!--
         <dependency>
@@ -153,6 +152,12 @@
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+        </repository>
+
+        <!-- Repositorio central de Maven (para Spring, Hibernate, etc.) -->
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
         </repository>
     </repositories>
 

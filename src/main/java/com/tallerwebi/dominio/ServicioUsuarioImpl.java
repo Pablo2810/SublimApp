@@ -24,4 +24,8 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
     public void modificarUsuario(Usuario usuario) {
         repositorioUsuario.modificar(usuario);
     }
+
+    @Override
+    public void eliminarUsuario(Usuario usuario) { repositorioUsuario.eliminar(usuario); }
+
 }
