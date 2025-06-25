@@ -1,9 +1,11 @@
 INSERT INTO Usuario(id, email, password, rol, activo) VALUES(null, 'admin@unlam.edu.ar', 'test', 'ADMIN', true);
 INSERT INTO Usuario(id, email, password, rol, activo) VALUES(null, 'pab@mail.com', 'pab', 'CLIENTE', true);
 
-INSERT INTO Tela(DTYPE, color, imagenUrl, metros, precio, tipoTela) VALUES('Tela', 'Azul', 'img/TELA_1.jpg', 150.0, 30000.0, 'SET');
-INSERT INTO Tela(DTYPE, color, imagenUrl, metros, precio, tipoTela) VALUES('Tela', 'Rojo', 'img/TELA_2.jpg', 200.0, 20000.0, 'W15');
-INSERT INTO Tela(DTYPE, color, imagenUrl, metros, precio, tipoTela, fk_usuario) VALUES('TelaUsuario', 'Negro', 'img/TELA_3.jpg', 90.0, 17000.0, 'LINO', 2);
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES('Azul', 'img/TELA_1.jpg', 150.0, 30000.0, 'SET');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES('Rojo', 'img/TELA_2.jpg', 200.0, 20000.0, 'W15');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES('Negro', 'img/TELA_3.jpg', 90.0, 17000.0, 'LINO');
+
+INSERT INTO TelaUsuario (id, fk_usuario) VALUES (3, 2);
 
 INSERT INTO Prenda(descripcion, precioBase) VALUES ('Camiseta', '7000.0');
 INSERT INTO Prenda(descripcion, precioBase) VALUES ('Short', '5500.0');

@@ -1,6 +1,7 @@
 package com.tallerwebi.presentacion.controlador;
 
 import com.tallerwebi.dominio.entidad.*;
+import com.tallerwebi.dominio.excepcion.ArchivoNoValido;
 import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
 import com.tallerwebi.dominio.servicio.*;
 import com.tallerwebi.presentacion.dto.DatosPedido;
@@ -27,18 +28,21 @@ public class ControladorProducto {
     private final ServicioTela servicioTela;
     private final ServicioArchivo servicioArchivo;
     private final ServicioProducto servicioProducto;
+    private final ServicioPedido servicioPedido;
 
     @Autowired
     public ControladorProducto(ServicioProducto servicioProducto,
                                ServicioTalle servicioTalle,
                                ServicioPrenda servicioPrenda,
                                ServicioTela servicioTela,
-                               ServicioArchivo servicioArchivo) {
+                               ServicioArchivo servicioArchivo,
+                               ServicioPedido servicioPedido) {
         this.servicioPrenda = servicioPrenda;
         this.servicioTalle = servicioTalle;
         this.servicioTela = servicioTela;
         this.servicioArchivo = servicioArchivo;
         this.servicioProducto = servicioProducto;
+        this.servicioPedido = servicioPedido;
     }
 
     @RequestMapping(path = "/nuevo-pedido", method = RequestMethod.GET)
@@ -59,20 +63,33 @@ public class ControladorProducto {
         Prenda prenda = servicioPrenda.buscarPrendaPorId(datosProducto.getPrendaId());
         Talle talle = servicioTalle.obtenerTalle(datosProducto.getTalleId()); // cambio buscarTallePorId por obtenerTalle
         Tela tela = null;
-//        try {
-            tela = servicioTela.obtenerTela(datosProducto.getTelaId()); // cambio buscarTelaPorId por obtenerTela y saco try-catch ya que no devuelve Exception
-//        } catch (TelaNoEncontrada e) {
-//            List<Prenda> prendas = servicioPrenda.obtenerTodas();
-//            model.put("producto", new DatosProducto());
-//            model.put("prendas", prendas);
-//            model.put("error", "No tienes esta tela disponible");
-//            return new ModelAndView("nuevo-pedido", model);
-//        }
-        Archivo archivo = servicioArchivo.registrarArchivo(datosProducto.getArchivo());
+        try {
+            tela = servicioTela.buscarTelaDelUsuario(datosProducto.getTelaId(), usuario);
+        } catch (TelaNoEncontrada e) {
+            List<Prenda> prendas = servicioPrenda.obtenerTodas();
+            model.put("producto", new DatosProducto());
+            model.put("prendas", prendas);
+            model.put("error", "No tienes esta tela");
+            return new ModelAndView("nuevo-pedido", model);
+        }
+        Archivo archivo = null;
+        try {
+            archivo = servicioArchivo.registrarArchivo(datosProducto.getArchivo());
+        } catch (ArchivoNoValido e) {
+            List<Prenda> prendas = servicioPrenda.obtenerTodas();
+            model.put("producto", new DatosProducto());
+            model.put("prendas", prendas);
+            model.put("error", "Ingrese un archivo valido");
+            return new ModelAndView("nuevo-pedido", model);
+        }
 
         //Pedido PENDIENTE asociar al PRODUCTO NUEVO
         Producto producto = servicioProducto.registrarProducto(datosProducto.getCantidad(), archivo, prenda, talle, tela);
-        model.put("producto", producto);
+        Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario);
+        pedido.getProductos().add(producto);
+        servicioPedido.asociarProductoPedido(pedido);
+
+        model.put("pedido", pedido);
         return new ModelAndView("detalle-pedido", model);
     }
     /*

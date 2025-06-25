@@ -13,4 +13,9 @@ public interface ServicioPedido {
     Pedido registrarPedidoConDescuento(String codigoPedido, Usuario usuario, HashSet<Producto> productos, Promocion promocion);
     List<Pedido> listarPedidosDelUsuario(Long idUsuario);
     void aplicarPromocion(Pedido pedido, Promocion promocion);
+
+
+    Pedido buscarPedidoEstadoPendiente(Usuario usuario);
+    void asociarProductoPedido(Pedido pedido);
+    void cambiarEstadoPedido(Long id);
 }

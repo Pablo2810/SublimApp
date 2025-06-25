@@ -22,10 +22,10 @@ public class ServicioProductoImpl implements ServicioProducto {
         Producto producto = new Producto();
         producto.setCantidad(cantidad);
         /*producto.setPrecio(); //CALCULAR PRECIO EN BASE A LA PRENDA Y LA CANTIDAD*/
-        producto.setArchivo(archivo);//ANTES SE DEBE VALIDAR EL ARCHIVO CORRECTAMENTE
+        producto.setArchivo(archivo);
         producto.setPrenda(prenda);
         producto.setTalle(talle);
-        producto.setTela(tela);//ANTES DE ASIGNARLA VERIFICAR QUE LA TELA LA TENGA EL USUARIO LOGUEADO Y RESTAR LOS METROS EN BASE AL LARGO DE LA PRENDA POR CANTIDAD
+        producto.setTela(tela);
         return repositorioProducto.guardarProducto(producto);
     }
 
