@@ -1,9 +1,6 @@
 package com.tallerwebi.presentacion.controlador;
 
-import com.tallerwebi.dominio.entidad.Archivo;
-import com.tallerwebi.dominio.entidad.Pedido;
-import com.tallerwebi.dominio.entidad.Producto;
-import com.tallerwebi.dominio.entidad.Usuario;
+import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
 import com.tallerwebi.dominio.servicio.ServicioProducto;
 import com.tallerwebi.dominio.servicio.ServicioUsuario;
@@ -70,4 +67,23 @@ public class ControladorPedido {
         return new ModelAndView("historial-pedidos", model);
     }
 */
+
+
+    @RequestMapping(value = "/pagar-pedido", method = RequestMethod.POST)
+    public ModelAndView pagarPedidoPendiente(@RequestParam Long pedidoId){
+        servicioPedido.cambiarEstadoPedido(pedidoId, Estado.EN_ESPERA);
+        return new ModelAndView("historial-pedidos");
+    }
+
+    /*@RequestMapping(value = "/historial-pedidos")
+    public ModelAndView historialPedidos(HttpServletRequest request) {
+        ModelMap model = new ModelMap();
+        Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
+        List<Pedido> pedidos = servicioPedido.listarPedidosDelUsuario(usuario.getId());
+
+        model.put("mensajeSinPedidos", "Todavia no tienes pedidos");
+        model.put("pedidos", pedidos);
+
+        return new ModelAndView("historial-pedidos", model);
+    }*/
 }

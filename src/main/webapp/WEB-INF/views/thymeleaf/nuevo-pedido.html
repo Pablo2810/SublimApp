@@ -163,7 +163,7 @@
             const prendaId = this.value;
 
             // Limpiar talles anteriores
-            talleSelect.innerHTML = '<option value="">Seleccione un talle</option>';
+            talleSelect.innerHTML = '<option value="" disabled selected>Seleccione un talle</option>';
 
             if (prendaId) {
                 fetch('/spring/talles-por-prenda/' + prendaId) // 👈 Acordate del contextPath "/spring"
@@ -193,7 +193,7 @@
 
         // Limpiar select de telas
         const telaSelect = document.getElementById('telaSelect');
-        telaSelect.innerHTML = '<option value="">Seleccione una tela</option>';
+        telaSelect.innerHTML = '<option value="" disabled selected>Seleccione una tela</option>';
 
         if (prendaId) {
             fetch('/spring/telas-por-prenda/' + prendaId)
@@ -202,7 +202,7 @@
                     data.forEach(tela => {
                         const option = document.createElement('option');
                         option.value = tela.id;
-                        option.textContent = tela.descripcion;
+                        option.textContent = tela.tipoTela;
                         telaSelect.appendChild(option);
                     });
                 })

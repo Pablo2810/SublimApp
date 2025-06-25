@@ -2,9 +2,11 @@ package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.entidad.Estado;
 import com.tallerwebi.dominio.entidad.Pedido;
+import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.repositorio.RepositorioPedido;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -113,5 +115,30 @@ public class RepositorioPedidoImpl implements RepositorioPedido {
     public Boolean guardarPedido(Pedido pedido) {
         sessionFactory.getCurrentSession().save(pedido);
         return true;
+    }
+
+    @Override
+    public void guardar(Pedido pedido) { sessionFactory.getCurrentSession().save(pedido); }
+
+    @Override
+    public Pedido buscarPedidoPendientePorUsuario(Usuario usuario) {
+        return (Pedido) sessionFactory.getCurrentSession()
+                .createQuery("FROM Pedido p LEFT JOIN FETCH p.productos WHERE p.usuarioPedido = :usuario AND p.estado = :estado")
+                .setParameter("usuario", usuario)
+                .setParameter("estado", Estado.PENDIENTE)
+                .uniqueResult();
+    }
+
+    @Override
+    public void actualizar(Pedido pedido) {
+        sessionFactory.getCurrentSession().update(pedido);
+    }
+
+    @Override
+    public Pedido buscarPorId(Long id) {
+        return (Pedido) sessionFactory.getCurrentSession()
+                .createCriteria(Pedido.class)
+                .add(Restrictions.eq("id", id))
+                .uniqueResult();
     }
 }
