@@ -27,7 +27,6 @@ public class ControladorPedido {
 
 
     private final ServicioPedido servicioPedido;
-    //private final ServicioPromocion servicioPromocion;
     private final ServicioProducto servicioProducto;
     private final ServicioUsuario servicioUsuario;
 
@@ -39,7 +38,7 @@ public class ControladorPedido {
         this.servicioUsuario = servicioUsuario;
         this.servicioProducto = servicioProducto;
     }
-
+/*
     @RequestMapping(path = "/nuevo-pedido", method = RequestMethod.GET)
     public ModelAndView nuevoPedido() {
         ModelMap model = new ModelMap();
@@ -70,5 +69,5 @@ public class ControladorPedido {
 
         return new ModelAndView("historial-pedidos", model);
     }
-
+*/
 }

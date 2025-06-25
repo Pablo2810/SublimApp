@@ -1,18 +1,27 @@
 package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.entidad.Tela;
+import com.tallerwebi.dominio.entidad.TelaUsuario;
+import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.repositorio.RepositorioTela;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
+@Repository("repositorioTela")
 public class RepositorioTelaImpl implements RepositorioTela {
 
     @Autowired
     private SessionFactory sessionFactory;
+
+    @Autowired
+    public RepositorioTelaImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public List<Tela> listarTelas() {
@@ -34,5 +43,37 @@ public class RepositorioTelaImpl implements RepositorioTela {
     public void borrarTela(Tela tela) {
         sessionFactory.getCurrentSession().delete(tela);
     }
+
+
+    @Override
+    public void guardarTelaFabrica() {
+
+    }
+
+    @Override
+    public List<Tela> buscarTelasDePrendaPorIdPrenda(Long id) {
+        final Session session = sessionFactory.getCurrentSession();
+        return session.createCriteria(Tela.class)
+                .createAlias("prendas", "p")
+                .add(Restrictions.eq("p.id", id))
+                .list();
+    }
+
+    @Override
+    public List<Tela> listarTelasDeFabrica() {
+        String hql = "FROM Tela t WHERE t.id NOT IN (SELECT tu.id FROM TelaUsuario tu)";
+        return sessionFactory.getCurrentSession().createQuery(hql, Tela.class).getResultList();
+    }
+
+    /*
+    @Override
+    public Tela buscarTelaPorId(Long id, Usuario usuario) {
+        return (TelaUsuario) sessionFactory.getCurrentSession()
+                .createCriteria(TelaUsuario.class)
+                .add(Restrictions.eq("id", id))
+                .add(Restrictions.eq("usuario", usuario))
+                .uniqueResult();
+    }
+    */
 
 }

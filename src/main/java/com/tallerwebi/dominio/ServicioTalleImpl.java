@@ -7,14 +7,22 @@ import org.springframework.stereotype.Service;
 import com.tallerwebi.dominio.repositorio.RepositorioTalle;
 import com.tallerwebi.dominio.servicio.ServicioTalle;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
-@Service
+@Service("servicioTalle")
+@Transactional
 public class ServicioTalleImpl implements ServicioTalle {
 
     @Autowired
     private RepositorioTalle repositorioTalle;
+
+    @Autowired
+    public ServicioTalleImpl(RepositorioTalle repositorioTalle) {
+        this.repositorioTalle = repositorioTalle;
+    }
 
     @Override
     public List<Talle> obtenerTalles() {
@@ -54,4 +62,15 @@ public class ServicioTalleImpl implements ServicioTalle {
         }
     }
 
+    @Override
+    public List<Talle> buscarTallesDePrendaPorId(Long id) {
+        return repositorioTalle.buscarTallesDePrendaPorId(id);
+    }
+
+    /*
+    @Override
+    public Talle buscarTallePorId(Long talleId) {
+        return repositorioTalle.buscarTallePorId(talleId);
+    }
+    */
 }

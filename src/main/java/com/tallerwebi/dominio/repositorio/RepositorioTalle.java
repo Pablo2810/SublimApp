@@ -9,4 +9,6 @@ public interface RepositorioTalle {
     void crearOActualizarTalle(Talle talle);
     Talle obtenerTalle(Long id);
     void borrarTalle(Talle talle);
+    List<Talle> buscarTallesDePrendaPorId(Long id);
+    // Talle buscarTallePorId(Long id);
 }

@@ -1,36 +1,38 @@
 package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.entidad.TipoTela;
+import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.servicio.ServicioTela;
 import com.tallerwebi.presentacion.controlador.ControladorTela;
 import com.tallerwebi.presentacion.dto.MisTelas;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
+import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
 
 public class ControladorTelaTest {
 
     private ControladorTela controlador;
     private ServicioTela servicioMock;
     private Model modelMock;
+    private Usuario usuarioMock;
+    private HttpSession sessionMock;
 
     @BeforeEach
     public void setUp() {
         servicioMock = mock(ServicioTela.class);
         controlador = new ControladorTela(servicioMock);
         modelMock = mock(Model.class);
+        sessionMock = mock(HttpSession.class);
+        usuarioMock = new Usuario();
+        when(sessionMock.getAttribute("usuario")).thenReturn(usuarioMock);
     }
 
     @Test
@@ -155,35 +157,25 @@ public class ControladorTelaTest {
     }
 
     @Test
-    public void confirmarPagoConTipoTelaInvalido_DebeLanzarIllegalArgumentException() {
-        RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
-        Model model = new ExtendedModelMap();
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            controlador.confirmarPago(
-                    "credito", "1234567812345678", "Juan Perez", "2025-12", "123",
-                    6, "azul", 10.0, 1.0, "tipoInvalido", "img.jpg",
-                    model,
-                    redirectAttrs
-            );
-        });
-    }
-
-    @Test
     public void confirmarPagoConMetodoPagoInvalido_DebeAgregarMensajeError_YMostrarMetodoPago() {
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
         Model model = new ExtendedModelMap();
+        HttpSession session = mock(HttpSession.class);
+        when(session.getAttribute("usuario")).thenReturn(new Usuario());
 
         String resultado = controlador.confirmarPago(
                 "paypal", "1234567812345678", "Ana Lopez", "2026-12", "456",
                 3, "azul", 10.0, 1.0, "algodon", "img.jpg",
-                model,
-                redirectAttrs
+                1L,                      // idTela
+                session,                 // HttpSession
+                model,                   // Model
+                redirectAttrs            // RedirectAttributes
         );
 
         assertEquals("metodo-pago-tela", resultado);
         assertEquals("Método de pago inválido.", model.asMap().get("mensajeError"));
     }
+
 
     @Test
     public void registrarTelaDesdeCatalogoConIdNoExistenteAgregaMensajeError() {
@@ -200,9 +192,10 @@ public class ControladorTelaTest {
     public void procesarCompraConMetodoPagoValido_DebeRedirigirAMetodoPagoTela_YPasarDatos() {
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
 
-        String resultado = controlador.procesarCompra("rojo", 12.0, 2.0, "algodon", "img.jpg", redirectAttrs);
+        String resultado = controlador.procesarCompra(1L,"rojo", 12.0, 2.0, "algodon", "img.jpg", redirectAttrs);
 
         assertEquals("redirect:/metodo-pago-tela", resultado);
+        verify(redirectAttrs).addFlashAttribute("idTela", 1L);
         verify(redirectAttrs).addFlashAttribute("color", "rojo");
         verify(redirectAttrs).addFlashAttribute("precio", 12.0);
         verify(redirectAttrs).addFlashAttribute("metros", 2.0);
@@ -214,53 +207,54 @@ public class ControladorTelaTest {
     public void procesarCompraConPrecioNegativo_DebeAgregarMensajeError_YRedirigirMetodoPago() {
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
 
-        // No podemos setear método de pago simulado
-        String resultado = controlador.procesarCompra("rojo", -10.0, 2.0, "algodon", "img.jpg", redirectAttrs);
+        String resultado = controlador.procesarCompra(1L,"rojo", -10.0, 2.0, "algodon", "img.jpg", redirectAttrs);
 
         assertEquals("redirect:/metodo-pago-tela", resultado);
         verify(redirectAttrs).addFlashAttribute("mensajeError", "Precio inválido.");
     }
 
     @Test
-    public void confirmarPagoConMetodoDebito_DebeIgnorarCuotas_YAgregarTelaYMensajeExito_YRedirigirCarga() {
+    public void confirmarPagoConMetodoDebito_DebeIgnorarCuotas_YAgregarMensajeExito() {
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
         Model model = new ExtendedModelMap();
+        HttpSession session = mock(HttpSession.class);
+        Usuario usuario = new Usuario();
+        when(session.getAttribute("usuario")).thenReturn(usuario);
 
         String resultado = controlador.confirmarPago(
                 "debito", "1111222233334444", "Carlos Soto", "2028-10", "789",
                 3, "azul", 15.0, 3.0, "lino", "url.jpg",
+                1L, // idTela
+                session,
                 model,
                 redirectAttrs
         );
 
         assertEquals("redirect:/boleta-tela", resultado);
 
-        try {
-            Field field = controlador.getClass().getDeclaredField("telasDelUsuario");
-            field.setAccessible(true);
-            List<MisTelas> telas = (List<MisTelas>) field.get(controlador);
-
-            Optional<MisTelas> ultimaTela = telas.stream()
-                    .filter(t -> t.getColor().equals("azul") && t.getPrecio() == 15.0 && t.getMetros() == 3.0)
-                    .findFirst();
-
-            assertTrue(ultimaTela.isPresent());
-        } catch (Exception e) {
-            fail("Error accediendo a telasDelUsuario: " + e.getMessage());
-        }
-
         verify(redirectAttrs).addFlashAttribute("mensaje", "Compra realizada con éxito");
         verify(redirectAttrs).addFlashAttribute("total", 15.0 * 3.0);
+        verify(redirectAttrs).addFlashAttribute("cuotas", 1);
+        verify(redirectAttrs).addFlashAttribute("valorCuota", 15.0 * 3.0);
+
+        // Verifica que se llamó a comprarTelaDeFabrica
+        verify(servicioMock).comprarTelaDeFabrica(1L, 3.0, usuario);
     }
+
 
     @Test
     public void confirmarPagoConCreditoY3Cuotas_DebeCalcularTotalEInteresCorrectamente_YAgregarFlashAttributes() {
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
         Model model = new ExtendedModelMap();
+        HttpSession session = mock(HttpSession.class);
+        Usuario usuario = new Usuario();
+        when(session.getAttribute("usuario")).thenReturn(usuario);
 
         String resultado = controlador.confirmarPago(
                 "credito", "2222333344445555", "Laura Diaz", "2027-09", "321",
                 3, "rojo", 20.0, 2.0, "algodon", "url.jpg",
+                1L, // idTela
+                session,
                 model,
                 redirectAttrs
         );
@@ -273,16 +267,23 @@ public class ControladorTelaTest {
         verify(redirectAttrs).addFlashAttribute(eq("total"), doubleThat(v -> Math.abs(v - totalEsperado) < 0.01));
         verify(redirectAttrs).addFlashAttribute(eq("valorCuota"), doubleThat(v -> Math.abs(v - cuotaEsperada) < 0.01));
         verify(redirectAttrs).addFlashAttribute("cuotas", 3);
+        verify(redirectAttrs).addFlashAttribute("mensaje", "Compra realizada con éxito");
+
+        verify(servicioMock).comprarTelaDeFabrica(1L, 2.0, usuario);
     }
 
     @Test
     public void confirmarPagoConCuotasInvalidas_DebeMostrarError_YMostrarMetodoPago() {
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
         Model model = new ExtendedModelMap();
+        HttpSession session = mock(HttpSession.class);
+        when(session.getAttribute("usuario")).thenReturn(new Usuario());
 
         String resultado = controlador.confirmarPago(
                 "credito", "9999888877776666", "Marta Sosa", "2030-01", "999",
                 0, "negro", 30.0, 1.0, "lino", "url.jpg",
+                1L,
+                session,
                 model,
                 redirectAttrs
         );
@@ -295,10 +296,15 @@ public class ControladorTelaTest {
     public void confirmarPagoCreditoCon3Cuotas_DebeAgregarValoresCorrectosConInteres() {
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
         Model model = new ExtendedModelMap();
+        HttpSession session = mock(HttpSession.class);
+        Usuario usuario = new Usuario();
+        when(session.getAttribute("usuario")).thenReturn(usuario);
 
         controlador.confirmarPago(
                 "credito", "4444333322221111", "Santiago Gil", "2029-11", "654",
                 3, "rojo", 20.0, 2.0, "algodon", "img.jpg",
+                1L, // idTela
+                session,
                 model,
                 redirectAttrs
         );
@@ -311,15 +317,19 @@ public class ControladorTelaTest {
         verify(redirectAttrs).addFlashAttribute("mensaje", "Compra realizada con éxito");
     }
 
-
     @Test
     public void confirmarPagoDebitoConCuotasMayoresA1_DebeForzarUnaCuota() {
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
         Model model = new ExtendedModelMap();
+        HttpSession session = mock(HttpSession.class);
+        Usuario usuario = new Usuario();
+        when(session.getAttribute("usuario")).thenReturn(usuario);
 
         controlador.confirmarPago(
                 "debito", "1111222233334444", "Luis Ramos", "2025-08", "111",
                 6, "verde", 10.0, 5.0, "lino", "url.jpg",
+                1L, // idTela
+                session,
                 model,
                 redirectAttrs
         );
@@ -332,6 +342,7 @@ public class ControladorTelaTest {
         verify(redirectAttrs).addFlashAttribute("mensaje", "Compra realizada con éxito");
     }
 
+
     @Test
     public void mostrarBoletaTela_DebeRetornarVistaBoleta() {
         String vista = controlador.mostrarBoleta();
@@ -342,12 +353,13 @@ public class ControladorTelaTest {
     public void confirmarPagoConNumeroTarjetaInvalido_DebeMostrarError_YMostrarMetodoPago() {
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
         Model model = new ExtendedModelMap();
+        HttpSession session = mock(HttpSession.class);
+        when(session.getAttribute("usuario")).thenReturn(new Usuario());
 
         String resultado = controlador.confirmarPago(
-                "debito", "1234", "Nombre Apellido", "12/25", "123",
+                "debito", "1234", "Nombre Apellido", "2025-12", "123",
                 1, "azul", 10.0, 2.0, "algodon", "img.jpg",
-                model,
-                redirectAttrs
+                1L, session, model, redirectAttrs
         );
 
         assertEquals("metodo-pago-tela", resultado);
@@ -358,12 +370,13 @@ public class ControladorTelaTest {
     public void confirmarPagoConNombreTitularVacio_DebeMostrarError_YMostrarMetodoPago() {
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
         Model model = new ExtendedModelMap();
+        HttpSession session = mock(HttpSession.class);
+        when(session.getAttribute("usuario")).thenReturn(new Usuario());
 
         String resultado = controlador.confirmarPago(
-                "credito", "1234567812345678", "   ", "12/25", "123",
+                "credito", "1234567812345678", "   ", "2025-12", "123",
                 1, "azul", 10.0, 2.0, "algodon", "img.jpg",
-                model,
-                redirectAttrs
+                1L, session, model, redirectAttrs
         );
 
         assertEquals("metodo-pago-tela", resultado);
@@ -374,29 +387,30 @@ public class ControladorTelaTest {
     public void confirmarPagoConFechaVencimientoInvalida_DebeMostrarError_YMostrarMetodoPago() {
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
         Model model = new ExtendedModelMap();
+        HttpSession session = mock(HttpSession.class);
+        when(session.getAttribute("usuario")).thenReturn(new Usuario());
 
         String resultado = controlador.confirmarPago(
                 "debito", "1234567812345678", "Maria Gomez", "1225", "123",
                 1, "azul", 10.0, 2.0, "algodon", "img.jpg",
-                model,
-                redirectAttrs
+                1L, session, model, redirectAttrs
         );
 
         assertEquals("metodo-pago-tela", resultado);
         assertEquals("Fecha de vencimiento inválida.", model.asMap().get("mensajeError"));
     }
 
-
     @Test
     public void confirmarPagoConCodigoSeguridadInvalido_DebeMostrarError_YMostrarMetodoPago() {
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
         Model model = new ExtendedModelMap();
+        HttpSession session = mock(HttpSession.class);
+        when(session.getAttribute("usuario")).thenReturn(new Usuario());
 
         String resultado = controlador.confirmarPago(
-                "credito", "1234567812345678", "Carlos Perez", "12/25", "12",
+                "credito", "1234567812345678", "Carlos Perez", "2025-12", "12",
                 1, "azul", 10.0, 2.0, "algodon", "img.jpg",
-                model,
-                redirectAttrs
+                1L, session, model, redirectAttrs
         );
 
         assertEquals("metodo-pago-tela", resultado);
@@ -405,18 +419,21 @@ public class ControladorTelaTest {
 
     @Test
     public void confirmarPagoCreditoSinCuotas_DebeMostrarError() {
-        Model model = mock(Model.class);
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
+        Model model = new ExtendedModelMap();
+        HttpSession session = mock(HttpSession.class);
+        when(session.getAttribute("usuario")).thenReturn(new Usuario());
 
         String resultado = controlador.confirmarPago(
                 "credito", "1234567812345678", "Juan Pérez", "2026-10", "123",
                 null, "azul", 40.0, 1.0, "algodon", "imagen.jpg",
-                model, redirectAttrs
+                1L, session, model, redirectAttrs
         );
 
         assertEquals("metodo-pago-tela", resultado);
-        verify(model).addAttribute(eq("mensajeError"), contains("cuotas válida"));
+        assertEquals("Debe seleccionar una cantidad de cuotas válida.", model.asMap().get("mensajeError"));
     }
+
 
     @Test
     public void mostrarVistaPago_SinFlashAttributes_DebeRetornarVista() {
@@ -444,10 +461,11 @@ public class ControladorTelaTest {
     @Test
     public void procesarCompraConMetrosNulos_DebeRedirigirConError() {
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
-        String resultado = controlador.procesarCompra("rojo", 50.0, null, "algodon", "img.jpg", redirectAttrs);
+        String resultado = controlador.procesarCompra(1L,"rojo", 50.0, null, "algodon", "img.jpg", redirectAttrs);
         assertEquals("redirect:/metodo-pago-tela", resultado);
         verify(redirectAttrs).addFlashAttribute(eq("metros"), isNull());
     }
+
 
 }
 

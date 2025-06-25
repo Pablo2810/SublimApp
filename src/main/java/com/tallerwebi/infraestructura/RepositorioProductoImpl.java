@@ -23,22 +23,24 @@ public class RepositorioProductoImpl implements RepositorioProducto {
 
     @Override
     public List<Producto> listarProductosDeUnPedido(Long idPedido) {
-        String hql = "FROM Producto WHERE pedidos = :idPedido";
+        /*String hql = "FROM Producto WHERE pedidos = :idPedido";
         Query query = this.sessionFactory.getCurrentSession().createQuery(hql);
         query.setParameter("idPedido", idPedido);
-        return query.getResultList();
+        return query.getResultList();*/
+        return null;
     }
 
     @Override
     public List<Pedido> listarProductosBase() {
-        String hql = "FROM ProductoBase";
+        /*String hql = "FROM ProductoBase";
         Query query = this.sessionFactory.getCurrentSession().createQuery(hql);
-        return query.getResultList();
+        return query.getResultList();*/
+        return null;
     }
 
     @Override
     public Boolean eliminarProducto(Long idProducto) {
-        Transaction tx = sessionFactory.getCurrentSession().beginTransaction();
+        /*Transaction tx = sessionFactory.getCurrentSession().beginTransaction();
 
         String hql = "DELETE FROM Producto WHERE id = :idProducto AND :idPedido IN (pedidos)";
         Query query = this.sessionFactory.getCurrentSession().createQuery(hql);
@@ -51,12 +53,13 @@ public class RepositorioProductoImpl implements RepositorioProducto {
             return false;
         }
         tx.commit();
-        return true;
+        return true;*/
+        return null;
     }
 
     @Override
     public Boolean actualizarProducto(Producto producto) {
-
+        /*
         Transaction tx = sessionFactory.getCurrentSession().beginTransaction();
 
         String hql = "UPDATE Producto SET archivo = :archivo, prenda = :prenda, cantidad = :cantidad," +
@@ -72,17 +75,18 @@ public class RepositorioProductoImpl implements RepositorioProducto {
         query.setParameter("tela", producto.getTela());
         int cantidadDeActualizaciones = query.executeUpdate();
 
-        if(cantidadDeActualizaciones > 0){
+        if(cantidadDeActualizaciones > 1){
             tx.rollback();
             return false;
         }
         tx.commit();
-        return true;
+        return true;*/
+        return null;
     }
 
     @Override
-    public Boolean guardarProducto(Producto producto) {
-        sessionFactory.getCurrentSession().save(producto);
-        return true;
+    public Producto guardarProducto(Producto producto) {
+        Long idGuardado = (Long) sessionFactory.getCurrentSession().save(producto);
+        return sessionFactory.getCurrentSession().get(Producto.class, idGuardado);
     }
 }

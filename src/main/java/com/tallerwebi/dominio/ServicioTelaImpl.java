@@ -1,6 +1,12 @@
 package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidad.Tela;
+import com.tallerwebi.dominio.entidad.TelaUsuario;
+import com.tallerwebi.dominio.entidad.TipoTela;
+import com.tallerwebi.dominio.entidad.Usuario;
+import com.tallerwebi.dominio.excepcion.StockInsuficiente;
+import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
+import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import com.tallerwebi.dominio.repositorio.RepositorioTela;
 import com.tallerwebi.dominio.servicio.ServicioStorageImagen;
 import com.tallerwebi.dominio.servicio.ServicioTela;
@@ -9,55 +15,31 @@ import com.tallerwebi.presentacion.dto.MisTelas;
 import io.imagekit.sdk.models.results.Result;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Service
+@Service("servicioTela")
+@Transactional
 public class ServicioTelaImpl implements ServicioTela {
-
     @Autowired
     private RepositorioTela repositorioTela;
     @Autowired
     private ServicioStorageImagen servicioStorageImagen;
 
-    @Override
-    public List<MisTelas> obtenerTelasDeFabrica() {
-//        List<MisTelas> telas = new ArrayList<>();
-//        long id = 1;
-//
-//        telas.add(new MisTelas(id++, TipoTela.ALGODON, "rojo", 12000.0, "img/TELA_1.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.ALGODON, "azul", 12000.0, "img/TELA_2.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.ALGODON, "rosa", 12000.0, "img/TELA_3.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.ALGODON, "gris", 12000.0, "img/TELA_4.jpg"));
-//
-//        telas.add(new MisTelas(id++, TipoTela.LINO, "azul", 13000.0, "img/TELA_5.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.LINO, "celeste", 13000.0, "img/TELA_6.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.LINO, "verde", 13000.0, "img/TELA_7.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.LINO, "verde agua", 13000.0, "img/TELA_8.jpg"));
-//
-//        telas.add(new MisTelas(id++, TipoTela.W15, "marron", 10000.0, "img/TELA_9.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.W15, "naranja", 10000.0, "img/TELA_10.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.W15, "negro", 10000.0, "img/TELA_11.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.W15, "gris oscuro", 10000.0, "img/TELA_12.jpg"));
-//
-//        telas.add(new MisTelas(id++, TipoTela.SET, "amarillo", 15000.0, "img/TELA_13.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.SET, "amarillo oscuro", 15000.0, "img/TELA_14.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.SET, "rosa", 15000.0, "img/TELA_15.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.SET, "verde agua", 15000.0, "img/TELA_16.jpg"));
-//
-//        telas.add(new MisTelas(id++, TipoTela.NEOPRENO, "lila", 18000.0, "img/TELA_17.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.NEOPRENO, "rosa", 18000.0, "img/TELA_18.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.NEOPRENO, "marron", 18000.0, "img/TELA_19.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.NEOPRENO, "rosa oscuro", 18000.0, "img/TELA_20.jpg"));
-//
-//        telas.add(new MisTelas(id++, TipoTela.POLIESTER, "celes", 20000.0, "img/TELA_21.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.POLIESTER, "beige", 20000.0, "img/TELA_22.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.POLIESTER, "marron", 20000.0, "img/TELA_23.jpg"));
-//        telas.add(new MisTelas(id++, TipoTela.POLIESTER, "blanco", 20000.0, "img/TELA_24.jpg"));
+    @Autowired
+    public ServicioTelaImpl(RepositorioTela repositorioTela) {
+        this.repositorioTela = repositorioTela;
+    }
 
-        return null;
+    @Override
+    public void agregarTelasDeFabrica() {
+
     }
 
     public List<Tela> obtenerTelas() {
@@ -101,4 +83,66 @@ public class ServicioTelaImpl implements ServicioTela {
         }
     }
 
+
+    @Override
+    public void dejarSinStockTelaDeFabrica() {
+
+    }
+
+    @Override
+    public List<Tela> buscarTelasDePrendaPorIdPrenda(Long prendaId) {
+        return repositorioTela.buscarTelasDePrendaPorIdPrenda(prendaId);
+    }
+
+    @Override
+    public List<MisTelas> obtenerTelasDeFabrica() {
+        List<Tela> telas = repositorioTela.listarTelasDeFabrica();
+        return telas.stream()
+                .map(t -> {
+                    MisTelas misTela = new MisTelas(t.getId(), t.getTipoTela(), t.getColor(), t.getPrecio(), t.getImagenUrl());
+                    misTela.setMetros(t.getMetros());
+                    return misTela;
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void comprarTelaDeFabrica(Long idTela, Double metrosComprados, Usuario usuario) throws TelaNoEncontrada, StockInsuficiente {
+        Tela tela = repositorioTela.obtenerTela(idTela);
+        if (tela == null) {
+            throw new TelaNoEncontrada();
+        }
+
+        if (tela.getMetros() < metrosComprados) {
+            throw new StockInsuficiente();
+        }
+
+        // Descontar metros
+        tela.setMetros(tela.getMetros() - metrosComprados);
+        repositorioTela.crearOActualizarTela(tela);
+
+        // Crear la copia para el usuario
+        TelaUsuario telaComprada = new TelaUsuario();
+        telaComprada.setTipoTela(tela.getTipoTela());
+        telaComprada.setColor(tela.getColor());
+        telaComprada.setImagenUrl(tela.getImagenUrl());
+        telaComprada.setPrecio(tela.getPrecio());
+        telaComprada.setMetros(metrosComprados);
+        telaComprada.setUsuario(usuario);
+
+        repositorioTela.crearOActualizarTela(telaComprada);
+    }
+
+
+
+    /*
+    @Override
+    public Tela buscarTelaPorId(Long telaId, Usuario usuario) throws TelaNoEncontrada {
+        Tela telaEncontrada = repositorioTela.buscarTelaPorId(telaId, usuario);
+        if (telaEncontrada == null){
+            throw new TelaNoEncontrada();
+        }
+        return telaEncontrada;
+    }
+    */
 }

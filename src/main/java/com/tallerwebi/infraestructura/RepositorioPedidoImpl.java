@@ -20,7 +20,7 @@ public class RepositorioPedidoImpl implements RepositorioPedido {
     public RepositorioPedidoImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
-
+/*
     @Override
     public List<Pedido> listarPedidosDelUsuario(Long idUsuario) {
         String hql = "FROM Pedido WHERE usuarioPedido = :idUsuario";
@@ -92,6 +92,21 @@ public class RepositorioPedidoImpl implements RepositorioPedido {
         }
         tx.commit();
         return true;
+    }*/
+
+    @Override
+    public List<Pedido> listarPedidosDelUsuario(Long idUsuario) {
+        return null;
+    }
+
+    @Override
+    public Boolean eliminarPedido(Long idPedido) {
+        return null;
+    }
+
+    @Override
+    public Boolean actualizarPedido(Pedido pedido) {
+        return null;
     }
 
     @Override

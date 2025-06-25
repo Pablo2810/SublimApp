@@ -46,4 +46,7 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
         sessionFactory.getCurrentSession().update(usuario);
     }
 
+    @Override
+    public void eliminar(Usuario usuario) { sessionFactory.getCurrentSession().delete(usuario); }
+
 }

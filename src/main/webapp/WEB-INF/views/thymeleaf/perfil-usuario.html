@@ -26,9 +26,32 @@
 <body class="p-0 m-0">
 <nav class="sticky-top" th:insert="templates/nav :: nav"></nav>
 
-<main class="container my-5">
+<!-- Toasts Bootstrap -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+    <div th:if="${exito}" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" th:text="${exito}">Datos actualizados correctamente.</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+        </div>
+    </div>
+    <div th:if="${error}" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" th:text="${error}">Error al actualizar.</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+        </div>
+    </div>
+</div>
 
+
+<main class="container my-5">
     <h2 class="mb-4">Perfil de Usuario</h2>
+
+    <!-- Imagen de Perfil -->
+    <section class="mb-4 text-center">
+        <h4>Imagen de perfil</h4>
+        <img th:if="${usuario.imagenPerfil != null}" th:src="${usuario.imagenPerfil}" alt="Imagen de perfil" class="rounded-circle img-thumbnail mb-2" style="max-width: 150px;" />
+        <img th:if="${usuario.imagenPerfil == null}" src="/images/default-profile.png" alt="Sin imagen de perfil" class="rounded-circle img-thumbnail mb-2" style="max-width: 150px;" />
+    </section>
 
     <!-- Mostrar datos actuales -->
     <section class="mb-5">
@@ -55,7 +78,7 @@
     <!-- Formulario para modificar datos -->
     <section class="mb-5">
         <h4>Modificar datos</h4>
-        <form th:action="@{/perfil-usuario/actualizar}" method="post" class="row g-3 needs-validation" novalidate>
+        <form id="formulario-perfil" th:action="@{/perfil-usuario/actualizar}" method="post" enctype="multipart/form-data" class="row g-3 needs-validation" novalidate>
             <div class="col-md-6">
                 <label for="nombre" class="form-label">Nombre</label>
                 <input type="text" class="form-control" id="nombre" name="nombre" th:value="${usuario.nombre}" required />
@@ -74,14 +97,29 @@
             </div>
 
             <div class="col-md-6">
-                <label for="password" class="form-label">Contraseña (nueva)</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Dejar vacío para no cambiar" />
+                <label for="passwordActual" class="form-label">Contraseña actual</label>
+                <input type="password" class="form-control" id="passwordActual" name="passwordActual" placeholder="Requerido para cambiar la contraseña" />
+            </div>
+
+            <div class="col-md-6">
+                <label for="imagenPerfil" class="form-label">Nueva imagen de perfil</label>
+                <input type="file" class="form-control" id="imagenPerfil" name="imagenPerfil" accept="image/*" />
             </div>
 
             <div class="col-12">
                 <button type="submit" class="btn btn-primary">Actualizar Datos</button>
             </div>
         </form>
+
+        <!-- Botón para eliminar cuenta -->
+        <section class="mb-5">
+            <h4>Eliminar cuenta</h4>
+            <form th:action="@{/perfil-usuario/eliminar}" method="post"
+                  onsubmit="return confirm('¿Estás seguro que querés eliminar tu cuenta? Esta acción no se puede deshacer.')">
+                <button type="submit" class="btn btn-danger">Eliminar mi cuenta</button>
+            </form>
+        </section>
+
     </section>
 
     <!-- Historial de pedidos -->
@@ -134,7 +172,6 @@
             No tenés telas compradas.
         </div>
     </section>
-
 </main>
 
 <footer th:insert="templates/footer :: footer"></footer>
@@ -142,8 +179,8 @@
 <!-- Bootstrap JS Bundle -->
 <script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/main.js}"></script>
-
 </body>
 </html>
+
 
 

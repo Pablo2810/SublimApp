@@ -20,6 +20,12 @@ public class Usuario {
 
     private String nombre;
 
+    private String telefono;
+
+    @Column(name = "imagen_perfil")
+    private String imagenPerfil;
+
+
     @OneToMany(mappedBy = "usuario")
     private List<TelaUsuario> telas = new ArrayList<>();
 
@@ -66,6 +72,10 @@ public class Usuario {
     public void activar() {
         activo = true;
     }
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
+    public String getImagenPerfil() { return imagenPerfil; }
+    public void setImagenPerfil(String imagenPerfil) { this.imagenPerfil = imagenPerfil; }
 
     public String getNombre() {
         return nombre;

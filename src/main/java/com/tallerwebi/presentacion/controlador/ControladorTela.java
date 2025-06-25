@@ -1,20 +1,27 @@
 package com.tallerwebi.presentacion.controlador;
 
+import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.TipoTela;
+import com.tallerwebi.dominio.entidad.Usuario;
+import com.tallerwebi.dominio.excepcion.StockInsuficiente;
+import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
 import com.tallerwebi.dominio.servicio.ServicioTela;
+import com.tallerwebi.presentacion.dto.DatosTela;
 import com.tallerwebi.presentacion.dto.MisTelas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 @Controller
 public class ControladorTela {
@@ -95,7 +102,8 @@ public class ControladorTela {
 
     // 5. Paso 1: Procesar datos antes de elegir método de pago
     @PostMapping("/procesar-compra")
-    public String procesarCompra(@RequestParam String color,
+    public String procesarCompra(@RequestParam Long idTela,
+                                 @RequestParam String color,
                                  @RequestParam Double precio,
                                  @RequestParam Double metros,
                                  @RequestParam String tipoTela,
@@ -107,6 +115,7 @@ public class ControladorTela {
             return "redirect:/metodo-pago-tela";
         }
 
+        redirectAttributes.addFlashAttribute("idTela", idTela);
         redirectAttributes.addFlashAttribute("color", color);
         redirectAttributes.addFlashAttribute("precio", precio);
         redirectAttributes.addFlashAttribute("metros", metros);
@@ -135,10 +144,12 @@ public class ControladorTela {
                                 @RequestParam Double metros,
                                 @RequestParam String tipoTela,
                                 @RequestParam String imagenUrl,
+                                @RequestParam Long idTela,
+                                HttpSession session,
                                 Model model,
                                 RedirectAttributes redirectAttributes) {
 
-        // Validar datos de la tarjeta
+        // Validaciones de tarjeta
         if (numeroTarjeta == null || !numeroTarjeta.matches("\\d{16}")) {
             model.addAttribute("mensajeError", "Número de tarjeta inválido.");
             cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
@@ -155,7 +166,7 @@ public class ControladorTela {
             return "metodo-pago-tela";
         }
 
-        // Validar fecha de vencimiento con YearMonth (formato esperado: "yyyy-MM")
+        // Validar fecha de vencimiento
         try {
             YearMonth fechaVencimiento = YearMonth.parse(vencimiento);
             YearMonth ahora = YearMonth.now();
@@ -170,14 +181,12 @@ public class ControladorTela {
             return "metodo-pago-tela";
         }
 
-        // Validación del método de pago
+        // Validar método de pago y cuotas
         if (!metodoPago.equalsIgnoreCase("credito") && !metodoPago.equalsIgnoreCase("debito")) {
             model.addAttribute("mensajeError", "Método de pago inválido.");
             cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
             return "metodo-pago-tela";
         }
-
-        // Cuotas
         if (metodoPago.equalsIgnoreCase("debito")) {
             cuotas = 1;
         } else if (cuotas == null || !(cuotas == 1 || cuotas == 2 || cuotas == 3 || cuotas == 6 || cuotas == 12)) {
@@ -186,7 +195,7 @@ public class ControladorTela {
             return "metodo-pago-tela";
         }
 
-        // Cálculo de intereses
+        // Calcular total con intereses
         double interes;
         switch (cuotas) {
             case 2: interes = 0.05; break;
@@ -200,17 +209,28 @@ public class ControladorTela {
         double total = subtotal * (1 + interes);
         double valorCuota = total / cuotas;
 
-        // Agregar la tela a la lista del usuario
-        TipoTela tipo = TipoTela.valueOf(tipoTela.toUpperCase());
-        MisTelas telaComprada = new MisTelas(generarId(), tipo, color, precio, imagenUrl);
-        telaComprada.setMetros(metros);
-        telasDelUsuario.add(telaComprada);
+        // Intentar descontar stock y registrar la compra
+        try {
+            Usuario usuario = (Usuario) session.getAttribute("usuario");
+            if (usuario == null) {
+                redirectAttributes.addFlashAttribute("mensajeError", "Debés iniciar sesión para realizar la compra.");
+                return "redirect:/login";
+            }
+            servicioTela.comprarTelaDeFabrica(idTela, metros, usuario);
+        } catch (TelaNoEncontrada e) {
+            model.addAttribute("mensajeError", "Tela no encontrada.");
+            cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
+            return "metodo-pago-tela";
+        } catch (StockInsuficiente e) {
+            model.addAttribute("mensajeError", "No hay suficiente stock de esta tela.");
+            cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
+            return "metodo-pago-tela";
+        }
 
-        // Fecha de compra
+        // Preparar boleta
         String fechaFormateada = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
 
-        // Enviar datos a la vista
         redirectAttributes.addFlashAttribute("fecha", fechaFormateada);
         redirectAttributes.addFlashAttribute("color", color);
         redirectAttributes.addFlashAttribute("tipoTela", tipoTela);
@@ -225,7 +245,6 @@ public class ControladorTela {
 
         return "redirect:/boleta-tela";
     }
-
 
     // 8. Vista de boleta final
     @GetMapping("/boleta-tela")
@@ -257,6 +276,19 @@ public class ControladorTela {
     private Long generarId() {
         return (long) (telasDelUsuario.size() + 1000);
     }
+
+
+    /*********************************************/
+    @GetMapping("/telas-por-prenda/{prendaId}")
+    @ResponseBody
+    public List<DatosTela> obtenerTelasPorPrenda(@PathVariable("prendaId") Long prendaId){
+        List<Tela> telas = servicioTela.buscarTelasDePrendaPorIdPrenda(prendaId);
+        return telas.stream()
+                .map(t -> new DatosTela(t.getId(), t.getTipoTela()))
+                .collect(Collectors.toList()); // cambié t.getTipoTela().name() a t.getTipoTela()
+    }
+
+
 }
 
 
