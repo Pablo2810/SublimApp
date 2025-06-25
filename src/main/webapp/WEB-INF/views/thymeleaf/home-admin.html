@@ -25,10 +25,10 @@
 <div class="container py-4">
 
     <div class="d-flex flex-column align-items-center gap-3">
-        <div class="row">
+        <div class="row dashboard-admin">
             <div class="col-4">
                 <div class="card" style="width: 18rem;">
-                    <img class="card-img p-1" src="https://images-cdn.ubuy.co.in/6353170d9244a94a1355fae3-sjiamjj-faux-leather-leatherette-fabric.jpg">
+                    <img th:src="@{/img/TELA_1.jpg}" class="card-img p-1">
                     <div class="card-body">
                         <a th:href="@{/admin/listar-telas}" class="btn btn-primary w-100">ABM de telas</a>
                     </div>
@@ -36,7 +36,7 @@
             </div>
             <div class="col-4">
                 <div class="card" style="width: 18rem;">
-                    <img class="card-img p-1" src="https://images-cdn.ubuy.co.in/6353170d9244a94a1355fae3-sjiamjj-faux-leather-leatherette-fabric.jpg">
+                    <img th:src="@{/img/promociones.jpg}" class="card-img p-1">
                     <div class="card-body">
                         <a href="#" class="btn btn-primary w-100">ABM de promociones</a>
                     </div>
@@ -44,7 +44,7 @@
             </div>
             <div class="col-4">
                 <div class="card" style="width: 18rem;">
-                    <img class="card-img p-1" src="https://images-cdn.ubuy.co.in/6353170d9244a94a1355fae3-sjiamjj-faux-leather-leatherette-fabric.jpg">
+                    <img th:src="@{/img/galeria_2.jpg}" class="card-img p-1">
                     <div class="card-body">
                         <a th:href="@{/admin/listar-talles}" class="btn btn-primary w-100">ABM de talles</a>
                     </div>
@@ -54,9 +54,9 @@
         <div class="row">
             <div class="col-4">
                 <div class="card" style="width: 18rem;">
-                    <img class="card-img p-1" src="https://images-cdn.ubuy.co.in/6353170d9244a94a1355fae3-sjiamjj-faux-leather-leatherette-fabric.jpg">
+                    <img th:src="@{/img/pedidos.jpg}" class="card-img p-1">
                     <div class="card-body">
-                        <a href="#" class="btn btn-primary w-100">Pedidos de usuarios</a>
+                        <a th:href="@{/admin/pedidos-solicitados}" href="#" class="btn btn-primary w-100">Pedidos de usuarios</a>
                     </div>
                 </div>
             </div>

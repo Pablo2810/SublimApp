@@ -1,5 +1,6 @@
 package com.tallerwebi.infraestructura;
 
+import com.tallerwebi.dominio.entidad.Estado;
 import com.tallerwebi.dominio.entidad.Pedido;
 import com.tallerwebi.dominio.repositorio.RepositorioPedido;
 import org.hibernate.SessionFactory;
@@ -26,6 +27,23 @@ public class RepositorioPedidoImpl implements RepositorioPedido {
         Query query = this.sessionFactory.getCurrentSession().createQuery(hql);
         query.setParameter("idUsuario", idUsuario);
         return query.getResultList();
+    }
+
+    @Override
+    public List<Pedido> listarPedidos() {
+        String hql = "From Pedido";
+        return this.sessionFactory.getCurrentSession().createQuery(hql).getResultList();
+    }
+
+    @Override
+    public Pedido obtenerPedido(Long id) {
+        return this.sessionFactory.getCurrentSession().get(Pedido.class, id);
+    }
+
+    @Override
+    public void cambiarEstadoPedido(Pedido pedido, Estado nuevoEstado) {
+        pedido.setEstado(nuevoEstado);
+        this.sessionFactory.getCurrentSession().update(pedido);
     }
 
     @Override
