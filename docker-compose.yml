@@ -16,6 +16,12 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
       - ./data.sql:/docker-entrypoint-initdb.d/data.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "user", "-puser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 
   jetty:
     build:
@@ -25,7 +31,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
       - DB_HOST=mysql
     links:
@@ -33,3 +40,7 @@ services:
 
 volumes:
   mysql_data:
+
+#1 hacer docker-compose down --volumes --remove-orphans
+#2 hacer mvn clean package
+#3 hacer docker-compose up --build

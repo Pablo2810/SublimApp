@@ -3,7 +3,7 @@ FROM mysql:5.7
 
 # Establece las variables de entorno para la configuración de MySQL
 ENV MYSQL_ROOT_PASSWORD=rootpassword
-ENV MYSQL_DATABASE=tallerwebi
+ENV MYSQL_DATABASE=sublimapp_db
 ENV MYSQL_USER=user
 ENV MYSQL_PASSWORD=user
 
