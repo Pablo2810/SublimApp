@@ -41,6 +41,21 @@ services:
 volumes:
   mysql_data:
 
-#1 hacer docker-compose down --volumes --remove-orphans
-#2 hacer mvn clean package
-#3 hacer docker-compose up --build
+# 📦 PASOS PARA LEVANTAR EL ENTORNO DOCKER DEL PROYECTO
+
+# 1️⃣ Eliminar contenedores anteriores, volúmenes y huérfanos (opcional pero recomendable si hubo cambios de estructura)
+#  docker-compose down --volumes --remove-orphans
+
+# 2️⃣ Compilar y empaquetar el proyecto con Maven (genera el WAR en /target)
+#  mvn clean package
+
+# 3️⃣ Levantar los contenedores y reconstruir las imágenes (modo background recomendado)
+#  docker-compose up --build -d
+
+# ✅ Listo. El proyecto debería estar disponible en http://localhost:8080
+# 🐳 Para ver los logs del contenedor de Jetty si hay errores:
+#  docker logs jetty-sublimapp
+
+# 🛑 Para detener los contenedores manualmente:
+#  docker-compose down
+
