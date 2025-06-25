@@ -20,5 +20,4 @@ public interface ServicioPedido {
 
     Pedido buscarPedidoEstadoPendiente(Usuario usuario);
     void asociarProductoPedido(Pedido pedido);
-    boolean cambiarEstadoPedido(Long id, Estado nuevoEstado);
 }
