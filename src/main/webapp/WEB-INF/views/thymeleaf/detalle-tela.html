@@ -32,6 +32,7 @@
 
   <form th:action="@{/procesar-compra}" method="post" class="border p-4 rounded formulario-fondo-claro">
   <!-- Campos ocultos necesarios para guardar la tela correctamente -->
+    <input type="hidden" name="idTela" th:value="${tela.id}" />
     <input type="hidden" name="color" th:value="${tela.color}" />
     <input type="hidden" name="precio" th:value="${tela.precio}" />
     <input type="hidden" name="tipoTela" th:value="${tela.tipoTela}" />
