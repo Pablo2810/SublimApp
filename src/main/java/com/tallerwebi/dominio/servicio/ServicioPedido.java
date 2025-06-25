@@ -12,5 +12,8 @@ public interface ServicioPedido {
     Double calcularCostoTotal(Pedido pedido);
     Pedido registrarPedidoConDescuento(String codigoPedido, Usuario usuario, HashSet<Producto> productos, Promocion promocion);
     List<Pedido> listarPedidosDelUsuario(Long idUsuario);
+    List<Pedido> listarPedidos();
+    Pedido obtenerPedido(Long id);
+    boolean cambiarEstadoPedido(Long id, Estado nuevoEstado);
     void aplicarPromocion(Pedido pedido, Promocion promocion);
 }
