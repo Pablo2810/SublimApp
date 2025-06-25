@@ -9,4 +9,5 @@ public interface ServicioUsuario {
 
     Usuario consultarUsuario(String email);
     void modificarUsuario(Usuario usuario);
+    void eliminarUsuario(Usuario usuario);
 }
