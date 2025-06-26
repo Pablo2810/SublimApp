@@ -13,4 +13,7 @@ public interface RepositorioTela {
     void guardarTelaFabrica();
     List<Tela> buscarTelasDePrendaPorIdPrenda(Long id);
     // Tela buscarTelaPorId(Long id, Usuario usuario);
+
+
+    Tela buscarTelasDelUsuario(Long id, Usuario usuario);
 }

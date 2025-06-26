@@ -67,4 +67,29 @@ public class ServicioPedidoImpl implements ServicioPedido {
         return repositorioPedido.listarPedidosDelUsuario(idUsuario);
     }
 
+    @Override
+    public Pedido buscarPedidoEstadoPendiente(Usuario usuario){
+        Pedido pedido = repositorioPedido.buscarPedidoPendientePorUsuario(usuario);
+        if (pedido == null){
+            pedido = new Pedido();
+            pedido.setEstado(Estado.PENDIENTE);
+            pedido.setUsuarioPedido(usuario);
+            pedido.setProductos(new HashSet<>());
+            repositorioPedido.guardar(pedido);
+        }
+        return pedido;
+    }
+
+    @Override
+    public void asociarProductoPedido(Pedido pedido){
+        repositorioPedido.actualizar(pedido);
+    }
+
+    @Override
+    public void cambiarEstadoPedido(Long id){
+        Pedido pedido = repositorioPedido.buscarPorId(id);
+        pedido.setEstado(Estado.EN_ESPERA);
+        pedido.setFechaCreacion(LocalDate.now());
+        repositorioPedido.actualizar(pedido);
+    }
 }

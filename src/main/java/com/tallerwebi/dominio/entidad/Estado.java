@@ -1,8 +1,8 @@
 package com.tallerwebi.dominio.entidad;
 
 public enum Estado {
-
-    EN_ESPERA("En espera", "text-danger"),
+    PENDIENTE("Pago pendiente", "text-danger"),
+    EN_ESPERA("En espera", "text-primary"),
     SUBLIMANDO("Sublimado", "text-warning"),
     A_RETIRAR("Listo para retirar", "text-success");
 

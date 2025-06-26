@@ -1,11 +1,13 @@
 package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidad.Archivo;
+import com.tallerwebi.dominio.excepcion.ArchivoNoValido;
 import com.tallerwebi.dominio.repositorio.RepositorioArchivo;
 import com.tallerwebi.dominio.servicio.ServicioArchivo;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
+import java.util.Objects;
 
 @Service("servicioArchivo")
 @Transactional
@@ -16,7 +18,10 @@ public class ServicioArchivoImpl  implements ServicioArchivo {
     public ServicioArchivoImpl(RepositorioArchivo repositorioArchivo) { this.repositorioArchivo = repositorioArchivo; }
 
     @Override
-    public Archivo registrarArchivo(MultipartFile file) {
+    public Archivo registrarArchivo(MultipartFile file) throws ArchivoNoValido {
+        if (!Objects.equals(file.getContentType(), "image/jpeg") || file.isEmpty()){
+            throw new ArchivoNoValido();
+        }
         Archivo archivo = new Archivo();
         archivo.setNombre(file.getOriginalFilename());
         archivo.setTipoFormato(file.getContentType());

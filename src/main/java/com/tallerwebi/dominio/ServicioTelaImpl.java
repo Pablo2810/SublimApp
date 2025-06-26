@@ -1,24 +1,19 @@
 package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidad.Tela;
-import com.tallerwebi.dominio.entidad.TipoTela;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
-import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import com.tallerwebi.dominio.repositorio.RepositorioTela;
 import com.tallerwebi.dominio.servicio.ServicioStorageImagen;
 import com.tallerwebi.dominio.servicio.ServicioTela;
 import com.tallerwebi.presentacion.dto.DatosTela;
 import com.tallerwebi.presentacion.dto.MisTelas;
 import io.imagekit.sdk.models.results.Result;
-import javassist.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service("servicioTela")
@@ -127,6 +122,15 @@ public class ServicioTelaImpl implements ServicioTela {
     @Override
     public List<Tela> buscarTelasDePrendaPorIdPrenda(Long prendaId) {
         return repositorioTela.buscarTelasDePrendaPorIdPrenda(prendaId);
+    }
+
+    @Override
+    public Tela buscarTelaDelUsuario(Long id, Usuario usuario) throws TelaNoEncontrada {
+        Tela tela = repositorioTela.buscarTelasDelUsuario(id, usuario);
+        if (tela == null){
+            throw new TelaNoEncontrada();
+        }
+        return tela;
     }
 
     /*
