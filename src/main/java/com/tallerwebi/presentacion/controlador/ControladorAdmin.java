@@ -1,17 +1,12 @@
 package com.tallerwebi.presentacion.controlador;
 
-import com.tallerwebi.dominio.ServicioStorageImagenImpl;
-import com.tallerwebi.dominio.entidad.Talle;
-import com.tallerwebi.dominio.entidad.Tela;
-import com.tallerwebi.dominio.entidad.TipoTela;
+import com.tallerwebi.dominio.entidad.*;
+import com.tallerwebi.dominio.servicio.ServicioPedido;
 import com.tallerwebi.dominio.servicio.ServicioTalle;
 import com.tallerwebi.dominio.servicio.ServicioTela;
+import com.tallerwebi.presentacion.dto.DatosModificarPedido;
 import com.tallerwebi.presentacion.dto.DatosTalle;
 import com.tallerwebi.presentacion.dto.DatosTela;
-import io.imagekit.sdk.ImageKit;
-import io.imagekit.sdk.config.Configuration;
-import io.imagekit.sdk.models.FileCreateRequest;
-import io.imagekit.sdk.models.results.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -21,9 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -35,7 +28,7 @@ public class ControladorAdmin {
     @Autowired
     private ServicioTalle servicioTalle;
     @Autowired
-    private ServicioStorageImagenImpl servicioStorageImagen;
+    private ServicioPedido servicioPedido;
 
     @GetMapping("/dashboard")
     public ModelAndView irAlDashboard(HttpServletRequest request) {
@@ -153,6 +146,53 @@ public class ControladorAdmin {
         }
 
         return new ModelAndView("redirect:/admin/listar-talles");
+    }
+
+    // Pedidos (listado y modificacion de estado)
+    @GetMapping("/pedidos-solicitados")
+    public ModelAndView pedidosSolicitados() {
+        ModelMap model = new ModelMap();
+        List<Pedido> pedidos = servicioPedido.listarPedidos();
+
+        model.put("pedidos", pedidos);
+        model.put("mensajeSinPedidos", "No hay pedidos solicitados");
+
+        return new ModelAndView("pedidos-solicitados", model);
+    }
+
+    @GetMapping("/pedido/{id}")
+    public ModelAndView verDetallePedido(@PathVariable() Long id) {
+        ModelMap model = new ModelMap();
+        Pedido pedido = servicioPedido.obtenerPedido(id);
+
+        model.put("estados", Estado.values());
+        model.put("pedido", pedido);
+
+        return new ModelAndView("editar-pedido", model);
+    }
+
+    @PostMapping("/pedido/{id}")
+    public ModelAndView cambiarEstadoPedido(@PathVariable() Long id,
+                                            DatosModificarPedido datosModificarPedido,
+                                            RedirectAttributes redirectAttributes) {
+
+        try {
+            Estado nuevoEstado = Arrays.stream(Estado.values())
+                    .filter(estado -> estado.name().equals(datosModificarPedido.getEstado().name()))
+                    .findAny()
+                    .orElseThrow(() -> new IllegalArgumentException("Estado no encontrado"));
+
+            if (servicioPedido.cambiarEstadoPedido(id, nuevoEstado)) {
+                redirectAttributes.addFlashAttribute("mensaje", "Ahora el pedido " + id + " esta en estado " + nuevoEstado.getDescripcion());
+            } else {
+                redirectAttributes.addFlashAttribute("mensajeAdvertencia", "El estado del pedido ya no puede modificarse");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("mensajeError", "No se pudo cambiar el estado del pedido");
+        }
+
+
+        return new ModelAndView("redirect:/admin/pedidos-solicitados");
     }
 
 }

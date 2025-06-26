@@ -32,6 +32,23 @@ public class RepositorioPedidoImpl implements RepositorioPedido {
     }
 
     @Override
+    public List<Pedido> listarPedidos() {
+        String hql = "From Pedido";
+        return this.sessionFactory.getCurrentSession().createQuery(hql).getResultList();
+    }
+
+    @Override
+    public Pedido obtenerPedido(Long id) {
+        return this.sessionFactory.getCurrentSession().get(Pedido.class, id);
+    }
+
+    @Override
+    public void cambiarEstadoPedido(Pedido pedido, Estado nuevoEstado) {
+        pedido.setEstado(nuevoEstado);
+        this.sessionFactory.getCurrentSession().update(pedido);
+    }
+
+    @Override
     public Boolean eliminarPedido(Long idPedido) {
         Transaction tx = sessionFactory.getCurrentSession().beginTransaction();
 
@@ -78,6 +95,23 @@ public class RepositorioPedidoImpl implements RepositorioPedido {
         tx.commit();
         return true;
     }*/
+
+    @Override
+    public List<Pedido> listarPedidos() {
+        String hql = "From Pedido";
+        return this.sessionFactory.getCurrentSession().createQuery(hql).getResultList();
+    }
+
+    @Override
+    public Pedido obtenerPedido(Long id) {
+        return this.sessionFactory.getCurrentSession().get(Pedido.class, id);
+    }
+
+    @Override
+    public void cambiarEstadoPedido(Pedido pedido, Estado nuevoEstado) {
+        pedido.setEstado(nuevoEstado);
+        this.sessionFactory.getCurrentSession().update(pedido);
+    }
 
     @Override
     public List<Pedido> listarPedidosDelUsuario(Long idUsuario) {

@@ -1,9 +1,6 @@
 package com.tallerwebi.presentacion.controlador;
 
-import com.tallerwebi.dominio.entidad.Archivo;
-import com.tallerwebi.dominio.entidad.Pedido;
-import com.tallerwebi.dominio.entidad.Producto;
-import com.tallerwebi.dominio.entidad.Usuario;
+import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
 import com.tallerwebi.dominio.servicio.ServicioProducto;
 import com.tallerwebi.dominio.servicio.ServicioUsuario;
@@ -74,7 +71,7 @@ public class ControladorPedido {
 
     @RequestMapping(value = "/pagar-pedido", method = RequestMethod.POST)
     public ModelAndView pagarPedidoPendiente(@RequestParam Long pedidoId){
-        servicioPedido.cambiarEstadoPedido(pedidoId);
+        servicioPedido.cambiarEstadoPedido(pedidoId, Estado.EN_ESPERA);
         return new ModelAndView("historial-pedidos");
     }
 

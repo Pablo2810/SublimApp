@@ -60,6 +60,12 @@ public class RepositorioTelaImpl implements RepositorioTela {
     }
 
     @Override
+    public List<Tela> listarTelasDeFabrica() {
+        String hql = "FROM Tela t WHERE t.id NOT IN (SELECT tu.id FROM TelaUsuario tu)";
+        return sessionFactory.getCurrentSession().createQuery(hql, Tela.class).getResultList();
+    }
+
+    @Override
     public Tela buscarTelasDelUsuario(Long id, Usuario usuario) {
         return (TelaUsuario) sessionFactory.getCurrentSession()
                 .createCriteria(TelaUsuario.class)
@@ -67,4 +73,16 @@ public class RepositorioTelaImpl implements RepositorioTela {
                 .add(Restrictions.eq("usuario", usuario))
                 .uniqueResult();
     }
+
+    /*
+    @Override
+    public Tela buscarTelaPorId(Long id, Usuario usuario) {
+        return (TelaUsuario) sessionFactory.getCurrentSession()
+                .createCriteria(TelaUsuario.class)
+                .add(Restrictions.eq("id", id))
+                .add(Restrictions.eq("usuario", usuario))
+                .uniqueResult();
+    }
+    */
+
 }
