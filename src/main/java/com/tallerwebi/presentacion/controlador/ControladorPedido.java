@@ -75,7 +75,7 @@ public class ControladorPedido {
         return new ModelAndView("historial-pedidos");
     }
 
-    /*@RequestMapping(value = "/historial-pedidos")
+    @RequestMapping(value = "/historial-pedidos")
     public ModelAndView historialPedidos(HttpServletRequest request) {
         ModelMap model = new ModelMap();
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
@@ -85,5 +85,5 @@ public class ControladorPedido {
         model.put("pedidos", pedidos);
 
         return new ModelAndView("historial-pedidos", model);
-    }*/
+    }
 }
