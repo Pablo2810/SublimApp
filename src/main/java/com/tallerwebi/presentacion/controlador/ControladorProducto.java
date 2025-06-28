@@ -92,30 +92,4 @@ public class ControladorProducto {
         model.put("pedido", pedido);
         return new ModelAndView("detalle-pedido", model);
     }
-    /*
-    @RequestMapping(path = "/personalizar", method = RequestMethod.POST)
-    public ModelAndView generarProducto(@ModelAttribute("datosProducto") DatosProducto datosProducto,
-                                        @RequestParam("file") MultipartFile file) throws IOException {
-        ModelMap model = new ModelMap();
-
-        if (file == null || file.isEmpty()) {
-            model.put("error", "Debe subir un archivo");
-            return new ModelAndView("personalizar", model);
-        }
-
-        if (!Objects.equals(file.getContentType(), "image/jpeg")) {
-            model.put("error", "Ingrese un archivo válido (.JPG o .JPEG)");
-            return new ModelAndView("personalizar", model);
-        }
-
-        if (datosProducto.getCantidad() == null || datosProducto.getCantidad() < 1) {
-            model.put("error", "Ingrese la cantidad de copias");
-            return new ModelAndView("personalizar", model);
-        }
-
-        Archivo archivo = servicioArchivo.registrarArchivo(datosProducto.generarNombre(), file);
-        model.put("archivo", archivo);
-
-        return new ModelAndView("personalizar", model);
-    }*/
 }

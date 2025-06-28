@@ -9,7 +9,7 @@ ENV MYSQL_PASSWORD=user
 
 # Copia cualquier script SQL que desees ejecutar en la inicialización
 #COPY ./init.sql /docker-entrypoint-initdb.d/
-COPY src/resources/data.sql /docker-entrypoint-initdb.d/data.sql
+#COPY src/resources/data.sql /docker-entrypoint-initdb.d/data.sql
 
 # Expone el puerto 3306
 EXPOSE 3306
