@@ -47,13 +47,37 @@ INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES('Negro', 'im
 
 INSERT INTO TelaUsuario (id, fk_usuario) VALUES (3, 2);
 */
+-- SET
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('amarillo', 'img/TELA_13.jpg', 100.0, 15000.0, 'SET');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('amarillo oscuro', 'img/TELA_14.jpg', 100.0, 15000.0, 'SET');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('rosa', 'img/TELA_15.jpg', 100.0, 15000.0, 'SET');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('verde agua', 'img/TELA_16.jpg', 100.0, 15000.0, 'SET');
+
+-- NEOPRENO
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('lila', 'img/TELA_17.jpg', 100.0, 18000.0, 'NEOPRENO');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('rosa', 'img/TELA_18.jpg', 100.0, 18000.0, 'NEOPRENO');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('marron', 'img/TELA_19.jpg', 100.0, 18000.0, 'NEOPRENO');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('rosa oscuro', 'img/TELA_20.jpg', 100.0, 18000.0, 'NEOPRENO');
+
+-- POLIESTER
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('celes', 'img/TELA_21.jpg', 100.0, 20000.0, 'POLIESTER');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('beige', 'img/TELA_22.jpg', 100.0, 20000.0, 'POLIESTER');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('marron', 'img/TELA_23.jpg', 100.0, 20000.0, 'POLIESTER');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('blanco', 'img/TELA_24.jpg', 100.0, 20000.0, 'POLIESTER');
+
 
 -- Telas del usuario (hereda de Tela: misma ID)
 INSERT INTO TelaUsuario(id, fk_usuario) VALUES (3, 2);
 
 -- Prendas
+INSERT INTO Prenda(id, descripcion, precioBase) VALUES (1, 'Camiseta', 7000.0);
+INSERT INTO Prenda(id, descripcion, precioBase) VALUES (2, 'Short', 5500.0);
+
+-- Prendas
+/*
 INSERT INTO Prenda(descripcion, precioBase) VALUES ('Camiseta', 7000.0);
 INSERT INTO Prenda(descripcion, precioBase) VALUES ('Short', 5500.0);
+*/
 
 -- Asociación ManyToMany entre Prenda y Tela
 INSERT INTO prenda_tela (prendas_id, telas_id) VALUES (1, 1);
@@ -62,9 +86,17 @@ INSERT INTO prenda_tela (prendas_id, telas_id) VALUES (2, 2);
 INSERT INTO prenda_tela (prendas_id, telas_id) VALUES (2, 3);
 
 -- Talles relacionados a Prenda
+/*
 INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('S', 69, 1);
 INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('L', 74, 1);
 INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('2XL', 79, 1);
 INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('M', 46, 2);
 INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('XL', 50, 2);
+*/
 
+-- Talles relacionados a Prenda
+INSERT INTO Talle(id, descripcion, metrosTotales, prenda) VALUES (1, 'S', 69, 1);
+INSERT INTO Talle(id, descripcion, metrosTotales, prenda) VALUES (2, 'L', 74, 1);
+INSERT INTO Talle(id, descripcion, metrosTotales, prenda) VALUES (3, '2XL', 79, 1);
+INSERT INTO Talle(id, descripcion, metrosTotales, prenda) VALUES (4, 'M', 46, 2);
+INSERT INTO Talle(id, descripcion, metrosTotales, prenda) VALUES (5, 'XL', 50, 2);
