@@ -74,6 +74,16 @@ public class RepositorioTelaImpl implements RepositorioTela {
                 .uniqueResult();
     }
 
+    @Override
+    public List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle) {
+        return sessionFactory.getCurrentSession()
+                .createCriteria(Tela.class)
+                .createAlias("prendas", "p")
+                .add(Restrictions.eq("p.id", prendaId))
+                .add(Restrictions.ge("metros", metrosTalle))
+                .list();
+    }
+
     /*
     @Override
     public Tela buscarTelaPorId(Long id, Usuario usuario) {

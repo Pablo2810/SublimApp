@@ -26,5 +26,7 @@ public interface ServicioTela {
 
 
     Tela buscarTelaDelUsuario(Long id, Usuario usuario) throws TelaNoEncontrada;
+
+    List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle);
     // Tela buscarTelaPorId(Long telaId, Usuario usuario) throws TelaNoEncontrada;
 }

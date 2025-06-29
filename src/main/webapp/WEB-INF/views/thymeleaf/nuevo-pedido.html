@@ -149,16 +149,15 @@
                     const talle = await responseTalle.json();
                     const metrosTalle = talle.metrosTotales;
 
-                    const responseTelas = await fetch('/spring/telas-por-prenda/' + prendaSelect.value);
+                    const url = `/spring/telas-por-prenda/${prendaSelect.value}?metrosTalle=${metrosTalle}`;
+                    const responseTelas = await fetch(url);
                     const telas = await responseTelas.json();
 
                     telas.forEach(tela => {
-                        if (metrosTalle <= tela.metros) {
-                            const option = document.createElement('option');
-                            option.value = tela.id;
-                            option.textContent = tela.tipoTela + ' - ' + tela.color;
-                            telaSelect.appendChild(option);
-                        }
+                        const option = document.createElement('option');
+                        option.value = tela.id;
+                        option.textContent = tela.tipoTela + ' - ' + tela.color;
+                        telaSelect.appendChild(option);
                     });
                 } catch (error) {
                     console.error('Error:', error);

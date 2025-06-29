@@ -138,6 +138,11 @@ public class ServicioTelaImpl implements ServicioTela {
         return tela;
     }
 
+    @Override
+    public List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle) {
+        return repositorioTela.buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(prendaId, metrosTalle);
+    }
+
 
     /*
     @Override

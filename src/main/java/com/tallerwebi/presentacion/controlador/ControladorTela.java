@@ -279,10 +279,13 @@ public class ControladorTela {
 
 
     /*********************************************/
-    @GetMapping("/telas-por-prenda/{prendaId}")
+    @RequestMapping(value = "/telas-por-prenda/{prendaId}", method = RequestMethod.GET)
     @ResponseBody
-    public List<DatosTela> obtenerTelasPorPrenda(@PathVariable("prendaId") Long prendaId){
-        List<Tela> telas = servicioTela.buscarTelasDePrendaPorIdPrenda(prendaId);
+    public List<DatosTela> obtenerTelasPorPrenda(
+            @PathVariable("prendaId") Long prendaId,
+            @RequestParam("metrosTalle") Double metrosTalle) {
+        //List<Tela> telas = servicioTela.buscarTelasDePrendaPorIdPrenda(prendaId);
+        List<Tela> telas = servicioTela.buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(prendaId, metrosTalle);
         return telas.stream()
                 .map(t -> new DatosTela(t.getId(), t.getTipoTela(), t.getMetros(), t.getColor()))
                 .collect(Collectors.toList()); // cambié t.getTipoTela().name() a t.getTipoTela()
