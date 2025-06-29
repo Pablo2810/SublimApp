@@ -66,15 +66,13 @@
                         <option value="" disabled selected>Seleccione una tela</option>
                     </select>
                 </div>
-                <div class="w-50 p-2 input-group">
-                    <label class="text-dark input-group-text">Cantidad</label>
+                <div class="w-50 p-2 form-floating">
+                    <label class="text-dark">Cantidad de camisetas:</label>
                     <input th:field="*{cantidad}"
-                           name="cantidad"
-                           class="form-control"
-                           id="cantidad"
                            type="number"
-                           min="1"
-                           required>
+                           class="form-control"
+                           id="cantidadCopias"
+                           name="cantidadCopias">
                 </div>
             </div>
             <div class="w-100 p-2 mb-4">
@@ -104,14 +102,12 @@
     document.addEventListener("DOMContentLoaded", function () {
         const prendaSelect = document.getElementById('prendaSelect');
         const talleSelect = document.getElementById('talleSelect');
-        const telaSelect = document.getElementById('telaSelect');
 
         prendaSelect.addEventListener('change', function () {
             const prendaId = this.value;
 
             // Limpiar talles anteriores
             talleSelect.innerHTML = '<option value="" disabled selected>Seleccione un talle</option>';
-            telaSelect.innerHTML = '<option value="" disabled selected>Seleccione una tela</option>';
 
             if (prendaId) {
                 fetch('/spring/talles-por-prenda/' + prendaId) // 👈 Acordate del contextPath "/spring"
@@ -134,38 +130,29 @@
                     });
             }
         });
-
-        talleSelect.addEventListener('change', async function () {
-            const talleId = this.value;
-
-            // Limpiar telas anteriores
-            telaSelect.innerHTML = '<option value="" selected>Seleccione una tela</option>';
-
-            if (talleId) {
-                try {
-                    const responseTalle = await fetch('/spring/talle-por-id/' + talleId);
-                    if (!responseTalle.ok) throw new Error("Error al cargar el talle");
-
-                    const talle = await responseTalle.json();
-                    const metrosTalle = talle.metrosTotales;
-
-                    const url = `/spring/telas-por-prenda/${prendaSelect.value}?metrosTalle=${metrosTalle}`;
-                    const responseTelas = await fetch(url);
-                    const telas = await responseTelas.json();
-
-                    telas.forEach(tela => {
-                        const option = document.createElement('option');
-                        option.value = tela.id;
-                        option.textContent = tela.tipoTela + ' - ' + tela.color;
-                        telaSelect.appendChild(option);
-                    });
-                } catch (error) {
-                    console.error('Error:', error);
-                }
-            }
-        });
     });
 
+    document.getElementById('prendaSelect').addEventListener('change', function () {
+        const prendaId = this.value;
+
+        // Limpiar select de telas
+        const telaSelect = document.getElementById('telaSelect');
+        telaSelect.innerHTML = '<option value="" disabled selected>Seleccione una tela</option>';
+
+        if (prendaId) {
+            fetch('/spring/telas-por-prenda/' + prendaId)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(tela => {
+                        const option = document.createElement('option');
+                        option.value = tela.id;
+                        option.textContent = tela.tipoTela;
+                        telaSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error cargando telas:', error));
+        }
+    });
 </script>
 </body>
 </html>

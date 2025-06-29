@@ -7,6 +7,7 @@ import com.tallerwebi.dominio.servicio.*;
 import com.tallerwebi.presentacion.controlador.ControladorLogin;
 import com.tallerwebi.presentacion.controlador.ControladorProducto;
 import com.tallerwebi.presentacion.dto.DatosLogin;
+import com.tallerwebi.presentacion.dto.DatosPrenda;
 import com.tallerwebi.presentacion.dto.DatosProducto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,14 +57,19 @@ public class ControladorProductoTest {
     void queSeMuestreElFormularioDeProducto() throws Exception {
         Prenda prenda = new Prenda();
         prenda.setId(1L);
+        prenda.setDescripcion("Remera");
+        prenda.setPrecioBase(1000.0);
+
         List<Prenda> prendas = List.of(prenda);
 
         when(servicioPrendaMock.obtenerTodas()).thenReturn(prendas);
 
         ModelAndView modelAndView = controladorProducto.mostrarFormularioDeProducto(redirectAttrs);
+        List<DatosPrenda> listaDatosPrenda = (List<DatosPrenda>) modelAndView.getModel().get("prendas");
 
         assertEquals("nuevo-pedido", modelAndView.getViewName());
-        assertEquals(prendas, modelAndView.getModel().get("prendas"));
+        assertEquals(1, listaDatosPrenda.size());
+        assertEquals("Remera", listaDatosPrenda.get(0).getDescripcion());
     }
 
     @Test

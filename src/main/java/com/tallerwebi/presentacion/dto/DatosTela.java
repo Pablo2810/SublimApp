@@ -18,6 +18,13 @@ public class DatosTela {
         this.tipoTela = tipoTela;
     }
 
+    public DatosTela(Long id, TipoTela tipoTela, Double metros, String color) {
+        this.id = id;
+        this.tipoTela = tipoTela;
+        this.metros = metros;
+        this.color = color;
+    }
+
     public DatosTela(TipoTela tipoTela, Double metros, String color, Double precio, String imagenUrl, String descripcion) {
         this.tipoTela = tipoTela;
         this.metros = metros;

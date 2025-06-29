@@ -26,4 +26,11 @@ public class ControladorTalle {
                 .map(t -> new DatosTalle(t.getId(), t.getDescripcion()))
                 .collect(Collectors.toList());
     }
+
+    @GetMapping("/talle-por-id/{talleId}")
+    @ResponseBody
+    public DatosTalle obtenerTallePorId(@PathVariable("talleId") Long talleId) {
+        Talle talle = servicioTalle.obtenerTalle(talleId);
+        return new DatosTalle(talle.getId(), talle.getDescripcion(), talle.getMetrosTotales());
+    }
 }

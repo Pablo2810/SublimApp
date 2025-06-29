@@ -3,6 +3,19 @@ package com.tallerwebi.presentacion.dto;
 import com.tallerwebi.dominio.entidad.TipoTela;
 
 public class MisTelas {
+    private Long id;
+    private TipoTela tipoTela;
+    private String color;
+    private Double precio;
+    private String imagenUrl;
+    private Double metros;
+
+    public MisTelas(TipoTela tipoTela, String color, Double precio, String imagenUrl) {
+        this.tipoTela = tipoTela;
+        this.color = color;
+        this.precio = precio;
+        this.imagenUrl = imagenUrl;
+    }
 
     public MisTelas(Long id, TipoTela tipoTela, String color, Double precio, String imagenUrl) {
         this.id = id;
@@ -11,13 +24,6 @@ public class MisTelas {
         this.precio = precio;
         this.imagenUrl = imagenUrl;
     }
-
-    private Long id;
-    private TipoTela tipoTela;
-    private String color;
-    private Double precio;
-    private String imagenUrl;
-    private Double metros;
 
     // Getters y setters
     public Long getId() { return id; }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -8,8 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
-    <!-- Bootstrap -->
+    <!-- Bootstrap core CSS -->
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <!-- Bootstrap core CSS -->
+    <script rel="stylesheet" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.js}"></script>
     <!-- Custom styles -->
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
     <link rel="stylesheet" th:href="@{/css/modoOscuro.css}">
@@ -23,26 +25,32 @@
 <div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
 <main>
     <section class="container my-4">
-        <h2 class="text-center mb-4">Historial de Pedidos</h2>
-        <table th:if="${!pedidos.isEmpty()}" class="table">
+        <h2 class="text-center mb-4">Solicitudes de pedidos</h2>
+        <table th:if="${!pedidos.isEmpty()}" class="table table-light table-striped">
             <thead>
             <tr>
-                <th>Nro pedido</th>
-                <th>Cantidad de copias</th>
-                <th>Metros</th>
-                <th>Costo del servicio</th>
-                <th>Fecha</th>
+                <th>#</th>
+                <th>Email usuario</th>
+                <th>Solicitado el</th>
+                <th>Fecha entrega</th>
                 <th>Estado</th>
+                <th>Monto final</th>
+                <th>Monto total</th>
+                <th>Acciones</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="pedido : ${pedidos}">
                 <td class="fw-bold" th:text="${pedido.id}"></td>
-                <td th:text="${pedido.cantCopias}"></td>
-                <td th:text="${pedido.metrosTotales}"></td>
-                <td th:text="${pedido.costoServicio}"></td>
+                <td th:text="${pedido.usuarioPedido.email}"></td>
                 <td th:text="${pedido.fechaCreacion}"></td>
-                <td th:class="${pedido.estado.claseCss}" th:text="${pedido.estado.descripcion}"></td>
+                <td th:text="${pedido.fechaEntrega}"></td>
+                <td th:text="${pedido.estado}" th:class="${pedido.estado.claseCss}"></td>
+                <td th:text="'$' + ${pedido.montoFinal}"></td>
+                <td th:text="'$' + ${pedido.montoTotal}"></td>
+                <td>
+                    <a th:href="@{/admin/pedido/{id}(id=${pedido.id})}" class="btn btn-info">Ver detalle</a>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -50,6 +58,7 @@
     </section>
 </main>
 
+<div th:replace="templates/toasts :: toasts"></div>
 <footer th:insert="templates/footer :: footer"></footer>
 <script th:src="@{/js/main.js}"></script>
 </body>

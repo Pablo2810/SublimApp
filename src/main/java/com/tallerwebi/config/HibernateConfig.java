@@ -24,8 +24,15 @@ public class HibernateConfig {
         //dataSource.setUrl("jdbc:mysql://mysql:3306/sublimapp_db?useSSL=false&serverTimezone=UTC");
         //dataSource.setUsername("sa");
         //dataSource.setPassword("");
+        dataSource.setUsername("user");
+        dataSource.setPassword("user");
+
+        /*
+        dataSource.setUrl("jdbc:mysql://localhost:3306/sublimapp_db?useSSL=false&serverTimezone=UTC");
         dataSource.setUsername("root");
-        dataSource.setPassword("HattoriHanzo123");
+        dataSource.setPassword("root_password_2025");
+        */
+
         return dataSource;
     }
 

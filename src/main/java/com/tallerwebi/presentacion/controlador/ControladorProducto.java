@@ -4,7 +4,7 @@ import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.excepcion.ArchivoNoValido;
 import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
 import com.tallerwebi.dominio.servicio.*;
-import com.tallerwebi.presentacion.dto.DatosPedido;
+import com.tallerwebi.presentacion.dto.DatosPrenda;
 import com.tallerwebi.presentacion.dto.DatosProducto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,16 +12,14 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 @Controller
 public class ControladorProducto {
@@ -52,9 +50,13 @@ public class ControladorProducto {
         ModelMap model = new ModelMap();
 
         try {
-            List<Prenda> prendas = servicioPrenda.obtenerTodas();
+            List<Prenda> listPrendas = servicioPrenda.obtenerTodas();
 
-            if (prendas.isEmpty()) throw new TelaNoEncontrada();
+            if (listPrendas.isEmpty()) throw new TelaNoEncontrada();
+
+            List<DatosPrenda> prendas = listPrendas.stream()
+                    .map(prenda -> new DatosPrenda(prenda.getId(), prenda.getDescripcion(), prenda.getPrecioBase()))
+                    .collect(Collectors.toList());
 
             model.put("producto", new DatosProducto());
             model.put("prendas", prendas);

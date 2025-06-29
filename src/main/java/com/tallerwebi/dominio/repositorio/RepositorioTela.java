@@ -18,4 +18,6 @@ public interface RepositorioTela {
 
 
     Tela buscarTelasDelUsuario(Long id, Usuario usuario);
+
+    List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle);
 }

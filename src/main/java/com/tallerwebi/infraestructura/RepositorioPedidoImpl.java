@@ -115,7 +115,10 @@ public class RepositorioPedidoImpl implements RepositorioPedido {
 
     @Override
     public List<Pedido> listarPedidosDelUsuario(Long idUsuario) {
-        return null;
+        return (List<Pedido>) sessionFactory.getCurrentSession()
+                .createQuery("FROM Pedido WHERE usuarioPedido.id = :usuarioBuscado")
+                .setParameter("usuarioBuscado", idUsuario)
+                .getResultList();
     }
 
     @Override

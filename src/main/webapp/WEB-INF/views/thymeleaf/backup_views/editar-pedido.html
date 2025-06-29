@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Taller Web I</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <!-- Custom styles -->
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/modoOscuro.css}">
+
+    <style>
+        body {
+            font-family: "Lexend Deca", sans-serif;
+        }
+    </style>
+</head>
+
+<body class="p-0 m-0">
+<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center"
+     th:insert="templates/nav :: nav"></div>
+<main class="container py-5">
+
+    <div class="container w-75">
+        <h2 class="mb-4 text-center">Detalle pedido</h2>
+
+        <form th:action="@{/admin/pedido/{id}(id=${pedido.id})}" th:object="${pedido}" method="post" enctype="multipart/form-data"
+              class="border p-4 rounded bg-light">
+
+            <div class="mb-3">
+                <div class="row text-dark">
+                    <div class="col-4">
+                        <label for="codigo" class="form-label text-dark">Codigo detalle</label>
+                        <input type="text" th:field="*{codigoPedido}" disabled class="form-control" id="codigo">
+                    </div>
+                    <div class="col-2">
+                        <label for="fecha-solicitud" class="form-label text-dark">Fecha solicitud</label>
+                        <input type="text" th:field="*{fechaCreacion}" disabled class="form-control" id="fecha-solicitud">
+                    </div>
+                    <div class="col-2">
+                        <label for="fecha-entrega" class="form-label text-dark">Fecha entrega</label>
+                        <input type="text" th:field="*{fechaEntrega}" disabled class="form-control" id="fecha-entrega">
+                    </div>
+                    <div class="col-4">
+                        <div class="row">
+                            <label class="form-label text-dark text-end">Monto total</label>
+                            <b class="text-end" th:text="'$' + ${pedido.montoTotal}"></b>
+                        </div>
+                        <div class="row">
+                            <label class="form-label text-dark text-end">Monto con descuentos</label>
+                            <b class="text-end" th:text="'$' + ${pedido.montoFinal}"></b>
+                        </div>
+                    </div>
+                </div>
+                <div class="row text-dark">
+                    <div class="col-3">
+                        <h4>Datos usuario</h4>
+                        <b>Email:</b> <span th:text="${pedido.usuarioPedido.email}"></span>
+                        <div th:if="${pedido.usuarioPedido.nombre != null}">
+                            <b>Nombre:</b> <span th:text="${pedido.usuarioPedido.nombre}"></span>
+                        </div>
+                    </div>
+                    <div class="col-5">
+                        <h3>Productos</h3>
+                        <ul class="list-group">
+                            <li class="list-group-item" th:each="producto : ${productos}">
+                                <div class="d-flex flex-column">
+                                    <div class="d-flex justify-content-between border-bottom">
+                                        <span th:text="${producto.prenda.descripcion}">Remera</span>
+                                        <b th:text="'x' + ${producto.cantidad}"></b>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Precio</span>
+                                        <b th:text="'$' + ${producto.precio}"></b>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-4">
+                        <label for="estado" class="form-label text-dark">Estado</label>
+                        <select th:field="*{estado}" id="estado" class="form-select">
+                            <option th:each="estado : ${estados}" th:value="${estado}" th:text="${estado.descripcion}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success">Aceptar</button>
+            <a th:href="@{/admin/listar-telas}" class="btn btn-secondary ms-2">Volver</a>
+
+        </form>
+    </div>
+</main>
+
+<footer th:insert="templates/footer :: footer"></footer>
+<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>
