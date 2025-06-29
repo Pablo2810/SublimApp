@@ -73,7 +73,7 @@ public class ControladorTela {
                              RedirectAttributes redirectAttributes) {
         try {
             TipoTela tipo = TipoTela.valueOf(tipoTela.toUpperCase());
-            MisTelas nueva = new MisTelas(generarId(), tipo, color, 0.0, imagenUrl);
+            MisTelas nueva = new MisTelas(tipo, color, 0.0, imagenUrl);
             telasDelUsuario.add(nueva);
             redirectAttributes.addFlashAttribute("mensaje", "Tela guardada con éxito");
         } catch (IllegalArgumentException e) {
@@ -273,9 +273,9 @@ public class ControladorTela {
     }
 
     // 10. Utilidad para generar ID
-    private Long generarId() {
-        return (long) (telasDelUsuario.size() + 1000);
-    }
+    //private Long generarId() {
+    //    return (long) (telasDelUsuario.size() + 1000);
+    //}
 
 
     /*********************************************/
@@ -284,7 +284,7 @@ public class ControladorTela {
     public List<DatosTela> obtenerTelasPorPrenda(@PathVariable("prendaId") Long prendaId){
         List<Tela> telas = servicioTela.buscarTelasDePrendaPorIdPrenda(prendaId);
         return telas.stream()
-                .map(t -> new DatosTela(t.getId(), t.getTipoTela()))
+                .map(t -> new DatosTela(t.getId(), t.getTipoTela(), t.getMetros(), t.getColor()))
                 .collect(Collectors.toList()); // cambié t.getTipoTela().name() a t.getTipoTela()
     }
 

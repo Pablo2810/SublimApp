@@ -21,11 +21,12 @@ public class ServicioProductoImpl implements ServicioProducto {
     public Producto registrarProducto(Integer cantidad, Archivo archivo, Prenda prenda, Talle talle, Tela tela) {
         Producto producto = new Producto();
         producto.setCantidad(cantidad);
-        /*producto.setPrecio(); //CALCULAR PRECIO EN BASE A LA PRENDA Y LA CANTIDAD*/
         producto.setArchivo(archivo);
         producto.setPrenda(prenda);
         producto.setTalle(talle);
         producto.setTela(tela);
+        Double precio = prenda.getPrecioBase() + (talle.getMetrosTotales() * tela.getPrecio());
+        producto.setPrecio(precio);
         return repositorioProducto.guardarProducto(producto);
     }
 

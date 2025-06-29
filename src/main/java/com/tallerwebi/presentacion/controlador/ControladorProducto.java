@@ -5,6 +5,7 @@ import com.tallerwebi.dominio.excepcion.ArchivoNoValido;
 import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
 import com.tallerwebi.dominio.servicio.*;
 import com.tallerwebi.presentacion.dto.DatosPedido;
+import com.tallerwebi.presentacion.dto.DatosPrenda;
 import com.tallerwebi.presentacion.dto.DatosProducto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Controller
 public class ControladorProducto {
@@ -48,7 +50,10 @@ public class ControladorProducto {
     @RequestMapping(path = "/nuevo-pedido", method = RequestMethod.GET)
     public ModelAndView mostrarFormularioDeProducto(){
         ModelMap model = new ModelMap();
-        List<Prenda> prendas = servicioPrenda.obtenerTodas();
+        List<Prenda> listPrendas = servicioPrenda.obtenerTodas();
+        List<DatosPrenda> prendas = listPrendas.stream()
+                .map(prenda -> new DatosPrenda(prenda.getId(), prenda.getDescripcion(), prenda.getPrecioBase()))
+                .collect(Collectors.toList());
         model.put("producto", new DatosProducto());
         model.put("prendas", prendas);
         return new ModelAndView("nuevo-pedido", model);
@@ -62,16 +67,17 @@ public class ControladorProducto {
         ModelMap model = new ModelMap();
         Prenda prenda = servicioPrenda.buscarPrendaPorId(datosProducto.getPrendaId());
         Talle talle = servicioTalle.obtenerTalle(datosProducto.getTalleId()); // cambio buscarTallePorId por obtenerTalle
-        Tela tela = null;
-        try {
-            tela = servicioTela.buscarTelaDelUsuario(datosProducto.getTelaId(), usuario);
-        } catch (TelaNoEncontrada e) {
-            List<Prenda> prendas = servicioPrenda.obtenerTodas();
-            model.put("producto", new DatosProducto());
-            model.put("prendas", prendas);
-            model.put("error", "No tienes esta tela");
-            return new ModelAndView("nuevo-pedido", model);
-        }
+        Tela tela = servicioTela.obtenerTela(datosProducto.getTelaId());
+
+//        try {
+//            tela = servicioTela.buscarTelaDelUsuario(datosProducto.getTelaId(), usuario);
+//        } catch (TelaNoEncontrada e) {
+//            List<Prenda> prendas = servicioPrenda.obtenerTodas();
+//            model.put("producto", new DatosProducto());
+//            model.put("prendas", prendas);
+//            model.put("error", "No tienes esta tela");
+//            return new ModelAndView("nuevo-pedido", model);
+//        }
         Archivo archivo = null;
         try {
             archivo = servicioArchivo.registrarArchivo(datosProducto.getArchivo());
@@ -85,7 +91,7 @@ public class ControladorProducto {
 
         //Pedido PENDIENTE asociar al PRODUCTO NUEVO
         Producto producto = servicioProducto.registrarProducto(datosProducto.getCantidad(), archivo, prenda, talle, tela);
-        Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario);
+        Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario); // esto devuelve un pedido pendiente o crea uno nuevo si no existe
         pedido.getProductos().add(producto);
         servicioPedido.asociarProductoPedido(pedido);
 

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Taller Web I</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet" />
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
+    <!-- Custom styles -->
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/modoOscuro.css}" />
+    <style>
+        body {
+            font-family: "Lexend Deca", sans-serif;
+        }
+    </style>
+</head>
+<body class="p-0 m-0">
+<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
+
+<main role="main" class="container p-4">
+    <div class="w-75 container d-flex flex-column justify-content-center align-items-center mb-4">
+        <a th:href="@{/cargar-tela}" class="btn btn-outline-primary btn-lg w-50 fw-semibold text-center">
+            Registra y mira tus telas disponibles
+        </a>
+    </div>
+
+    <section>
+        <h2 class="p-5 mb-3 text-center fw-semibold text-primary">Explora nuestro Catálogo de Telas</h2>
+        <div class="row g-4">
+            <div class="col-md-4" th:each="tela : ${telas}">
+                <div class="card shadow h-100 border border-2 border-light rounded-0 p-2">
+                    <img th:src="@{${tela.imagenUrl}}"
+                         th:alt="'Imagen de tela ' + ${tela.tipoTela} + ' color ' + ${tela.color}"
+                         class="w-100"
+                         style="height: 300px; object-fit: cover;" />
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <div>
+                            <h5 class="card-title text-primary" th:text="${tela.tipoTela}">Tipo Tela</h5>
+                            <p class="card-text"><strong>Color:</strong> <span th:text="${tela.color}">Color</span></p>
+                            <p class="card-text"><strong>Precio por metro:</strong> $<span th:text="${tela.precio}">0.00</span></p>
+                        </div>
+                        <a th:href="@{'/detalle-tela-id/' + ${tela.id}}" class="btn btn-primary mt-3">Comprar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+
+
+<div th:replace="templates/toasts :: toasts"></div>
+<footer th:insert="templates/footer :: footer"></footer>
+
+<!-- Scripts -->
+<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>
+
+
+
+
