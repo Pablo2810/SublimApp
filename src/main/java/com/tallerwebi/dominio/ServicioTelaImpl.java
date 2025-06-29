@@ -2,7 +2,6 @@ package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.TelaUsuario;
-import com.tallerwebi.dominio.entidad.TipoTela;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
 import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
@@ -143,6 +142,15 @@ public class ServicioTelaImpl implements ServicioTela {
         return repositorioTela.buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(prendaId, metrosTalle);
     }
 
+    @Override
+    public void restarMetrosTela(Tela tela, Double metrosTotales) {
+        if (tela != null) {
+            tela.setMetros(tela.getMetros() - metrosTotales);
+            repositorioTela.crearOActualizarTela(tela);
+        } else {
+            throw new TelaNoEncontrada();
+        }
+    }
 
     /*
     @Override

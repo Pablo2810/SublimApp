@@ -2,9 +2,7 @@ package com.tallerwebi.presentacion.controlador;
 
 import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.excepcion.ArchivoNoValido;
-import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
 import com.tallerwebi.dominio.servicio.*;
-import com.tallerwebi.presentacion.dto.DatosPedido;
 import com.tallerwebi.presentacion.dto.DatosPrenda;
 import com.tallerwebi.presentacion.dto.DatosProducto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +11,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -91,6 +85,7 @@ public class ControladorProducto {
 
         //Pedido PENDIENTE asociar al PRODUCTO NUEVO
         Producto producto = servicioProducto.registrarProducto(datosProducto.getCantidad(), archivo, prenda, talle, tela);
+        servicioTela.restarMetrosTela(tela, talle.getMetrosTotales());
         Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario); // esto devuelve un pedido pendiente o crea uno nuevo si no existe
         pedido.getProductos().add(producto);
         servicioPedido.asociarProductoPedido(pedido);
