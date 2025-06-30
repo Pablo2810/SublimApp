@@ -75,6 +75,8 @@ public class ControladorProducto {
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
         ModelMap model = new ModelMap();
 
+        if (usuario == null) return new ModelAndView("redirect:/login");
+
         Prenda prenda = null;
         Talle talle = null;
         Tela tela = null;
