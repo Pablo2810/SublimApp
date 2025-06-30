@@ -14,11 +14,13 @@
 
 <form th:action="@{/confirmar-pago}" method="post" class="card p-4 shadow-sm">
     <!-- Datos ocultos de la tela -->
+    <input type="hidden" name="idTela" th:value="${idTela}" />
     <input type="hidden" name="color" th:value="${color}" />
     <input type="hidden" name="precio" th:value="${precio}" />
     <input type="hidden" name="metros" th:value="${metros}" />
     <input type="hidden" name="tipoTela" th:value="${tipoTela}" />
     <input type="hidden" name="imagenUrl" th:value="${imagenUrl}" />
+
 
     <!-- Método de pago -->
     <div class="mb-3">

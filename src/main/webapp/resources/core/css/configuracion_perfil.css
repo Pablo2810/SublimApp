@@ -1,0 +1,85 @@
+/*================================*/
+/* CONFIGURACIÓN DE PERFIL        */
+/*================================*/
+
+.configuracion-perfil-page main h2 {
+    text-align: center;
+    color: var(--naranja);
+    margin-bottom: 2.5rem;
+}
+
+.configuracion-perfil-page section.text-center img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid var(--naranja);
+    box-shadow: 0 0 10px var(--naranja);
+}
+
+.configuracion-perfil-page form {
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.configuracion-perfil-page label {
+    color: var(--blanco);
+    font-weight: 600;
+}
+
+.configuracion-perfil-page input[type="text"],
+.configuracion-perfil-page input[type="email"],
+.configuracion-perfil-page input[type="tel"],
+.configuracion-perfil-page input[type="password"],
+.configuracion-perfil-page input[type="file"] {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--blanco);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.6rem;
+    border-radius: 8px;
+}
+
+.configuracion-perfil-page input::placeholder {
+    color: #ccc;
+}
+
+.configuracion-perfil-page .btn-primary {
+    background-color: var(--azul);
+    border: none;
+}
+
+.configuracion-perfil-page .btn-primary:hover {
+    background-color: var(--naranja);
+    box-shadow: 0 0 8px var(--naranja);
+}
+
+.configuracion-perfil-page .btn-secondary {
+    margin-top: 2rem;
+    background-color: transparent;
+    border: 1px solid var(--blanco);
+    color: var(--blanco);
+}
+
+.configuracion-perfil-page .btn-secondary:hover {
+    background-color: var(--blanco);
+    color: var(--azul-oscuro);
+}
+
+.config-img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid var(--naranja);
+    box-shadow: 0 0 10px var(--naranja);
+}
+
+
+/* Validaciones */
+.configuracion-perfil-page .invalid-feedback {
+    color: #ff8080;
+}
+
+

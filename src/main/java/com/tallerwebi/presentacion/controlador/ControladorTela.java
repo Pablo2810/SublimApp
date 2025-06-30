@@ -211,7 +211,7 @@ public class ControladorTela {
 
         // Intentar descontar stock y registrar la compra
         try {
-            Usuario usuario = (Usuario) session.getAttribute("usuario");
+            Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
             if (usuario == null) {
                 redirectAttributes.addFlashAttribute("mensajeError", "Debés iniciar sesión para realizar la compra.");
                 return "redirect:/login";

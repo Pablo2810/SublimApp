@@ -219,7 +219,7 @@ public class ControladorTelaTest {
         Model model = new ExtendedModelMap();
         HttpSession session = mock(HttpSession.class);
         Usuario usuario = new Usuario();
-        when(session.getAttribute("usuario")).thenReturn(usuario);
+        when(session.getAttribute("usuarioLogueado")).thenReturn(usuario);
 
         String resultado = controlador.confirmarPago(
                 "debito", "1111222233334444", "Carlos Soto", "2028-10", "789",
@@ -248,7 +248,7 @@ public class ControladorTelaTest {
         Model model = new ExtendedModelMap();
         HttpSession session = mock(HttpSession.class);
         Usuario usuario = new Usuario();
-        when(session.getAttribute("usuario")).thenReturn(usuario);
+        when(session.getAttribute("usuarioLogueado")).thenReturn(usuario);
 
         String resultado = controlador.confirmarPago(
                 "credito", "2222333344445555", "Laura Diaz", "2027-09", "321",
@@ -298,7 +298,7 @@ public class ControladorTelaTest {
         Model model = new ExtendedModelMap();
         HttpSession session = mock(HttpSession.class);
         Usuario usuario = new Usuario();
-        when(session.getAttribute("usuario")).thenReturn(usuario);
+        when(session.getAttribute("usuarioLogueado")).thenReturn(usuario);
 
         controlador.confirmarPago(
                 "credito", "4444333322221111", "Santiago Gil", "2029-11", "654",
@@ -323,7 +323,7 @@ public class ControladorTelaTest {
         Model model = new ExtendedModelMap();
         HttpSession session = mock(HttpSession.class);
         Usuario usuario = new Usuario();
-        when(session.getAttribute("usuario")).thenReturn(usuario);
+        when(session.getAttribute("usuarioLogueado")).thenReturn(usuario);
 
         controlador.confirmarPago(
                 "debito", "1111222233334444", "Luis Ramos", "2025-08", "111",

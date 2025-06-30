@@ -1,7 +1,6 @@
 package com.tallerwebi.presentacion.controlador;
 
 import com.tallerwebi.dominio.entidad.Pedido;
-import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
 import com.tallerwebi.dominio.servicio.ServicioStorageImagen;
@@ -16,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import java.util.List;
 
@@ -70,6 +70,11 @@ public class ControladorPerfilUsuario {
             return new ModelAndView("redirect:/login");
         }
 
+        if (!email.equals(usuario.getEmail()) && !servicioUsuario.emailDisponible(email)) {
+            return new ModelAndView("redirect:/configuracion-perfil?error=El correo ya está en uso.");
+        }
+
+
         usuario.setNombre(nombre);
         usuario.setEmail(email);
         usuario.setTelefono(telefono);
@@ -92,14 +97,28 @@ public class ControladorPerfilUsuario {
         return new ModelAndView("redirect:/perfil-usuario?exito=Datos actualizados correctamente.");
     }
 
-    @PostMapping("/perfil-usuario/eliminar")
-    public ModelAndView eliminarCuenta(HttpServletRequest request) {
+    @GetMapping("/configuracion-perfil")
+    public ModelAndView configuracionPerfil(HttpServletRequest request,
+                                            @RequestParam(required = false) String exito,
+                                            @RequestParam(required = false) String error) {
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
-        if (usuario != null) {
-            servicioUsuario.eliminarUsuario(usuario);
-            request.getSession().invalidate();
+        if (usuario == null) {
+            return new ModelAndView("redirect:/login");
         }
-        return new ModelAndView("redirect:/");
+
+        ModelMap model = new ModelMap();
+        model.put("usuario", usuario);
+
+        if (exito != null) model.put("exito", exito);
+        if (error != null) model.put("error", error);
+
+        return new ModelAndView("configuracion_perfil", model);
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate(); // invalida la sesión del usuario
+        return "redirect:/login"; // redirige al login u otra página pública
     }
 
 }
