@@ -74,6 +74,14 @@ public class RepositorioTelaImpl implements RepositorioTela {
                 .uniqueResult();
     }
 
+    @Override
+    public List<Tela> obtenerTelasDelUsuario(Usuario usuario) {
+        return sessionFactory.getCurrentSession()
+                .createCriteria(TelaUsuario.class)
+                .add(Restrictions.eq("usuario", usuario))
+                .add(Restrictions.eq("esManual", true))
+                .list();
+    }
     /*
     @Override
     public Tela buscarTelaPorId(Long id, Usuario usuario) {

@@ -13,6 +13,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -63,7 +64,8 @@ public class ControladorPerfilUsuario {
                                          @RequestParam(required = false) String telefono,
                                          @RequestParam(required = false) String password,
                                          @RequestParam(required = false) String passwordActual,
-                                         @RequestParam(required = false) MultipartFile imagenPerfil) {
+                                         @RequestParam(required = false) MultipartFile imagenPerfil,
+                                         RedirectAttributes redirectAttrs) {
 
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
         if (usuario == null) {
@@ -71,9 +73,9 @@ public class ControladorPerfilUsuario {
         }
 
         if (!email.equals(usuario.getEmail()) && !servicioUsuario.emailDisponible(email)) {
-            return new ModelAndView("redirect:/configuracion-perfil?error=El correo ya está en uso.");
+            redirectAttrs.addFlashAttribute("error", "El correo ya está en uso.");
+            return new ModelAndView("redirect:/configuracion-perfil");
         }
-
 
         usuario.setNombre(nombre);
         usuario.setEmail(email);
@@ -81,7 +83,8 @@ public class ControladorPerfilUsuario {
 
         if (password != null && !password.isEmpty()) {
             if (passwordActual == null || !usuario.getPassword().equals(passwordActual)) {
-                return new ModelAndView("redirect:/perfil-usuario?error=La contraseña actual es incorrecta.");
+                redirectAttrs.addFlashAttribute("error", "La contraseña actual es incorrecta.");
+                return new ModelAndView("redirect:/configuracion-perfil");
             }
             usuario.setPassword(password);
         }
@@ -94,13 +97,15 @@ public class ControladorPerfilUsuario {
         servicioUsuario.modificarUsuario(usuario);
         request.getSession().setAttribute("usuarioLogueado", usuario);
 
-        return new ModelAndView("redirect:/perfil-usuario?exito=Datos actualizados correctamente.");
+        redirectAttrs.addFlashAttribute("exito", "Datos actualizados correctamente.");
+        return new ModelAndView("redirect:/configuracion-perfil");
     }
+
 
     @GetMapping("/configuracion-perfil")
     public ModelAndView configuracionPerfil(HttpServletRequest request,
-                                            @RequestParam(required = false) String exito,
-                                            @RequestParam(required = false) String error) {
+                                            @ModelAttribute("exito") String exito,
+                                            @ModelAttribute("error") String error) {
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
         if (usuario == null) {
             return new ModelAndView("redirect:/login");

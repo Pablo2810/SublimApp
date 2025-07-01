@@ -1,6 +1,7 @@
 package com.tallerwebi.presentacion.controlador;
 
 import com.tallerwebi.dominio.entidad.Tela;
+import com.tallerwebi.dominio.entidad.TelaUsuario;
 import com.tallerwebi.dominio.entidad.TipoTela;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
@@ -59,25 +60,49 @@ public class ControladorTela {
 
     // 2. Mostrar formulario para cargar telas del usuario
     @GetMapping("/cargar-tela")
-    public String mostrarFormularioCarga(Model model) {
-        model.addAttribute("telasUsuario", telasDelUsuario);
+    public String mostrarFormularioCarga(Model model, HttpSession session) {
+        Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuario != null) {
+            List<Tela> telasDelUsuario = servicioTela.obtenerTelasDelUsuario(usuario);
+            model.addAttribute("telasUsuario", telasDelUsuario);
+        }
+
         model.addAttribute("tiposTela", TipoTela.values());
         return "cargar-tela";
     }
 
+
     // 3. Cargar manualmente una tela
     @PostMapping("/mis-telas/cargar-tela")
-    public String cargarTela(@RequestParam String tipoTela,
-                             @RequestParam String color,
-                             @RequestParam String imagenUrl,
-                             RedirectAttributes redirectAttributes) {
+    public String cargarTelaManual(@RequestParam String tipoTela,
+                                   @RequestParam String color,
+                                   @RequestParam String imagenUrl,
+                                   HttpSession session,
+                                   RedirectAttributes redirectAttributes) {
+
+        Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuario == null) {
+            redirectAttributes.addFlashAttribute("error", "Debés iniciar sesión para cargar telas.");
+            return "redirect:/login";
+        }
+
         try {
             TipoTela tipo = TipoTela.valueOf(tipoTela.toUpperCase());
-            MisTelas nueva = new MisTelas(generarId(), tipo, color, 0.0, imagenUrl);
-            telasDelUsuario.add(nueva);
-            redirectAttributes.addFlashAttribute("mensaje", "Tela guardada con éxito");
+
+            TelaUsuario nuevaTela = new TelaUsuario();
+            nuevaTela.setTipoTela(tipo);
+            nuevaTela.setColor(color);
+            nuevaTela.setImagenUrl(imagenUrl);
+            nuevaTela.setPrecio(0.0);
+            nuevaTela.setMetros(0.0);
+            nuevaTela.setUsuario(usuario);
+            nuevaTela.setEsManual(true);
+
+            servicioTela.crearTelaDelUsuario(nuevaTela);
+            redirectAttributes.addFlashAttribute("mensaje", "Tela guardada con éxito.");
+
         } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("mensajeError", "Tipo de tela inválido");
+            redirectAttributes.addFlashAttribute("error", "Tipo de tela inválido.");
         }
 
         return "redirect:/cargar-tela";

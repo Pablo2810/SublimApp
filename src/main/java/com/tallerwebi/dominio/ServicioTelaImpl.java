@@ -125,6 +125,7 @@ public class ServicioTelaImpl implements ServicioTela {
         telaComprada.setPrecio(tela.getPrecio());
         telaComprada.setMetros(metrosComprados);
         telaComprada.setUsuario(usuario);
+        telaComprada.setEsManual(false);
 
         repositorioTela.crearOActualizarTela(telaComprada);
     }
@@ -136,6 +137,16 @@ public class ServicioTelaImpl implements ServicioTela {
             throw new TelaNoEncontrada();
         }
         return tela;
+    }
+
+    @Override
+    public void crearTelaDelUsuario(TelaUsuario telaUsuario) {
+        repositorioTela.crearOActualizarTela(telaUsuario);
+    }
+
+    @Override
+    public List<Tela> obtenerTelasDelUsuario(Usuario usuario) {
+        return repositorioTela.obtenerTelasDelUsuario(usuario);
     }
 
 

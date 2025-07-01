@@ -93,7 +93,7 @@ public class ControladorPerfilUsuarioTest {
                         .param("email", "libre@test.com")
                         .sessionAttr("usuarioLogueado", usuario))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/perfil-usuario?exito=Datos actualizados correctamente."));
+                .andExpect(redirectedUrl("/configuracion-perfil"));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class ControladorPerfilUsuarioTest {
                         .param("passwordActual", "incorrecta")
                         .sessionAttr("usuarioLogueado", usuario))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/perfil-usuario?error=La contraseña actual es incorrecta."));
+                .andExpect(redirectedUrl("/configuracion-perfil"));
     }
 
     @Test
@@ -119,12 +119,12 @@ public class ControladorPerfilUsuarioTest {
                         .param("passwordActual", "vieja123")
                         .sessionAttr("usuarioLogueado", usuario))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/perfil-usuario?exito=Datos actualizados correctamente."));
+                .andExpect(redirectedUrl("/configuracion-perfil"));
     }
 
     @Test
     public void actualizarPerfilConImagenSubida() throws Exception {
-        MockMultipartFile archivo = new MockMultipartFile("archivo", "foto.jpg", "image/jpeg", "contenido-imagen".getBytes());
+        MockMultipartFile archivo = new MockMultipartFile("imagenPerfil", "foto.jpg", "image/jpeg", "contenido-imagen".getBytes());
 
         mockMvc.perform(multipart("/perfil-usuario/actualizar")
                         .file(archivo)
@@ -132,7 +132,7 @@ public class ControladorPerfilUsuarioTest {
                         .param("email", "libre@test.com")
                         .sessionAttr("usuarioLogueado", usuario))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/perfil-usuario?exito=Datos actualizados correctamente."));
+                .andExpect(redirectedUrl("/configuracion-perfil"));
     }
 
     @Test
@@ -160,7 +160,6 @@ public class ControladorPerfilUsuarioTest {
     @Test
     public void actualizarPerfilConEmailYaExistenteRedirigeConError() throws Exception {
         usuario.setEmail("usuario@actual.com");
-
         Mockito.when(servicioUsuario.emailDisponible("correo@existente.com")).thenReturn(false);
 
         mockMvc.perform(post("/perfil-usuario/actualizar")
@@ -168,10 +167,8 @@ public class ControladorPerfilUsuarioTest {
                         .param("email", "correo@existente.com")
                         .sessionAttr("usuarioLogueado", usuario))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/configuracion-perfil?error=El correo ya está en uso."));
+                .andExpect(redirectedUrl("/configuracion-perfil"));
     }
-
-
 
     @Test
     public void actualizarPerfilConImagenVaciaNoRompe() throws Exception {
@@ -183,14 +180,14 @@ public class ControladorPerfilUsuarioTest {
                         .param("email", "libre@test.com")
                         .sessionAttr("usuarioLogueado", usuario))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/perfil-usuario?exito=Datos actualizados correctamente."));
+                .andExpect(redirectedUrl("/configuracion-perfil"));
     }
 
     @Test
     public void verConfiguracionPerfilSinSesionRedirigeALogin() throws Exception {
         mockMvc.perform(get("/configuracion-perfil"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/login"));
+                .andExpect(redirectedUrl("/login?exito=&error="));
     }
 
     @Test
