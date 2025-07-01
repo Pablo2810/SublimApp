@@ -29,27 +29,24 @@
     <table class="table table-dark table-hover text-center w-75 container mb-4">
         <thead>
         <tr>
-            <th>Nombre del archivo</th> <!-- Cambiar por imagen -->
+            <th>Nombre del archivo</th>
             <th>Prenda</th>
             <th>Talle</th>
             <th>Tela</th>
-            <th>Cantidad</th> <!-- Permitir modificar acá la cantidad -->
-            <th>Precio</th>
-            <!-- Agregar columna de acciones -->
-            <th>Total</th> <!-- Sacar de acá, mover al final de la tabla por fuera -->
+            <th>Cantidad</th>
+            <th>Precio (prenda)</th>
+            <th>Total</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="producto : ${pedido.productos}">
-            <!-- Agregar input hidden con id de producto? -->
-            <td th:text="${producto.archivo.nombre}">Nombre archivo</td> <!-- Cambiar por imagen -->
+            <td th:text="${producto.archivo.nombre}">Nombre archivo</td>
             <td th:text="${producto.prenda.descripcion}">Prenda</td>
             <td th:text="${producto.talle.descripcion}">Talle</td>
             <td th:text="${producto.tela.tipoTela} + ' - ' + ${producto.tela.color}">Tela</td>
-            <td th:text="${producto.cantidad}">Cantidad</td> <!-- Permitir modificar acá la cantidad -->
+            <td th:text="${producto.cantidad}">Cantidad</td>
             <td th:text="${producto.prenda.precioBase}">Precio prenda</td>
-            <!-- Agregar columna de acciones -->
-            <td>$$$</td> <!-- Sacar de acá, mover al final de la tabla por fuera -->
+            <td>$$$</td>
         </tr>
         </tbody>
     </table>
@@ -59,13 +56,11 @@
                class="btn btn-outline-light w-100"
                style="padding: 10px 20px;">Realizar otro producto</a>
         </div>
-        <!-- Agregar div acá con precio total del pedido -->
         <form th:action="@{/pagar-pedido}" method="post" style="display: inline;" class="w-25">
             <input type="hidden" th:name="pedidoId" th:value="${pedido.id}" />
             <button type="submit" class="w-100 btn-lg">Pagar Pedido</button>
         </form>
         <div class="w-25">
-            <!-- sacar de acá, no es necesario -->
             <a th:href="@{/historial-pedidos}"
                class="btn btn-secondary w-100"
                style="padding: 10px 20px;"> Ver lista de pedidos </a>

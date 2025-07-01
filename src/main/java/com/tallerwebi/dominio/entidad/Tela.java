@@ -22,6 +22,10 @@ public class Tela {
 
     private String imagenUrl;
 
+    private String nombre;
+
+    private String descripcion;
+
     @ManyToMany(mappedBy = "telas")
     private List<Prenda> prendas = new ArrayList<>();
 
@@ -68,5 +72,13 @@ public class Tela {
     public void setPrendas(List<Prenda> prendas) {
         this.prendas = prendas;
     }
+
+    public String getNombre() { return nombre; }
+
+    public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public String getDescripcion() { return descripcion; }
+
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
 }

@@ -120,12 +120,12 @@ public class ServicioPedidoImpl implements ServicioPedido {
 
     /*
     Evalua que se pueda cambiar el estado del pedido
-    - primero tiene que pasar de EN_ESPERA a SUBLIMADO
-    - una vez que el estado este en SUBLIMADO no puede volver a estar EN_ESPERA
+    - una vez que el estado este en SUBLIMADO | EN_ESPERA | A_RETIRAR no puede volver a estar PENDIENTE
     */
     private boolean puedeCambiarElEstado(Estado estadoAnterior, Estado nuevoEstado) {
-        return (estadoAnterior.equals(Estado.EN_ESPERA) && !nuevoEstado.equals(Estado.A_RETIRAR)) ||
-                (estadoAnterior.equals(Estado.SUBLIMANDO) && !nuevoEstado.equals(Estado.EN_ESPERA));
+        return estadoAnterior.equals(Estado.PENDIENTE) && !nuevoEstado.equals(Estado.PENDIENTE) ||
+                estadoAnterior.equals(Estado.EN_ESPERA) && nuevoEstado.equals(Estado.SUBLIMANDO) ||
+                estadoAnterior.equals(Estado.SUBLIMANDO) && nuevoEstado.equals(Estado.A_RETIRAR);
     }
 
 }

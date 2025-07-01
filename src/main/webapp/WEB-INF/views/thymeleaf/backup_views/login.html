@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Taller Web I</title>
+    <!-- font google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Boostrap core css -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <!-- custom style -->
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <style>
+        body { font-family: "Lexend Deca", sans-serif; }
+    </style>
+</head>
+<body>
+<main class="d-flex main">
+    <div class="w-50 d-flex justify-content-center align-items-center">
+        <form action="#" th:action="@{/validar-login}" method="POST" th:object="${datosLogin}" class="form-login bg-white w-75 rounded-5 shadow-lg">
+            <h3 class="text-center text-dark mb-4">Inicia Sesion</h3>
+            <div class="d-flex flex-column fs-5 mb-4">
+                <label for="email" class="mb-2">Email:</label>
+                <input th:field="*{email}" type="email" id="email" placeholder="Ingrese su email" class="p-2 border-top-0 border-start-0 border-end-0 rounded-0 fw-light">
+            </div>
+            <div class="d-flex flex-column fs-5 mb-4">
+                <label for="password" class="mb-2">Contraseña:</label>
+                <input th:field="*{password}" type="password" id="password" placeholder="Ingrese su contraseña" class="p-2 border-top-0 border-start-0 border-end-0 rounded-0 fw-light">
+            </div>
+            <p th:if="${error != null}" id="mensaje-error-login" class="text-danger fs-5 text-center" th:text="'Error ' + ${error}"></p>
+            <div class="w-50 mt-5 container d-flex flex-column align-items-center">
+                <button id="btn-login" type="submit" class="w-100 btn btn-lg btn-primary">Iniciar Sesion</button>
+                <p class="mt-4 fs-5">
+                    <a th:href="@{/nuevo-usuario}" class="text-decoration-none">Registrarse</a>
+                </p>
+            </div>
+        </form>
+    </div>
+    <div class="w-50 img-login"></div>
+</main>
+    <script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+    <script type="text/javascript" th:src="@{js/main.js}"></script>
+</body>
+</html>

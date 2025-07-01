@@ -15,12 +15,12 @@ services:
       MYSQL_PASSWORD: user
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./src/resources/data.sql:/docker-entrypoint-initdb.d/data.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "user", "-puser"]
       interval: 10s
       timeout: 5s
       retries: 5
-
 
   jetty:
     build:
@@ -39,6 +39,7 @@ services:
 
 volumes:
   mysql_data:
+
 
 # 📦 PASOS PARA LEVANTAR EL ENTORNO DOCKER DEL PROYECTO
 

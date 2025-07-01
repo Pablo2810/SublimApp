@@ -18,15 +18,11 @@ public class RepositorioTelaImpl implements RepositorioTela {
     @Autowired
     private SessionFactory sessionFactory;
 
-    @Autowired
-    public RepositorioTelaImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
     @Override
     public List<Tela> listarTelas() {
-        String hql = "FROM Tela";
-        return sessionFactory.getCurrentSession().createQuery(hql).getResultList();
+        return sessionFactory.getCurrentSession()
+                .createQuery("FROM Tela", Tela.class)
+                .getResultList();
     }
 
     @Override
@@ -44,25 +40,12 @@ public class RepositorioTelaImpl implements RepositorioTela {
         sessionFactory.getCurrentSession().delete(tela);
     }
 
-
-    @Override
-    public void guardarTelaFabrica() {
-
-    }
-
-    @Override
-    public List<Tela> buscarTelasDePrendaPorIdPrenda(Long id) {
-        final Session session = sessionFactory.getCurrentSession();
-        return session.createCriteria(Tela.class)
-                .createAlias("prendas", "p")
-                .add(Restrictions.eq("p.id", id))
-                .list();
-    }
-
     @Override
     public List<Tela> listarTelasDeFabrica() {
         String hql = "FROM Tela t WHERE t.id NOT IN (SELECT tu.id FROM TelaUsuario tu)";
-        return sessionFactory.getCurrentSession().createQuery(hql, Tela.class).getResultList();
+        return sessionFactory.getCurrentSession()
+                .createQuery(hql, Tela.class)
+                .getResultList();
     }
 
     @Override
@@ -82,15 +65,29 @@ public class RepositorioTelaImpl implements RepositorioTela {
                 .add(Restrictions.eq("esManual", true))
                 .list();
     }
-    /*
-    @Override
-    public Tela buscarTelaPorId(Long id, Usuario usuario) {
-        return (TelaUsuario) sessionFactory.getCurrentSession()
-                .createCriteria(TelaUsuario.class)
-                .add(Restrictions.eq("id", id))
-                .add(Restrictions.eq("usuario", usuario))
-                .uniqueResult();
-    }
-    */
 
+    @Override
+    public List<Tela> buscarTelasDePrendaPorIdPrenda(Long prendaId) {
+        return sessionFactory.getCurrentSession()
+                .createCriteria(Tela.class)
+                .createAlias("prendas", "p")
+                .add(Restrictions.eq("p.id", prendaId))
+                .list();
+    }
+
+    @Override
+    public List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle) {
+        return sessionFactory.getCurrentSession()
+                .createCriteria(Tela.class)
+                .createAlias("prendas", "p")
+                .add(Restrictions.eq("p.id", prendaId))
+                .add(Restrictions.ge("metros", metrosTalle))
+                .list();
+    }
+
+    @Override
+    public void guardarTelaFabrica() {
+        // no implementado aún
+    }
 }
+
