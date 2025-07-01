@@ -5,47 +5,47 @@ INSERT INTO Usuario(email, password, rol, activo) VALUES ('pab@mail.com', 'pab',
 -- TELAS DE FÁBRICA (insertadas en la tabla Tela)
 
 -- ALGODÓN
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('rojo', 'img/TELA_1.jpg', 100.0, 12000.0, 'ALGODON');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('azul', 'img/TELA_2.jpg', 100.0, 12000.0, 'ALGODON');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('rosa', 'img/TELA_3.jpg', 100.0, 12000.0, 'ALGODON');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('gris', 'img/TELA_4.jpg', 100.0, 12000.0, 'ALGODON');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('rojo', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_1.jpg?updatedAt=1751405832681', 100.0, 12000.0, 'ALGODON');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('azul', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_2.jpg?updatedAt=1751405832806', 100.0, 12000.0, 'ALGODON');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('rosa', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_3.jpg?updatedAt=1751405832460', 100.0, 12000.0, 'ALGODON');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('gris', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_4.jpg?updatedAt=1751405832638', 100.0, 12000.0, 'ALGODON');
 
 -- LINO
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('azul', 'img/TELA_5.jpg', 100.0, 13000.0, 'LINO');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('celeste', 'img/TELA_6.jpg', 100.0, 13000.0, 'LINO');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('verde', 'img/TELA_7.jpg', 100.0, 13000.0, 'LINO');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('verde agua', 'img/TELA_8.jpg', 100.0, 13000.0, 'LINO');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('azul', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_5.jpg?updatedAt=1751405834509', 100.0, 13000.0, 'LINO');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('celeste', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_6.jpg?updatedAt=1751405834678', 100.0, 13000.0, 'LINO');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('verde', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_7.jpg?updatedAt=1751405834824', 100.0, 13000.0, 'LINO');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('verde agua', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_8.jpg?updatedAt=1751405834570', 100.0, 13000.0, 'LINO');
 
 -- W15
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('marron', 'img/TELA_9.jpg', 100.0, 10000.0, 'W15');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('naranja', 'img/TELA_10.jpg', 100.0, 10000.0, 'W15');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('negro', 'img/TELA_11.jpg', 100.0, 10000.0, 'W15');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('gris oscuro', 'img/TELA_12.jpg', 100.0, 10000.0, 'W15');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('marron', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_9.jpg?updatedAt=1751405830143', 100.0, 10000.0, 'W15');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('naranja', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_10.jpg?updatedAt=1751405830086', 100.0, 10000.0, 'W15');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('negro', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_11.jpg?updatedAt=1751405829956', 100.0, 10000.0, 'W15');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('gris oscuro', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_12.jpg?updatedAt=1751405829881', 100.0, 10000.0, 'W15');
 
 -- SET
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('amarillo', 'img/TELA_13.jpg', 100.0, 15000.0, 'SET');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('amarillo oscuro', 'img/TELA_14.jpg', 100.0, 15000.0, 'SET');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('rosa', 'img/TELA_15.jpg', 100.0, 15000.0, 'SET');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('verde agua', 'img/TELA_16.jpg', 100.0, 15000.0, 'SET');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('amarillo', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_13.jpg?updatedAt=1751405829924', 100.0, 15000.0, 'SET');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('amarillo oscuro', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_14.jpg?updatedAt=1751405830058', 100.0, 15000.0, 'SET');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('rosa', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_15.jpg?updatedAt=1751405829951', 100.0, 15000.0, 'SET');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('verde agua', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_16.jpg?updatedAt=1751405830061', 100.0, 15000.0, 'SET');
 
 -- NEOPRENO
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('lila', 'img/TELA_17.jpg', 100.0, 18000.0, 'NEOPRENO');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('rosa', 'img/TELA_18.jpg', 100.0, 18000.0, 'NEOPRENO');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('marron', 'img/TELA_19.jpg', 100.0, 18000.0, 'NEOPRENO');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('rosa oscuro', 'img/TELA_20.jpg', 100.0, 18000.0, 'NEOPRENO');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('lila', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_17.jpg?updatedAt=1751405830137', 100.0, 18000.0, 'NEOPRENO');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('rosa', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_18.jpg?updatedAt=1751405830342', 100.0, 18000.0, 'NEOPRENO');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('marron', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_19.jpg?updatedAt=1751405831897', 100.0, 18000.0, 'NEOPRENO');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('rosa oscuro', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_20.jpg?updatedAt=1751405832107', 100.0, 18000.0, 'NEOPRENO');
 
 -- POLIESTER
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('celes', 'img/TELA_21.jpg', 100.0, 20000.0, 'POLIESTER');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('beige', 'img/TELA_22.jpg', 100.0, 20000.0, 'POLIESTER');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('marron', 'img/TELA_23.jpg', 100.0, 20000.0, 'POLIESTER');
-INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('blanco', 'img/TELA_24.jpg', 100.0, 20000.0, 'POLIESTER');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('celes', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_21.jpg?updatedAt=1751405832340', 100.0, 20000.0, 'POLIESTER');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('beige', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_22.jpg?updatedAt=1751405832270', 100.0, 20000.0, 'POLIESTER');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('marron', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_23.jpg?updatedAt=1751405832402', 100.0, 20000.0, 'POLIESTER');
+INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('blanco', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_24.jpg?updatedAt=1751405832481', 100.0, 20000.0, 'POLIESTER');
 
 
 -- Telas del usuario (hereda de Tela: misma ID)
-INSERT INTO TelaUsuario(id, fk_usuario) VALUES (2, 2);--ALGODON AZUL
-INSERT INTO TelaUsuario(id, fk_usuario) VALUES (6, 2);--LINO CELESTE
-INSERT INTO TelaUsuario(id, fk_usuario) VALUES (11, 2);--W15 NEGRO
-INSERT INTO TelaUsuario(id, fk_usuario) VALUES (13, 2);--SET AMARILLO
+-- INSERT INTO TelaUsuario(id, fk_usuario) VALUES (2, 2);--ALGODON AZUL
+-- INSERT INTO TelaUsuario(id, fk_usuario) VALUES (6, 2);--LINO CELESTE
+-- INSERT INTO TelaUsuario(id, fk_usuario) VALUES (11, 2);--W15 NEGRO
+-- INSERT INTO TelaUsuario(id, fk_usuario) VALUES (13, 2);--SET AMARILLO
 
 -- Prendas
 INSERT INTO Prenda(id, descripcion, precioBase) VALUES (1, 'Camiseta', 7000.0);

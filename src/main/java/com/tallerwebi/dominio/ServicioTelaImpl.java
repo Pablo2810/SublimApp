@@ -49,7 +49,7 @@ public class ServicioTelaImpl implements ServicioTela {
     public void crearOActualizar(DatosTela datosTela, MultipartFile archivo) {
         Tela tela = new Tela();
 
-        if (datosTela.getId() != 0) {
+        if (datosTela.getId() != null && datosTela.getId() != 0) {
             try {
                 tela = obtenerTela(datosTela.getId());
             } catch (Exception e) {
@@ -63,7 +63,7 @@ public class ServicioTelaImpl implements ServicioTela {
         tela.setColor(datosTela.getColor());
 
         if (!archivo.isEmpty()) {
-            Result imagenSubida = servicioStorageImagen.subirImagen(archivo, "tela-" + datosTela.getColor().toLowerCase());
+            Result imagenSubida = servicioStorageImagen.subirImagen(archivo, "telas", "tela-" + datosTela.getColor().toLowerCase());
             tela.setImagenUrl(imagenSubida.getUrl());
         }
 
@@ -132,7 +132,7 @@ public class ServicioTelaImpl implements ServicioTela {
     @Override
     public Tela buscarTelaDelUsuario(Long id, Usuario usuario) throws TelaNoEncontrada {
         Tela tela = repositorioTela.buscarTelasDelUsuario(id, usuario);
-        if (tela == null){
+        if (tela == null) {
             throw new TelaNoEncontrada();
         }
         return tela;
