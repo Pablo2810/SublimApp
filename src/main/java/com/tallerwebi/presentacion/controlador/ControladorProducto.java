@@ -93,14 +93,12 @@ public class ControladorProducto {
 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("mensajeError", "Ocurrio un error al traer materiales para el pedido");
-            System.out.println(e.getMessage());
         }
 
         try {
             archivo = servicioArchivo.registrarArchivo(datosProducto.getArchivo());
         } catch (ArchivoNoValido e) {
             redirectAttributes.addFlashAttribute("mensajeError", "Ingrese un archivo valido");
-            System.out.println(e.getMessage());
         }
 
         //Pedido PENDIENTE asociar al PRODUCTO NUEVO
