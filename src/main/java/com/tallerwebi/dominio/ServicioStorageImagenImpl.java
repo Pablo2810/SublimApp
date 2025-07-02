@@ -23,7 +23,7 @@ public class ServicioStorageImagenImpl implements ServicioStorageImagen {
             FileCreateRequest fileCreateRequest = new FileCreateRequest(archivo.getBytes(), nombreArchivo);
             return imageKit.upload(fileCreateRequest);
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new IllegalArgumentException();
         }
     }
 
@@ -34,7 +34,7 @@ public class ServicioStorageImagenImpl implements ServicioStorageImagen {
             fileCreateRequest.setFolder(carpeta);
             return imageKit.upload(fileCreateRequest);
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new IllegalArgumentException();
         }
     }
 
