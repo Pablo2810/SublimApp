@@ -41,12 +41,6 @@ INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('marron', '
 INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('blanco', 'https://ik.imagekit.io/dwcllhcyp/telas/TELA_24.jpg?updatedAt=1751405832481', 100.0, 20000.0, 'POLIESTER');
 
 
--- Telas del usuario (hereda de Tela: misma ID)
--- INSERT INTO TelaUsuario(id, fk_usuario) VALUES (2, 2);--ALGODON AZUL
--- INSERT INTO TelaUsuario(id, fk_usuario) VALUES (6, 2);--LINO CELESTE
--- INSERT INTO TelaUsuario(id, fk_usuario) VALUES (11, 2);--W15 NEGRO
--- INSERT INTO TelaUsuario(id, fk_usuario) VALUES (13, 2);--SET AMARILLO
-
 -- Prendas
 INSERT INTO Prenda(id, descripcion, precioBase) VALUES (1, 'Camiseta', 7000.0);
 INSERT INTO Prenda(id, descripcion, precioBase) VALUES (2, 'Short', 5500.0);

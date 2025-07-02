@@ -12,8 +12,6 @@ public class TelaUsuario extends Tela {
     @JoinColumn(name = "fk_usuario")
     private Usuario usuario;
 
-    @Column(name = "es_manual")
-    private Boolean esManual;
 
     public Usuario getUsuario() {
         return usuario;
@@ -22,15 +20,5 @@ public class TelaUsuario extends Tela {
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
-
-    public Boolean isEsManual() {
-        return esManual;
-    }
-
-    public void setEsManual(Boolean esManual) {
-        this.esManual = esManual;
-    }
-
-    public Boolean getEsManual(){ return esManual; }
 
 }

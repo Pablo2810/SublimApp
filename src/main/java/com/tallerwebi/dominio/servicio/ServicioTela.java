@@ -24,12 +24,7 @@ public interface ServicioTela {
     void dejarSinStockTelaDeFabrica();
     List<Tela> buscarTelasDePrendaPorIdPrenda(Long prendaId);
     void comprarTelaDeFabrica(Long idTela, Double metrosComprados, Usuario usuario) throws TelaNoEncontrada, StockInsuficiente;
-    void crearTelaDelUsuario(TelaUsuario telaUsuario);
-    List<Tela> obtenerTelasDelUsuario(Usuario usuario);
-
-
-    Tela buscarTelaDelUsuario(Long id, Usuario usuario) throws TelaNoEncontrada;
-
     List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle);
+    List<TelaUsuario> obtenerTelasDelUsuario(Usuario usuario);
     // Tela buscarTelaPorId(Long telaId, Usuario usuario) throws TelaNoEncontrada;
 }

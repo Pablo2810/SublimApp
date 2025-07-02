@@ -33,7 +33,7 @@ public class ControladorPerfilUsuario {
     private ServicioPedido servicioPedido;
 
     @Autowired
-    private ServicioTela servicioTela; // servicio para obtener telas del usuario
+    private ServicioTela servicioTela;
 
     @GetMapping("/perfil-usuario")
     public ModelAndView verPerfilUsuario(HttpServletRequest request,
@@ -49,7 +49,7 @@ public class ControladorPerfilUsuario {
 
         model.put("usuario", usuario);
         model.put("pedidos", pedidos);
-        model.put("telas", servicioTela.obtenerTelas());
+        model.put("telas", servicioTela.obtenerTelasDelUsuario(usuario));
 
         if (exito != null) model.put("exito", exito);
         if (error != null) model.put("error", error);

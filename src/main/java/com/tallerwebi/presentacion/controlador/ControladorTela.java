@@ -1,8 +1,6 @@
 package com.tallerwebi.presentacion.controlador;
 
 import com.tallerwebi.dominio.entidad.Tela;
-import com.tallerwebi.dominio.entidad.TelaUsuario;
-import com.tallerwebi.dominio.entidad.TipoTela;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
 import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
@@ -20,7 +18,6 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +25,6 @@ import java.util.stream.Collectors;
 public class ControladorTela {
 
     private final ServicioTela servicioTela;
-    private final List<MisTelas> telasDelUsuario = new ArrayList<>();
 
     @Autowired
     public ControladorTela(ServicioTela servicioTela) {
@@ -56,60 +52,6 @@ public class ControladorTela {
         }
 
         return "catalogo-telas";
-    }
-
-    // 2. Mostrar formulario para cargar telas del usuario
-    @GetMapping("/cargar-tela")
-    public String mostrarFormularioCarga(Model model, HttpSession session) {
-        Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
-        if (usuario != null) {
-            List<Tela> telasDelUsuario = servicioTela.obtenerTelasDelUsuario(usuario);
-            model.addAttribute("telasUsuario", telasDelUsuario);
-        }
-
-        model.addAttribute("tiposTela", TipoTela.values());
-        return "cargar-tela";
-    }
-
-
-    // 3. Cargar manualmente una tela
-    @PostMapping("/mis-telas/cargar-tela")
-    public String cargarTelaManual(@RequestParam String tipoTela,
-                                   @RequestParam String color,
-                                   @RequestParam String imagenUrl,
-                                   HttpSession session,
-                                   RedirectAttributes redirectAttributes) {
-
-        Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
-        if (usuario == null) {
-            redirectAttributes.addFlashAttribute("error", "Debés iniciar sesión para cargar telas.");
-            return "redirect:/login";
-        }
-
-        try {
-            TipoTela tipo = TipoTela.valueOf(tipoTela.toUpperCase());
-
-            TelaUsuario nuevaTela = new TelaUsuario();
-            nuevaTela.setTipoTela(tipo);
-            nuevaTela.setColor(color);
-            nuevaTela.setImagenUrl(imagenUrl);
-            nuevaTela.setPrecio(0.0);
-            nuevaTela.setMetros(0.0);
-            nuevaTela.setUsuario(usuario);
-            nuevaTela.setEsManual(true);
-
-            servicioTela.crearTelaDelUsuario(nuevaTela);
-            redirectAttributes.addFlashAttribute("mensaje", "Tela guardada con éxito.");
-
-            MisTelas nueva = new MisTelas(tipo, color, 0.0, imagenUrl);
-            telasDelUsuario.add(nueva);
-            redirectAttributes.addFlashAttribute("mensaje", "Tela guardada con éxito");
-
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("error", "Tipo de tela inválido.");
-        }
-
-        return "redirect:/cargar-tela";
     }
 
     // 4. Mostrar detalle de una tela del catálogo
@@ -281,25 +223,6 @@ public class ControladorTela {
         return "boleta-tela";
     }
 
-    // 9. Comprar directamente desde catálogo (opcional)
-    @GetMapping("/registrar-tela")
-    public String registrarTelaDesdeCatalogo(@RequestParam Long id, RedirectAttributes redirectAttributes) {
-        MisTelas telaComprada = servicioTela.obtenerTelasDeFabrica().stream()
-                .filter(tela -> tela.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-
-        if (telaComprada == null) {
-            redirectAttributes.addFlashAttribute("mensajeError", "Tela no encontrada en el catálogo");
-        } else if (telasDelUsuario.stream().anyMatch(t -> t.getId().equals(id))) {
-            redirectAttributes.addFlashAttribute("mensajeAdvertencia", "Ya has comprado esta tela");
-        } else {
-            telasDelUsuario.add(telaComprada);
-            redirectAttributes.addFlashAttribute("mensaje", "Tela comprada con éxito");
-        }
-
-        return "redirect:/catalogo-telas";
-    }
 
     /*********************************************/
     @RequestMapping(value = "/telas-por-prenda/{prendaId}", method = RequestMethod.GET)
@@ -313,7 +236,6 @@ public class ControladorTela {
                 .map(t -> new DatosTela(t.getId(), t.getTipoTela(), t.getMetros(), t.getColor()))
                 .collect(Collectors.toList()); // cambié t.getTipoTela().name() a t.getTipoTela()
     }
-
 
 }
 

@@ -2,6 +2,7 @@ package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.TelaUsuario;
+import com.tallerwebi.dominio.entidad.TipoTela;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.repositorio.RepositorioTela;
 import org.hibernate.Session;
@@ -42,28 +43,10 @@ public class RepositorioTelaImpl implements RepositorioTela {
 
     @Override
     public List<Tela> listarTelasDeFabrica() {
-        String hql = "FROM Tela t WHERE t.id NOT IN (SELECT tu.id FROM TelaUsuario tu)";
+        String hql = "FROM com.tallerwebi.dominio.entidad.Tela t WHERE t.id NOT IN (SELECT tu.id FROM com.tallerwebi.dominio.entidad.TelaUsuario tu)";
         return sessionFactory.getCurrentSession()
                 .createQuery(hql, Tela.class)
                 .getResultList();
-    }
-
-    @Override
-    public Tela buscarTelasDelUsuario(Long id, Usuario usuario) {
-        return (TelaUsuario) sessionFactory.getCurrentSession()
-                .createCriteria(TelaUsuario.class)
-                .add(Restrictions.eq("id", id))
-                .add(Restrictions.eq("usuario", usuario))
-                .uniqueResult();
-    }
-
-    @Override
-    public List<Tela> obtenerTelasDelUsuario(Usuario usuario) {
-        return sessionFactory.getCurrentSession()
-                .createCriteria(TelaUsuario.class)
-                .add(Restrictions.eq("usuario", usuario))
-                .add(Restrictions.eq("esManual", true))
-                .list();
     }
 
     @Override
@@ -83,6 +66,27 @@ public class RepositorioTelaImpl implements RepositorioTela {
                 .add(Restrictions.eq("p.id", prendaId))
                 .add(Restrictions.ge("metros", metrosTalle))
                 .list();
+    }
+
+    @Override
+    public List<TelaUsuario> obtenerTelasPorUsuario(Usuario usuario) {
+        String hql = "FROM TelaUsuario WHERE usuario = :usuario";
+        return sessionFactory.getCurrentSession()
+                .createQuery(hql, TelaUsuario.class)
+                .setParameter("usuario", usuario)
+                .getResultList();
+    }
+
+    @Override
+    public TelaUsuario buscarTelaUsuarioPorTipoYColor(Usuario usuario, TipoTela tipoTela, String color) {
+        String hql = "FROM TelaUsuario tu WHERE tu.usuario = :usuario AND tu.tipoTela = :tipoTela AND tu.color = :color";
+        return sessionFactory.getCurrentSession()
+                .createQuery(hql, TelaUsuario.class)
+                .setParameter("usuario", usuario)
+                .setParameter("tipoTela", tipoTela)
+                .setParameter("color", color)
+                .uniqueResultOptional()
+                .orElse(null);
     }
 
     @Override
