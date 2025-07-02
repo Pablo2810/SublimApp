@@ -1,6 +1,5 @@
 package com.tallerwebi.dominio.servicio;
 
-import com.tallerwebi.dominio.ServicioTelaImpl;
 import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.TelaUsuario;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
@@ -31,5 +30,7 @@ public interface ServicioTela {
     Tela buscarTelaDelUsuario(Long id, Usuario usuario) throws TelaNoEncontrada;
 
     List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle);
+
+    void restarMetrosTela(Tela tela, Double metrosTotales);
     // Tela buscarTelaPorId(Long telaId, Usuario usuario) throws TelaNoEncontrada;
 }

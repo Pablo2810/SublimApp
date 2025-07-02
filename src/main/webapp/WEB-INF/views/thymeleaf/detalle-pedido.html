@@ -29,7 +29,7 @@
     <table class="table table-dark table-hover text-center w-75 container mb-4">
         <thead>
         <tr>
-            <th>Nombre del archivo</th> <!-- Cambiar por imagen -->
+            <th>Imágen</th> <!-- Cambiar por imagen -->
             <th>Prenda</th>
             <th>Talle</th>
             <th>Tela</th>
@@ -42,7 +42,7 @@
         <tbody>
         <tr th:each="producto : ${pedido.productos}">
             <!-- Agregar input hidden con id de producto? -->
-            <td th:text="${producto.archivo.nombre}">Nombre archivo</td> <!-- Cambiar por imagen -->
+            <td><img th:src="${producto.archivo.nombre}" alt="${producto.archivo.nombre}"></td> <!-- Cambiar por imagen -->
             <td th:text="${producto.prenda.descripcion}">Prenda</td>
             <td th:text="${producto.talle.descripcion}">Talle</td>
             <td th:text="${producto.tela.tipoTela} + ' - ' + ${producto.tela.color}">Tela</td>
