@@ -24,8 +24,8 @@
 
 <main role="main" class="container p-4">
     <div class="w-75 container d-flex flex-column justify-content-center align-items-center mb-4">
-        <a th:href="@{/cargar-tela}" class="btn btn-outline-primary btn-lg w-50 fw-semibold text-center">
-            Registra y mira tus telas disponibles
+        <a th:href="@{/perfil-usuario}" class="btn btn-outline-primary btn-lg w-50 fw-semibold text-center">
+            Ver mis telas compradas
         </a>
     </div>
 
@@ -51,8 +51,6 @@
         </div>
     </section>
 </main>
-
-
 
 <div th:replace="templates/toasts :: toasts"></div>
 <footer th:insert="templates/footer :: footer"></footer>

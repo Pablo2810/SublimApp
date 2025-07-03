@@ -8,6 +8,7 @@ import io.imagekit.sdk.ImageKit;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class TestBeansConfig {
@@ -33,8 +34,10 @@ public class TestBeansConfig {
     }
 
     @Bean
+    @Primary
     public ServicioStorageImagen servicioStorageImagen() {
         return Mockito.mock(ServicioStorageImagen.class);
     }
+
 }
 

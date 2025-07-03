@@ -66,13 +66,15 @@
                         <option value="" disabled selected>Seleccione una tela</option>
                     </select>
                 </div>
-                <div class="w-50 p-2 form-floating">
-                    <label class="text-dark">Cantidad de camisetas:</label>
+                <div class="w-50 p-2 input-group">
+                    <label class="text-dark input-group-text">Cantidad</label>
                     <input th:field="*{cantidad}"
-                           type="number"
+                           name="cantidad"
                            class="form-control"
-                           id="cantidadCopias"
-                           name="cantidadCopias">
+                           id="cantidad"
+                           type="number"
+                           min="1"
+                           required>
                 </div>
             </div>
             <div class="w-100 p-2 mb-4">
@@ -94,6 +96,7 @@
              style="height: 100%; border-bottom-left-radius: 0px!important; border-top-left-radius: 0px!important;">
     </div>
 </main>
+<div th:replace="templates/toasts :: toasts"></div>
 <footer th:insert="templates/footer :: footer"></footer>
 <!-- Bootstrap JS -->
 <script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
@@ -102,12 +105,14 @@
     document.addEventListener("DOMContentLoaded", function () {
         const prendaSelect = document.getElementById('prendaSelect');
         const talleSelect = document.getElementById('talleSelect');
+        const telaSelect = document.getElementById('telaSelect');
 
         prendaSelect.addEventListener('change', function () {
             const prendaId = this.value;
 
             // Limpiar talles anteriores
             talleSelect.innerHTML = '<option value="" disabled selected>Seleccione un talle</option>';
+            telaSelect.innerHTML = '<option value="" disabled selected>Seleccione una tela</option>';
 
             if (prendaId) {
                 fetch('/spring/talles-por-prenda/' + prendaId) // 👈 Acordate del contextPath "/spring"
@@ -130,29 +135,38 @@
                     });
             }
         });
-    });
 
-    document.getElementById('prendaSelect').addEventListener('change', function () {
-        const prendaId = this.value;
+        talleSelect.addEventListener('change', async function () {
+            const talleId = this.value;
 
-        // Limpiar select de telas
-        const telaSelect = document.getElementById('telaSelect');
-        telaSelect.innerHTML = '<option value="" disabled selected>Seleccione una tela</option>';
+            // Limpiar telas anteriores
+            telaSelect.innerHTML = '<option value="" selected>Seleccione una tela</option>';
 
-        if (prendaId) {
-            fetch('/spring/telas-por-prenda/' + prendaId)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(tela => {
+            if (talleId) {
+                try {
+                    const responseTalle = await fetch('/spring/talle-por-id/' + talleId);
+                    if (!responseTalle.ok) throw new Error("Error al cargar el talle");
+
+                    const talle = await responseTalle.json();
+                    const metrosTalle = talle.metrosTotales;
+
+                    const url = `/spring/telas-por-prenda/${prendaSelect.value}?metrosTalle=${metrosTalle}`;
+                    const responseTelas = await fetch(url);
+                    const telas = await responseTelas.json();
+
+                    telas.forEach(tela => {
                         const option = document.createElement('option');
                         option.value = tela.id;
-                        option.textContent = tela.tipoTela;
+                        option.textContent = tela.tipoTela + ' - ' + tela.color;
                         telaSelect.appendChild(option);
                     });
-                })
-                .catch(error => console.error('Error cargando telas:', error));
-        }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        });
     });
+
 </script>
 </body>
 </html>

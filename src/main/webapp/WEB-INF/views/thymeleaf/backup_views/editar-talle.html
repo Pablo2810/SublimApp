@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Taller Web I</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <!-- Custom styles -->
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/modoOscuro.css}">
+
+    <style>
+        body {
+            font-family: "Lexend Deca", sans-serif;
+        }
+    </style>
+</head>
+
+<body class="p-0 m-0">
+<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center"
+     th:insert="templates/nav :: nav"></div>
+<main class="container py-5">
+
+    <div class="container w-50">
+        <h2 class="mb-4" th:text="${talle.id != null ? 'Editar talle' : 'Crear talle'}"></h2>
+
+        <form th:action="@{${talle.id != null ? '/admin/editar-talle/' + talle.id : '/admin/editar-talle'}}"
+              th:object="${talle}" method="post" enctype="multipart/form-data" class="border p-4 rounded bg-light">
+
+            <div class="mb-3">
+                <div class="row">
+                    <div class="col-4">
+                        <label for="descripcion" class="form-label text-dark">Descripcion talle</label>
+                        <input type="text" th:field="*{descripcion}" class="form-control" id="descripcion" required>
+                    </div>
+                    <div class="col-4">
+                        <label for="metros-totales" class="form-label text-dark">Metros totales</label>
+                        <input type="number" th:field="*{metrosTotales}" class="form-control" id="metros-totales"
+                               min="0.5" step="0.5"
+                               required>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success">Guardar</button>
+            <a th:href="@{/admin/listar-telas}" class="btn btn-secondary ms-2">Volver</a>
+
+        </form>
+    </div>
+</main>
+
+<footer th:insert="templates/footer :: footer"></footer>
+<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

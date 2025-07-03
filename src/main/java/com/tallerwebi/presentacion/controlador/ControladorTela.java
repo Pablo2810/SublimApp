@@ -1,7 +1,6 @@
 package com.tallerwebi.presentacion.controlador;
 
 import com.tallerwebi.dominio.entidad.Tela;
-import com.tallerwebi.dominio.entidad.TipoTela;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
 import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
@@ -19,7 +18,6 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +25,6 @@ import java.util.stream.Collectors;
 public class ControladorTela {
 
     private final ServicioTela servicioTela;
-    private final List<MisTelas> telasDelUsuario = new ArrayList<>();
 
     @Autowired
     public ControladorTela(ServicioTela servicioTela) {
@@ -55,32 +52,6 @@ public class ControladorTela {
         }
 
         return "catalogo-telas";
-    }
-
-    // 2. Mostrar formulario para cargar telas del usuario
-    @GetMapping("/cargar-tela")
-    public String mostrarFormularioCarga(Model model) {
-        model.addAttribute("telasUsuario", telasDelUsuario);
-        model.addAttribute("tiposTela", TipoTela.values());
-        return "cargar-tela";
-    }
-
-    // 3. Cargar manualmente una tela
-    @PostMapping("/mis-telas/cargar-tela")
-    public String cargarTela(@RequestParam String tipoTela,
-                             @RequestParam String color,
-                             @RequestParam String imagenUrl,
-                             RedirectAttributes redirectAttributes) {
-        try {
-            TipoTela tipo = TipoTela.valueOf(tipoTela.toUpperCase());
-            MisTelas nueva = new MisTelas(generarId(), tipo, color, 0.0, imagenUrl);
-            telasDelUsuario.add(nueva);
-            redirectAttributes.addFlashAttribute("mensaje", "Tela guardada con éxito");
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("mensajeError", "Tipo de tela inválido");
-        }
-
-        return "redirect:/cargar-tela";
     }
 
     // 4. Mostrar detalle de una tela del catálogo
@@ -211,7 +182,7 @@ public class ControladorTela {
 
         // Intentar descontar stock y registrar la compra
         try {
-            Usuario usuario = (Usuario) session.getAttribute("usuario");
+            Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
             if (usuario == null) {
                 redirectAttributes.addFlashAttribute("mensajeError", "Debés iniciar sesión para realizar la compra.");
                 return "redirect:/login";
@@ -252,42 +223,19 @@ public class ControladorTela {
         return "boleta-tela";
     }
 
-    // 9. Comprar directamente desde catálogo (opcional)
-    @GetMapping("/registrar-tela")
-    public String registrarTelaDesdeCatalogo(@RequestParam Long id, RedirectAttributes redirectAttributes) {
-        MisTelas telaComprada = servicioTela.obtenerTelasDeFabrica().stream()
-                .filter(tela -> tela.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-
-        if (telaComprada == null) {
-            redirectAttributes.addFlashAttribute("mensajeError", "Tela no encontrada en el catálogo");
-        } else if (telasDelUsuario.stream().anyMatch(t -> t.getId().equals(id))) {
-            redirectAttributes.addFlashAttribute("mensajeAdvertencia", "Ya has comprado esta tela");
-        } else {
-            telasDelUsuario.add(telaComprada);
-            redirectAttributes.addFlashAttribute("mensaje", "Tela comprada con éxito");
-        }
-
-        return "redirect:/catalogo-telas";
-    }
-
-    // 10. Utilidad para generar ID
-    private Long generarId() {
-        return (long) (telasDelUsuario.size() + 1000);
-    }
-
 
     /*********************************************/
-    @GetMapping("/telas-por-prenda/{prendaId}")
+    @RequestMapping(value = "/telas-por-prenda/{prendaId}", method = RequestMethod.GET)
     @ResponseBody
-    public List<DatosTela> obtenerTelasPorPrenda(@PathVariable("prendaId") Long prendaId){
-        List<Tela> telas = servicioTela.buscarTelasDePrendaPorIdPrenda(prendaId);
+    public List<DatosTela> obtenerTelasPorPrenda(
+            @PathVariable("prendaId") Long prendaId,
+            @RequestParam("metrosTalle") Double metrosTalle) {
+        //List<Tela> telas = servicioTela.buscarTelasDePrendaPorIdPrenda(prendaId);
+        List<Tela> telas = servicioTela.buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(prendaId, metrosTalle);
         return telas.stream()
-                .map(t -> new DatosTela(t.getId(), t.getTipoTela()))
+                .map(t -> new DatosTela(t.getId(), t.getTipoTela(), t.getMetros(), t.getColor()))
                 .collect(Collectors.toList()); // cambié t.getTipoTela().name() a t.getTipoTela()
     }
-
 
 }
 

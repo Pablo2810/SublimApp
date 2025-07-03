@@ -26,6 +26,6 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
     }
 
     @Override
-    public void eliminarUsuario(Usuario usuario) { repositorioUsuario.eliminar(usuario); }
+    public boolean emailDisponible(String email) {return !repositorioUsuario.existeEmail(email); }
 
 }

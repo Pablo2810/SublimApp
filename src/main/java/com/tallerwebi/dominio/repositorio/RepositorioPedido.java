@@ -23,4 +23,6 @@ public interface RepositorioPedido {
     void actualizar(Pedido pedido);
     Pedido buscarPorId(Long id);
     void cambiarEstadoPedido(Pedido pedido, Estado nuevoEstado);
+
+    List<Pedido> listarPedidosDelUsuarioNoPendiente(Long idUsuario);
 }

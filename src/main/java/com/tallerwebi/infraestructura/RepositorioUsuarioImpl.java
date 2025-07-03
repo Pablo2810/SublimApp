@@ -47,6 +47,13 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     }
 
     @Override
-    public void eliminar(Usuario usuario) { sessionFactory.getCurrentSession().delete(usuario); }
+    public boolean existeEmail(String email) {
+        Long count = (Long) sessionFactory.getCurrentSession().createQuery(
+                        "select count(*) from Usuario u where u.email = :email")
+                .setParameter("email", email)
+                .uniqueResult();
+        return count > 0;
+    }
+
 
 }

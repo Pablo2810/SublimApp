@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Taller Web I</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <!-- Custom styles -->
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/modoOscuro.css}">
+    <style>
+        body {
+            font-family: "Lexend Deca", sans-serif;
+        }
+    </style>
+</head>
+<body class="p-0 m-0">
+<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
+<main>
+    <section class="container my-4">
+        <h2 class="text-center mb-4">Historial de Pedidos</h2>
+        <table th:if="${!pedidos.isEmpty()}" class="table">
+            <thead>
+            <tr>
+                <th>Nro pedido</th>
+                <th>Cantidad de copias</th>
+                <th>Metros</th>
+                <th>Costo del servicio</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="pedido : ${pedidos}">
+                <td class="fw-bold" th:text="${pedido.id}"></td>
+                <td th:text="${pedido.cantCopias}"></td>
+                <td th:text="${pedido.metrosTotales}"></td>
+                <td th:text="${pedido.costoServicio}"></td>
+                <td th:text="${pedido.fechaCreacion}"></td>
+                <td th:class="${pedido.estado.claseCss}" th:text="${pedido.estado.descripcion}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <p th:if="${pedidos.isEmpty()}" th:text="${mensajeSinPedidos}" class="text-center text-muted"></p>
+    </section>
+</main>
+
+<footer th:insert="templates/footer :: footer"></footer>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

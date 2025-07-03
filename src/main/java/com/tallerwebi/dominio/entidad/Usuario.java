@@ -25,6 +25,8 @@ public class Usuario {
     @Column(name = "imagen_perfil")
     private String imagenPerfil;
 
+    private Integer edad;
+
 
     @OneToMany(mappedBy = "usuario")
     private List<TelaUsuario> telas = new ArrayList<>();
@@ -76,38 +78,28 @@ public class Usuario {
     public void setTelefono(String telefono) { this.telefono = telefono; }
     public String getImagenPerfil() { return imagenPerfil; }
     public void setImagenPerfil(String imagenPerfil) { this.imagenPerfil = imagenPerfil; }
-
     public String getNombre() {
         return nombre;
     }
-
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
     public Integer getCantidadPromocionesVistas() {
         return cantidadPromocionesVistas;
     }
-
-    public void setCantidadPromocionesVistas(Integer cantidadPromocionesVistas) {
-        this.cantidadPromocionesVistas = cantidadPromocionesVistas;
-    }
-
+    public void setCantidadPromocionesVistas(Integer cantidadPromocionesVistas) { this.cantidadPromocionesVistas = cantidadPromocionesVistas; }
     public Double getPromedioItemsPorPedido() {
         return promedioItemsPorPedido;
     }
-
-    public void setPromedioItemsPorPedido(Double promedioItemsPorPedido) {
-        this.promedioItemsPorPedido = promedioItemsPorPedido;
-    }
-
+    public void setPromedioItemsPorPedido(Double promedioItemsPorPedido) { this.promedioItemsPorPedido = promedioItemsPorPedido; }
     public Double getFrecuenciaPedidos() {
         return frecuenciaPedidos;
     }
-
     public void setFrecuenciaPedidos(Double frecuenciaPedidos) {
         this.frecuenciaPedidos = frecuenciaPedidos;
     }
+    public Integer getEdad(){ return edad; }
+    public void setEdad(Integer edad){ this.edad = edad; }
 
     public void agregarTela(TelaUsuario tela) {
         this.telas.add(tela);

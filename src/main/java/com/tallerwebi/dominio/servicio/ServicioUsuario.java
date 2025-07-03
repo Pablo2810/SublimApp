@@ -8,6 +8,9 @@ import javax.transaction.Transactional;
 public interface ServicioUsuario {
 
     Usuario consultarUsuario(String email);
+
     void modificarUsuario(Usuario usuario);
-    void eliminarUsuario(Usuario usuario);
+
+    boolean emailDisponible(String email);
+
 }

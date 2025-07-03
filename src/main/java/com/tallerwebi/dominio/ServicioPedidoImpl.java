@@ -63,8 +63,24 @@ public class ServicioPedidoImpl implements ServicioPedido {
     }
 
     @Override
+    public void generarPedidoCompleto(Long id, String codigoPedido, LocalDate fechaCreacion, Long diasEspera) {
+        Pedido pedido = obtenerPedido(id);
+        pedido.setCodigoPedido(codigoPedido);
+        pedido.setFechaCreacion(fechaCreacion);
+        pedido.setFechaEntrega(LocalDate.now().plusDays(diasEspera));
+        pedido.setMontoTotal(calcularCostoTotal(pedido));
+        pedido.setMontoFinal(pedido.getMontoTotal());
+        repositorioPedido.actualizar(pedido);
+    }
+
+    @Override
     public List<Pedido> listarPedidosDelUsuario(Long idUsuario) {
         return repositorioPedido.listarPedidosDelUsuario(idUsuario);
+    }
+
+    @Override
+    public List<Pedido> listarPedidosDelUsuarioNoPendiente(Long idUsuario) {
+        return repositorioPedido.listarPedidosDelUsuarioNoPendiente(idUsuario);
     }
 
     @Override
@@ -120,12 +136,12 @@ public class ServicioPedidoImpl implements ServicioPedido {
 
     /*
     Evalua que se pueda cambiar el estado del pedido
-    - primero tiene que pasar de EN_ESPERA a SUBLIMADO
-    - una vez que el estado este en SUBLIMADO no puede volver a estar EN_ESPERA
+    - una vez que el estado este en SUBLIMADO | EN_ESPERA | A_RETIRAR no puede volver a estar PENDIENTE
     */
     private boolean puedeCambiarElEstado(Estado estadoAnterior, Estado nuevoEstado) {
-        return (estadoAnterior.equals(Estado.EN_ESPERA) && !nuevoEstado.equals(Estado.A_RETIRAR)) ||
-                (estadoAnterior.equals(Estado.SUBLIMANDO) && !nuevoEstado.equals(Estado.EN_ESPERA));
+        return estadoAnterior.equals(Estado.PENDIENTE) && !nuevoEstado.equals(Estado.PENDIENTE) ||
+                estadoAnterior.equals(Estado.EN_ESPERA) && nuevoEstado.equals(Estado.SUBLIMANDO) ||
+                estadoAnterior.equals(Estado.SUBLIMANDO) && nuevoEstado.equals(Estado.A_RETIRAR);
     }
 
 }

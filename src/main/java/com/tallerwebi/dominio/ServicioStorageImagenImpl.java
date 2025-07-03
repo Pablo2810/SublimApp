@@ -23,7 +23,18 @@ public class ServicioStorageImagenImpl implements ServicioStorageImagen {
             FileCreateRequest fileCreateRequest = new FileCreateRequest(archivo.getBytes(), nombreArchivo);
             return imageKit.upload(fileCreateRequest);
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
+    public Result subirImagen(MultipartFile archivo, String carpeta, String nombreArchivo) {
+        try {
+            FileCreateRequest fileCreateRequest = new FileCreateRequest(archivo.getBytes(), nombreArchivo);
+            fileCreateRequest.setFolder(carpeta);
+            return imageKit.upload(fileCreateRequest);
+        } catch (Exception e) {
+            throw new IllegalArgumentException();
         }
     }
 

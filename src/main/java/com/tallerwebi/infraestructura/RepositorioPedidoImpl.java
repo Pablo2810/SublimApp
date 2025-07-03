@@ -115,7 +115,19 @@ public class RepositorioPedidoImpl implements RepositorioPedido {
 
     @Override
     public List<Pedido> listarPedidosDelUsuario(Long idUsuario) {
-        return null;
+        return (List<Pedido>) sessionFactory.getCurrentSession()
+                .createQuery("FROM Pedido p JOIN FETCH p.productos WHERE p.usuarioPedido.id = :usuarioBuscado", Pedido.class) // Added JOIN FETCH and Pedido.class for type safety
+                .setParameter("usuarioBuscado", idUsuario)
+                .getResultList();
+    }
+
+    @Override
+    public List<Pedido> listarPedidosDelUsuarioNoPendiente(Long idUsuario) {
+        return (List<Pedido>) sessionFactory.getCurrentSession()
+                .createQuery("FROM Pedido p JOIN FETCH p.productos WHERE p.usuarioPedido.id = :usuarioBuscado AND p.estado <> :estado", Pedido.class) // Added JOIN FETCH and Pedido.class for type safety
+                .setParameter("usuarioBuscado", idUsuario)
+                .setParameter("estado", Estado.PENDIENTE)
+                .getResultList();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.tallerwebi.presentacion.controlador;
 
 import com.tallerwebi.dominio.entidad.*;
+import com.tallerwebi.dominio.servicio.ServicioMaquina;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
 import com.tallerwebi.dominio.servicio.ServicioProducto;
 import com.tallerwebi.dominio.servicio.ServicioUsuario;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -26,14 +28,17 @@ public class ControladorPedido {
     private final ServicioPedido servicioPedido;
     private final ServicioProducto servicioProducto;
     private final ServicioUsuario servicioUsuario;
+    private final ServicioMaquina servicioMaquina;
 
     @Autowired
     public ControladorPedido(ServicioPedido servicioPedido,
                              ServicioUsuario servicioUsuario,
-                             ServicioProducto servicioProducto) {
+                             ServicioProducto servicioProducto,
+                             ServicioMaquina servicioMaquina) {
         this.servicioPedido = servicioPedido;
         this.servicioUsuario = servicioUsuario;
         this.servicioProducto = servicioProducto;
+        this.servicioMaquina = servicioMaquina;
     }
 /*
     @RequestMapping(path = "/nuevo-pedido", method = RequestMethod.GET)
@@ -67,23 +72,38 @@ public class ControladorPedido {
         return new ModelAndView("historial-pedidos", model);
     }
 */
-
+    @RequestMapping(value = "/detalle-pedido", method = RequestMethod.GET)
+    public ModelAndView mostrarCarrito(ModelMap model, HttpServletRequest request) {
+        if (!model.containsAttribute("pedido")) {
+            Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
+            Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario);
+            model.addAttribute("pedido", pedido);
+        }
+        return new ModelAndView("detalle-pedido", model);
+    }
 
     @RequestMapping(value = "/pagar-pedido", method = RequestMethod.POST)
     public ModelAndView pagarPedidoPendiente(@RequestParam Long pedidoId){
-        servicioPedido.cambiarEstadoPedido(pedidoId, Estado.EN_ESPERA);
+        ModelMap model = new ModelMap();
+        try {
+            servicioPedido.cambiarEstadoPedido(pedidoId, Estado.EN_ESPERA);
+            Long diasEspera = servicioMaquina.calcularTiempoEspera();
+            servicioPedido.generarPedidoCompleto(pedidoId, UUID.randomUUID().toString(), LocalDate.now(), diasEspera);
+        } catch (Exception e) {
+            return new ModelAndView("detalle-pedido");
+        }
         return new ModelAndView("historial-pedidos");
     }
 
-    /*@RequestMapping(value = "/historial-pedidos")
+    @RequestMapping(value = "/historial-pedidos")
     public ModelAndView historialPedidos(HttpServletRequest request) {
         ModelMap model = new ModelMap();
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
-        List<Pedido> pedidos = servicioPedido.listarPedidosDelUsuario(usuario.getId());
+        List<Pedido> pedidos = servicioPedido.listarPedidosDelUsuarioNoPendiente(usuario.getId());
 
         model.put("mensajeSinPedidos", "Todavia no tienes pedidos");
         model.put("pedidos", pedidos);
 
         return new ModelAndView("historial-pedidos", model);
-    }*/
+    }
 }

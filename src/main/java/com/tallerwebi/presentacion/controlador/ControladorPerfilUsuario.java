@@ -1,7 +1,6 @@
 package com.tallerwebi.presentacion.controlador;
 
 import com.tallerwebi.dominio.entidad.Pedido;
-import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
 import com.tallerwebi.dominio.servicio.ServicioStorageImagen;
@@ -14,8 +13,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class ControladorPerfilUsuario {
     private ServicioPedido servicioPedido;
 
     @Autowired
-    private ServicioTela servicioTela; // servicio para obtener telas del usuario
+    private ServicioTela servicioTela;
 
     @GetMapping("/perfil-usuario")
     public ModelAndView verPerfilUsuario(HttpServletRequest request,
@@ -48,7 +49,7 @@ public class ControladorPerfilUsuario {
 
         model.put("usuario", usuario);
         model.put("pedidos", pedidos);
-        model.put("telas", servicioTela.obtenerTelas());
+        model.put("telas", servicioTela.obtenerTelasDelUsuario(usuario));
 
         if (exito != null) model.put("exito", exito);
         if (error != null) model.put("error", error);
@@ -63,11 +64,17 @@ public class ControladorPerfilUsuario {
                                          @RequestParam(required = false) String telefono,
                                          @RequestParam(required = false) String password,
                                          @RequestParam(required = false) String passwordActual,
-                                         @RequestParam(required = false) MultipartFile imagenPerfil) {
+                                         @RequestParam(required = false) MultipartFile imagenPerfil,
+                                         RedirectAttributes redirectAttrs) {
 
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
         if (usuario == null) {
             return new ModelAndView("redirect:/login");
+        }
+
+        if (!email.equals(usuario.getEmail()) && !servicioUsuario.emailDisponible(email)) {
+            redirectAttrs.addFlashAttribute("error", "El correo ya está en uso.");
+            return new ModelAndView("redirect:/configuracion-perfil");
         }
 
         usuario.setNombre(nombre);
@@ -76,7 +83,8 @@ public class ControladorPerfilUsuario {
 
         if (password != null && !password.isEmpty()) {
             if (passwordActual == null || !usuario.getPassword().equals(passwordActual)) {
-                return new ModelAndView("redirect:/perfil-usuario?error=La contraseña actual es incorrecta.");
+                redirectAttrs.addFlashAttribute("error", "La contraseña actual es incorrecta.");
+                return new ModelAndView("redirect:/configuracion-perfil");
             }
             usuario.setPassword(password);
         }
@@ -89,17 +97,33 @@ public class ControladorPerfilUsuario {
         servicioUsuario.modificarUsuario(usuario);
         request.getSession().setAttribute("usuarioLogueado", usuario);
 
-        return new ModelAndView("redirect:/perfil-usuario?exito=Datos actualizados correctamente.");
+        redirectAttrs.addFlashAttribute("exito", "Datos actualizados correctamente.");
+        return new ModelAndView("redirect:/configuracion-perfil");
     }
 
-    @PostMapping("/perfil-usuario/eliminar")
-    public ModelAndView eliminarCuenta(HttpServletRequest request) {
+
+    @GetMapping("/configuracion-perfil")
+    public ModelAndView configuracionPerfil(HttpServletRequest request,
+                                            @ModelAttribute("exito") String exito,
+                                            @ModelAttribute("error") String error) {
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
-        if (usuario != null) {
-            servicioUsuario.eliminarUsuario(usuario);
-            request.getSession().invalidate();
+        if (usuario == null) {
+            return new ModelAndView("redirect:/login");
         }
-        return new ModelAndView("redirect:/");
+
+        ModelMap model = new ModelMap();
+        model.put("usuario", usuario);
+
+        if (exito != null) model.put("exito", exito);
+        if (error != null) model.put("error", error);
+
+        return new ModelAndView("configuracion_perfil", model);
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate(); // invalida la sesión del usuario
+        return "redirect:/login"; // redirige al login u otra página pública
     }
 
 }

@@ -2,7 +2,6 @@ package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.TelaUsuario;
-import com.tallerwebi.dominio.entidad.TipoTela;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
 import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
@@ -49,7 +48,7 @@ public class ServicioTelaImpl implements ServicioTela {
     public void crearOActualizar(DatosTela datosTela, MultipartFile archivo) {
         Tela tela = new Tela();
 
-        if (datosTela.getId() != 0) {
+        if (datosTela.getId() != null && datosTela.getId() != 0) {
             try {
                 tela = obtenerTela(datosTela.getId());
             } catch (Exception e) {
@@ -63,7 +62,7 @@ public class ServicioTelaImpl implements ServicioTela {
         tela.setColor(datosTela.getColor());
 
         if (!archivo.isEmpty()) {
-            Result imagenSubida = servicioStorageImagen.subirImagen(archivo, "tela-" + datosTela.getColor().toLowerCase());
+            Result imagenSubida = servicioStorageImagen.subirImagen(archivo, "telas", "tela-" + datosTela.getColor().toLowerCase());
             tela.setImagenUrl(imagenSubida.getUrl());
         }
 
@@ -113,40 +112,78 @@ public class ServicioTelaImpl implements ServicioTela {
             throw new StockInsuficiente();
         }
 
-        // Descontar metros
+        // Descontar metros de stock de fábrica
         tela.setMetros(tela.getMetros() - metrosComprados);
         repositorioTela.crearOActualizarTela(tela);
 
-        // Crear la copia para el usuario
-        TelaUsuario telaComprada = new TelaUsuario();
-        telaComprada.setTipoTela(tela.getTipoTela());
-        telaComprada.setColor(tela.getColor());
-        telaComprada.setImagenUrl(tela.getImagenUrl());
-        telaComprada.setPrecio(tela.getPrecio());
-        telaComprada.setMetros(metrosComprados);
-        telaComprada.setUsuario(usuario);
+        // Buscar si el usuario ya tiene una tela igual (por tipo + color)
+        TelaUsuario telaExistente = repositorioTela.buscarTelaUsuarioPorTipoYColor(usuario, tela.getTipoTela(), tela.getColor());
 
-        repositorioTela.crearOActualizarTela(telaComprada);
+        if (telaExistente != null) {
+            // Ya tiene una tela igual, sumamos metros
+            telaExistente.setMetros(telaExistente.getMetros() + metrosComprados);
+            repositorioTela.crearOActualizarTela(telaExistente);
+        } else {
+            // No tiene una igual, creamos una nueva
+            TelaUsuario telaComprada = new TelaUsuario();
+            telaComprada.setTipoTela(tela.getTipoTela());
+            telaComprada.setColor(tela.getColor());
+            telaComprada.setImagenUrl(tela.getImagenUrl());
+            telaComprada.setPrecio(tela.getPrecio());
+            telaComprada.setMetros(metrosComprados);
+            telaComprada.setUsuario(usuario);
+
+            repositorioTela.crearOActualizarTela(telaComprada);
+        }
     }
 
     @Override
-    public Tela buscarTelaDelUsuario(Long id, Usuario usuario) throws TelaNoEncontrada {
-        Tela tela = repositorioTela.buscarTelasDelUsuario(id, usuario);
-        if (tela == null){
-            throw new TelaNoEncontrada();
-        }
-        return tela;
+    public List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle) {
+        return repositorioTela.buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(prendaId, metrosTalle);
     }
 
-
-    /*
     @Override
-    public Tela buscarTelaPorId(Long telaId, Usuario usuario) throws TelaNoEncontrada {
-        Tela telaEncontrada = repositorioTela.buscarTelaPorId(telaId, usuario);
-        if (telaEncontrada == null){
+    public void restarMetrosTela(Tela tela, Double metrosTotales) {
+        if (tela != null) {
+            tela.setMetros(tela.getMetros() - metrosTotales);
+            repositorioTela.crearOActualizarTela(tela);
+        } else {
             throw new TelaNoEncontrada();
         }
-        return telaEncontrada;
+
     }
-    */
+
+    @Override
+    public List<TelaUsuario> obtenerTelasDelUsuario(Usuario usuario) {
+        return repositorioTela.obtenerTelasPorUsuario(usuario);
+    }
+
+    @Override
+    public void consumirTelaParaProducto(Tela telaSeleccionada, Double metrosNecesarios, Usuario usuario)
+            throws StockInsuficiente, TelaNoEncontrada {
+
+        // Buscar si el usuario tiene tela
+        TelaUsuario telaUsuario = repositorioTela.buscarTelaUsuarioPorTipoYColor(usuario,
+                telaSeleccionada.getTipoTela(), telaSeleccionada.getColor());
+
+        // Caso 1: el usuario tiene suficiente
+        if (telaUsuario != null && telaUsuario.getMetros() >= metrosNecesarios) {
+            telaUsuario.setMetros(telaUsuario.getMetros() - metrosNecesarios);
+            repositorioTela.crearOActualizarTela(telaUsuario);
+            return;
+        }
+
+        // Caso 2: la fábrica tiene suficiente
+        if (telaSeleccionada.getMetros() >= metrosNecesarios) {
+            telaSeleccionada.setMetros(telaSeleccionada.getMetros() - metrosNecesarios);
+            repositorioTela.crearOActualizarTela(telaSeleccionada);
+            // No se guarda en stock del usuario
+            return;
+        }
+
+        // Caso 3: ninguno tiene suficiente
+        throw new StockInsuficiente();
+    }
+
+
 }

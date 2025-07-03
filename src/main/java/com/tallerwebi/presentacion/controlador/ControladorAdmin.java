@@ -23,12 +23,16 @@ import java.util.List;
 @RequestMapping("/admin")
 public class ControladorAdmin {
 
+    private final ServicioTela servicioTela;
+    private final ServicioTalle servicioTalle;
+    private final ServicioPedido servicioPedido;
+
     @Autowired
-    private ServicioTela servicioTela;
-    @Autowired
-    private ServicioTalle servicioTalle;
-    @Autowired
-    private ServicioPedido servicioPedido;
+    public ControladorAdmin(ServicioTela servicioTela, ServicioTalle servicioTalle, ServicioPedido servicioPedido) {
+        this.servicioTela = servicioTela;
+        this.servicioTalle = servicioTalle;
+        this.servicioPedido = servicioPedido;
+    }
 
     @GetMapping("/dashboard")
     public ModelAndView irAlDashboard(HttpServletRequest request) {
@@ -39,10 +43,16 @@ public class ControladorAdmin {
     @GetMapping("/listar-telas")
     public ModelAndView listarTelas() {
         ModelMap model = new ModelMap();
-        List<Tela> telas = servicioTela.obtenerTelas();
 
-        model.put("mensajeSinTelas", "No hay telas de fabrica registradas");
-        model.addAttribute("telas", telas);
+        try {
+            List<Tela> telas = servicioTela.obtenerTelas();
+
+            if (telas.isEmpty()) throw new Exception();
+
+            model.addAttribute("telas", telas);
+        } catch (Exception e) {
+            model.put("mensajeSinTelas", "No hay telas de fabrica registradas");
+        }
 
         return new ModelAndView("listar-telas", model);
     }
