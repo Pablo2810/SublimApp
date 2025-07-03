@@ -67,7 +67,15 @@ public class ControladorPedido {
         return new ModelAndView("historial-pedidos", model);
     }
 */
-
+    @RequestMapping(value = "/detalle-pedido", method = RequestMethod.GET)
+    public ModelAndView mostrarCarrito(ModelMap model, HttpServletRequest request) {
+        if (!model.containsAttribute("pedido")) {
+            Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
+            Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario);
+            model.addAttribute("pedido", pedido);
+        }
+        return new ModelAndView("detalle-pedido", model);
+    }
 
     @RequestMapping(value = "/pagar-pedido", method = RequestMethod.POST)
     public ModelAndView pagarPedidoPendiente(@RequestParam Long pedidoId){

@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>Fragmento Nav SublimApp</title>
   <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
+  <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.4.0/css/all.min.css}" />
 </head>
 <body>
 
@@ -38,6 +39,29 @@
       </div>
     </div>
   </div>
+<<<<<<< HEAD
+=======
+=======
+<nav class="w-50 p-0">
+  <h3 class="m-0">
+    <a th:href="@{/home}" class="text-decoration-none text-white">SublimApp</a>
+    <a th:if="${session.ROL_USUARIO == 'ADMIN'}" th:href="@{/admin/dashboard}" class="btn btn-outline-success ms-3">
+      Dashboard
+    </a>
+  </h3>
+</nav>
+<nav class="p-3 d-flex justify-content-evenly navbar bg-dark w-50 align-items-center">
+  <a th:href="@{/nuevo-pedido}" class="fs-5 text-white text-decoration-none me-3">Pedidos</a>
+  <a th:href="@{/catalogo-telas}" class="fs-5 text-white text-decoration-none me-3">Telas</a>
+  <a th:href="@{/disenios}" class="fs-5 text-white text-decoration-none me-3">Diseños</a>
+  <a th:href="@{/guia-talles}" class="fs-5 text-white text-decoration-none me-3">Guia de talles</a>
+  <a th:href="@{/detalle-pedido}" class="fs-5 text-white text-decoration-none me-3">
+    <i class="fa-solid fa-cart-shopping" style="color: #ffffff;"></i>
+  </a>
+  <a th:href="@{/perfil-usuario}" class="fs-5 text-white text-decoration-none me-3">Perfil</a>
+  <button id="modoOscuroToggle" class="btn btn-outline-light">Modo Oscuro</button>
+>>>>>>> origin/alan
+>>>>>>> origin/alan
 </nav>
 
 <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>

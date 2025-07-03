@@ -136,6 +136,12 @@
             <version>2.15.2</version> <!-- o la que uses -->
         </dependency>
 
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>font-awesome</artifactId>
+            <version>6.4.0</version> <!-- Última disponible en WebJars -->
+        </dependency>
+
         <!-- compile only, deployed container will provide this -->
         <!--
         <dependency>
