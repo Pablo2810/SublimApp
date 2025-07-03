@@ -63,8 +63,24 @@ public class ServicioPedidoImpl implements ServicioPedido {
     }
 
     @Override
+    public void generarPedidoCompleto(Long id, String codigoPedido, LocalDate fechaCreacion, Long diasEspera) {
+        Pedido pedido = obtenerPedido(id);
+        pedido.setCodigoPedido(codigoPedido);
+        pedido.setFechaCreacion(fechaCreacion);
+        pedido.setFechaEntrega(LocalDate.now().plusDays(diasEspera));
+        pedido.setMontoTotal(calcularCostoTotal(pedido));
+        pedido.setMontoFinal(pedido.getMontoTotal());
+        repositorioPedido.actualizar(pedido);
+    }
+
+    @Override
     public List<Pedido> listarPedidosDelUsuario(Long idUsuario) {
         return repositorioPedido.listarPedidosDelUsuario(idUsuario);
+    }
+
+    @Override
+    public List<Pedido> listarPedidosDelUsuarioNoPendiente(Long idUsuario) {
+        return repositorioPedido.listarPedidosDelUsuarioNoPendiente(idUsuario);
     }
 
     @Override
