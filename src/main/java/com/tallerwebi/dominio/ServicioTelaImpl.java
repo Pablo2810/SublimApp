@@ -166,23 +166,16 @@ public class ServicioTelaImpl implements ServicioTela {
         TelaUsuario telaUsuario = repositorioTela.buscarTelaUsuarioPorTipoYColor(usuario,
                 telaSeleccionada.getTipoTela(), telaSeleccionada.getColor());
 
-        // Caso 1: el usuario tiene suficiente
         if (telaUsuario != null && telaUsuario.getMetros() >= metrosNecesarios) {
             telaUsuario.setMetros(telaUsuario.getMetros() - metrosNecesarios);
             repositorioTela.crearOActualizarTela(telaUsuario);
-            return;
-        }
-
-        // Caso 2: la fábrica tiene suficiente
-        if (telaSeleccionada.getMetros() >= metrosNecesarios) {
+        } else if (telaSeleccionada.getMetros() >= metrosNecesarios) {
             telaSeleccionada.setMetros(telaSeleccionada.getMetros() - metrosNecesarios);
             repositorioTela.crearOActualizarTela(telaSeleccionada);
             // No se guarda en stock del usuario
-            return;
+        } else {
+            throw new StockInsuficiente();
         }
-
-        // Caso 3: ninguno tiene suficiente
-        throw new StockInsuficiente();
     }
 
 
