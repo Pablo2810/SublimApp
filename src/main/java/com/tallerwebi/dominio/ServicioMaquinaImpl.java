@@ -12,6 +12,6 @@ public class ServicioMaquinaImpl implements ServicioMaquina {
     @Override
     public Long calcularTiempoEspera() {
         Random random = new Random();
-        return random.nextLong(1,21);
+        return random.nextLong();
     }
 }
