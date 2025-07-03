@@ -109,7 +109,7 @@ public class ControladorProducto {
             servicioPedido.asociarProductoPedido(pedido);
 
             if (talle != null)
-                servicioTela.restarMetrosTela(tela, talle.getMetrosTotales());
+                servicioTela.restarMetrosTela(tela, talle.getMetrosTotales() * producto.getCantidad());
 
             model.put("pedido", pedido);
             return new ModelAndView("detalle-pedido", model);

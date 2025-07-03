@@ -3,6 +3,7 @@ package com.tallerwebi.dominio.servicio;
 import com.tallerwebi.dominio.entidad.*;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 
@@ -20,4 +21,8 @@ public interface ServicioPedido {
 
     Pedido buscarPedidoEstadoPendiente(Usuario usuario);
     void asociarProductoPedido(Pedido pedido);
+
+    List<Pedido> listarPedidosDelUsuarioNoPendiente(Long id);
+
+    void generarPedidoCompleto(Long id, String codigoPedido, LocalDate fechaCreacion, Long diasEspera);
 }
