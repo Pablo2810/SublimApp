@@ -1,173 +1,173 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Taller Web I</title>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
-    <!-- Custom CSS -->
-    <link rel="stylesheet" th:href="@{/css/main.css}"/>
-    <link rel="stylesheet" th:href="@{/css/modoOscuro.css}">
-    <style>
-        body {
-            font-family: "Lexend Deca", sans-serif;
-        }
-    </style>
-</head>
-<body class="p-0 m-0">
-<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
-<main class="d-flex align-items-center main pe-5">
-    <div class="w-50 shadow-lg"
-         style="height: fit-content;">
-        <form th:action="@{/registrar-producto}"
-              th:object="${producto}"
-              method="post"
-              enctype="multipart/form-data"
-              class="formulario-pedido p-5 bg-white rounded-5"
-              style="border-bottom-right-radius: 0px!important; border-top-right-radius: 0px!important;">
-            <h3 class="mb-4 text-dark text-center"> Realiza un Nuevo Pedido </h3>
-            <p th:if="${error != null}" class="my-3 fs-5 text-danger text-center" th:text="${error}"></p>
-            <div class="mb-3 w-100 d-flex flex-row justify-content-between">
-                <div class="w-50 p-2 input-group">
-                    <label class="text-dark input-group-text">Prenda</label>
-                    <select th:field="*{prendaId}"
-                            name="prendaId"
-                            id="prendaSelect"
-                            class="form-select">
-                        <option value="" disabled selected>Seleccione una prenda</option>
-                        <option th:each="prenda : ${prendas}"
-                                th:value="${prenda.id}"
-                                th:text="${prenda.descripcion}">
-                        </option>
-                    </select>
+    <!DOCTYPE html>
+    <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Taller Web I</title>
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+        <!-- Custom CSS -->
+        <link rel="stylesheet" th:href="@{/css/main.css}"/>
+        <link rel="stylesheet" th:href="@{/css/modoOscuro.css}">
+        <style>
+            body {
+                font-family: "Lexend Deca", sans-serif;
+            }
+        </style>
+    </head>
+    <body class="p-0 m-0">
+    <div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
+    <main class="d-flex align-items-center main pe-5">
+        <div class="w-50 shadow-lg"
+             style="height: fit-content;">
+            <form th:action="@{/registrar-producto}"
+                  th:object="${producto}"
+                  method="post"
+                  enctype="multipart/form-data"
+                  class="formulario-pedido p-5 bg-white rounded-5"
+                  style="border-bottom-right-radius: 0px!important; border-top-right-radius: 0px!important;">
+                <h3 class="mb-4 text-dark text-center"> Realiza un Nuevo Pedido </h3>
+                <p th:if="${error != null}" class="my-3 fs-5 text-danger text-center" th:text="${error}"></p>
+                <div class="mb-3 w-100 d-flex flex-row justify-content-between">
+                    <div class="w-50 p-2 input-group">
+                        <label class="text-dark input-group-text">Prenda</label>
+                        <select th:field="*{prendaId}"
+                                name="prendaId"
+                                id="prendaSelect"
+                                class="form-select">
+                            <option value="" disabled selected>Seleccione una prenda</option>
+                            <option th:each="prenda : ${prendas}"
+                                    th:value="${prenda.id}"
+                                    th:text="${prenda.descripcion}">
+                            </option>
+                        </select>
+                    </div>
+                    <div class="w-50 p-2 input-group">
+                        <label class="text-dark input-group-text">Talle</label>
+                        <select th:field="*{talleId}"
+                                id="talleSelect"
+                                name="talleId"
+                                class="form-select">
+                            <option value="" disabled selected>Seleccione un talle</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="w-50 p-2 input-group">
-                    <label class="text-dark input-group-text">Talle</label>
-                    <select th:field="*{talleId}"
-                            id="talleSelect"
-                            name="talleId"
-                            class="form-select">
-                        <option value="" disabled selected>Seleccione un talle</option>
-                    </select>
+                <div class="mb-3 w-100 d-flex flex-row justify-content-between">
+                    <div class="w-50 p-2 input-group">
+                        <label class="text-dark input-group-text">Tela</label>
+                        <select th:field="*{telaId}"
+                                id="telaSelect"
+                                name="telaId"
+                                class="form-select">
+                            <option value="" disabled selected>Seleccione una tela</option>
+                        </select>
+                    </div>
+                    <div class="w-50 p-2 input-group">
+                        <label class="text-dark input-group-text">Cantidad</label>
+                        <input th:field="*{cantidad}"
+                               name="cantidad"
+                               class="form-control"
+                               id="cantidad"
+                               type="number"
+                               min="1"
+                               required>
+                    </div>
                 </div>
-            </div>
-            <div class="mb-3 w-100 d-flex flex-row justify-content-between">
-                <div class="w-50 p-2 input-group">
-                    <label class="text-dark input-group-text">Tela</label>
-                    <select th:field="*{telaId}"
-                            id="telaSelect"
-                            name="telaId"
-                            class="form-select">
-                        <option value="" disabled selected>Seleccione una tela</option>
-                    </select>
-                </div>
-                <div class="w-50 p-2 input-group">
-                    <label class="text-dark input-group-text">Cantidad</label>
-                    <input th:field="*{cantidad}"
-                           name="cantidad"
+                <div class="w-100 p-2 mb-4">
+                    <input th:field="*{archivo}"
+                           name="file"
                            class="form-control"
-                           id="cantidad"
-                           type="number"
-                           min="1"
-                           required>
+                           id="file"
+                           type="file">
                 </div>
-            </div>
-            <div class="w-100 p-2 mb-4">
-                <input th:field="*{archivo}"
-                       name="file"
-                       class="form-control"
-                       id="file"
-                       type="file">
-            </div>
-            <div class="d-flex justify-content-center">
-                <button type="submit" class="btn btn-primary w-50">Enviar</button>
-            </div>
-        </form>
-    </div>
-    <div class="w-50 rounded-5 shadow-lg"
-         style="height: 529.200px; border-bottom-left-radius: 0px!important; border-top-left-radius: 0px!important;">
-        <img th:src="@{/img/fondo_registro.jpg}"
-             class="img-fluid rounded-5"
-             style="height: 100%; border-bottom-left-radius: 0px!important; border-top-left-radius: 0px!important;">
-    </div>
-</main>
-<footer th:insert="templates/footer :: footer"></footer>
-<!-- Bootstrap JS -->
-<script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
-<script th:src="@{/js/main.js}"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const prendaSelect = document.getElementById('prendaSelect');
-        const talleSelect = document.getElementById('talleSelect');
-        const telaSelect = document.getElementById('telaSelect');
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary w-50">Enviar</button>
+                </div>
+            </form>
+        </div>
+        <div class="w-50 rounded-5 shadow-lg"
+             style="height: 529.200px; border-bottom-left-radius: 0px!important; border-top-left-radius: 0px!important;">
+            <img th:src="@{/img/fondo_registro.jpg}"
+                 class="img-fluid rounded-5"
+                 style="height: 100%; border-bottom-left-radius: 0px!important; border-top-left-radius: 0px!important;">
+        </div>
+    </main>
+    <footer th:insert="templates/footer :: footer"></footer>
+    <!-- Bootstrap JS -->
+    <script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const prendaSelect = document.getElementById('prendaSelect');
+            const talleSelect = document.getElementById('talleSelect');
+            const telaSelect = document.getElementById('telaSelect');
 
-        prendaSelect.addEventListener('change', function () {
-            const prendaId = this.value;
+            prendaSelect.addEventListener('change', function () {
+                const prendaId = this.value;
 
-            // Limpiar talles anteriores
-            talleSelect.innerHTML = '<option value="" disabled selected>Seleccione un talle</option>';
-            telaSelect.innerHTML = '<option value="" disabled selected>Seleccione una tela</option>';
+                // Limpiar talles anteriores
+                talleSelect.innerHTML = '<option value="" disabled selected>Seleccione un talle</option>';
+                telaSelect.innerHTML = '<option value="" disabled selected>Seleccione una tela</option>';
 
-            if (prendaId) {
-                fetch('/spring/talles-por-prenda/' + prendaId) // 👈 Acordate del contextPath "/spring"
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error("Error al cargar los talles");
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        data.forEach(talle => {
-                            const option = document.createElement('option');
-                            option.value = talle.id;
-                            option.textContent = talle.descripcion;
-                            talleSelect.appendChild(option);
+                if (prendaId) {
+                    fetch('/talles-por-prenda/' + prendaId)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error("Error al cargar los talles");
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            data.forEach(talle => {
+                                const option = document.createElement('option');
+                                option.value = talle.id;
+                                option.textContent = talle.descripcion;
+                                talleSelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error al obtener talles:', error);
                         });
-                    })
-                    .catch(error => {
-                        console.error('Error al obtener talles:', error);
-                    });
-            }
-        });
-
-        talleSelect.addEventListener('change', async function () {
-            const talleId = this.value;
-
-            // Limpiar telas anteriores
-            telaSelect.innerHTML = '<option value="" selected>Seleccione una tela</option>';
-
-            if (talleId) {
-                try {
-                    const responseTalle = await fetch('/spring/talle-por-id/' + talleId);
-                    if (!responseTalle.ok) throw new Error("Error al cargar el talle");
-
-                    const talle = await responseTalle.json();
-                    const metrosTalle = talle.metrosTotales;
-
-                    const url = `/spring/telas-por-prenda/${prendaSelect.value}?metrosTalle=${metrosTalle}`;
-                    const responseTelas = await fetch(url);
-                    const telas = await responseTelas.json();
-
-                    telas.forEach(tela => {
-                        const option = document.createElement('option');
-                        option.value = tela.id;
-                        option.textContent = tela.tipoTela + ' - ' + tela.color;
-                        telaSelect.appendChild(option);
-                    });
-                } catch (error) {
-                    console.error('Error:', error);
                 }
-            }
-        });
-    });
+            });
 
-</script>
-</body>
-</html>
+            talleSelect.addEventListener('change', async function () {
+                const talleId = this.value;
+
+                // Limpiar telas anteriores
+                telaSelect.innerHTML = '<option value="" selected>Seleccione una tela</option>';
+
+                if (talleId) {
+                    try {
+                        const responseTalle = await fetch('/talle-por-id/' + talleId);
+                        if (!responseTalle.ok) throw new Error("Error al cargar el talle");
+
+                        const talle = await responseTalle.json();
+                        const metrosTalle = talle.metrosTotales;
+
+                        const url = `/telas-por-prenda/${prendaSelect.value}?metrosTalle=${metrosTalle}`;
+                        const responseTelas = await fetch(url);
+                        const telas = await responseTelas.json();
+
+                        telas.forEach(tela => {
+                            const option = document.createElement('option');
+                            option.value = tela.id;
+                            option.textContent = tela.tipoTela + ' - ' + tela.color;
+                            telaSelect.appendChild(option);
+                        });
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
+                }
+            });
+        });
+
+    </script>
+    </body>
+    </html>
 
 

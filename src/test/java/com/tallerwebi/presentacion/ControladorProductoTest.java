@@ -101,24 +101,30 @@ public class ControladorProductoTest {
         verify(redirectAttrs).addFlashAttribute("mensajeError", "Por el momento no hay prendas en stock");
     }
 
-   /*@Test
+    @Test
     void queSePuedaRegistrarProductoCorrectamente() throws Exception {
-        // Crear objetos simulados
+
         Prenda prenda = new Prenda();
         prenda.setId(1L);
+
         Talle talle = new Talle();
         talle.setId(2L);
         talle.setMetrosTotales(1.0);
+
         Tela tela = new Tela();
         tela.setId(3L);
+
         Archivo archivo = new Archivo();
         archivo.setId(4L);
+
         Producto producto = new Producto();
         producto.setId(10L);
+        producto.setCantidad(5);
+
         Usuario usuario = new Usuario();
         usuario.setId(8L);
+
         Pedido pedido = new Pedido();
-        // Inicializo la colección para evitar NullPointerException
         pedido.setProductos(new HashSet<>());
 
         DatosProducto datosProducto = new DatosProducto();
@@ -131,35 +137,34 @@ public class ControladorProductoTest {
         // Mockear sesión y servicios
         when(requestMock.getSession()).thenReturn(sessionMock);
         when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(usuario);
-
-        when(servicioPrendaMock.buscarPrendaPorId(1L)).thenReturn(prenda);
-       when(servicioTalleMock.obtenerTalle(datosProducto.getTalleId())).thenReturn(talle);
-       when(servicioTelaMock.obtenerTela(3L)).thenReturn(tela);
-        when(servicioArchivoMock.registrarArchivo(datosProducto.getArchivo())).thenReturn(archivo);
+        when(servicioTalleMock.obtenerTalle(anyLong())).thenReturn(talle);
+        when(servicioTelaMock.obtenerTela(anyLong())).thenReturn(tela);
+        when(servicioPrendaMock.buscarPrendaPorId(anyLong())).thenReturn(prenda);
+        when(servicioArchivoMock.registrarArchivo(any(MultipartFile.class))).thenReturn(archivo);
         when(servicioProductoMock.registrarProducto(5, archivo, prenda, talle, tela)).thenReturn(producto);
         when(servicioPedidoMock.buscarPedidoEstadoPendiente(usuario)).thenReturn(pedido);
 
         doNothing().when(servicioPedidoMock).asociarProductoPedido(pedido);
         doNothing().when(servicioTelaMock).consumirTelaParaProducto(tela, talle.getMetrosTotales() * 5, usuario);
 
-        // Llamar método
+        assertNotNull(servicioPrendaMock.buscarPrendaPorId(1L), "Prenda es null");
+        assertNotNull(servicioTalleMock.obtenerTalle(2L), "Talle es null");
+        assertNotNull(servicioTelaMock.obtenerTela(3L), "Tela es null");
+
+        // Llamar al método
         ModelAndView modelAndView = controladorProducto.registrarProductoAlPedido(datosProducto, requestMock, redirectAttrs);
 
         // Verificaciones
         assertEquals("detalle-pedido", modelAndView.getViewName());
         assertTrue(modelAndView.getModel().containsKey("pedido"));
 
-        // Verificar que el producto se agregó al pedido
         Pedido pedidoEnModelo = (Pedido) modelAndView.getModel().get("pedido");
         assertNotNull(pedidoEnModelo);
         assertTrue(pedidoEnModelo.getProductos().contains(producto));
 
-        // Verificar que se llamó al método para asociar producto al pedido con el pedido correcto
         verify(servicioPedidoMock).asociarProductoPedido(pedido);
-
-        // Verificar que se consumió tela para el producto
         verify(servicioTelaMock).consumirTelaParaProducto(tela, talle.getMetrosTotales() * 5, usuario);
-    }*/
+    }
 
     @Test
     void queNoSePuedaRegistrarProductoPorQueNoSeEncontroLaPrendaElegida() throws Exception {
