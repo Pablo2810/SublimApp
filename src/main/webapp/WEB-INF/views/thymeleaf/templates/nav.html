@@ -10,16 +10,19 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 py-3">
   <div class="container-fluid">
-    <!-- Logo / título -->
+    <!-- Logo y Dashboard -->
     <a class="navbar-brand fs-4" th:href="@{/home}">SublimApp</a>
+    <a th:if="${session.ROL_USUARIO == 'ADMIN'}" th:href="@{/admin/dashboard}" class="btn btn-outline-success ms-2">
+      Dashboard
+    </a>
 
-    <!-- Botón hamburguesa para móvil -->
+    <!-- Botón hamburguesa -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
             aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- Enlaces y acciones -->
+    <!-- Contenido -->
     <div class="collapse navbar-collapse justify-content-between" id="navbarContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link fs-5" th:href="@{/nuevo-pedido}">Pedidos</a></li>
@@ -27,46 +30,27 @@
         <li class="nav-item"><a class="nav-link fs-5" th:href="@{/disenios}">Diseños</a></li>
         <li class="nav-item"><a class="nav-link fs-5" th:href="@{/guia-talles}">Guía de Talles</a></li>
         <li class="nav-item"><a class="nav-link fs-5" th:href="@{/perfil-usuario}">Perfil</a></li>
-        <li class="nav-item" th:if="${session.ROL_USUARIO == 'ADMIN'}">
-          <a class="nav-link fs-5 text-success" th:href="@{/admin/dashboard}">Dashboard</a>
+        <li class="nav-item">
+          <a class="nav-link fs-5" th:href="@{/detalle-pedido}">
+            <i class="fa-solid fa-cart-shopping" style="color: #ffffff;"></i>
+          </a>
         </li>
       </ul>
 
-      <!-- Botones a la derecha -->
+      <!-- Acciones derecha -->
       <div class="d-flex align-items-center gap-2">
+        <button id="modoOscuroToggle" class="btn btn-outline-light btn-sm">Modo Oscuro</button>
         <a class="btn btn-outline-light btn-sm" th:href="@{/configuracion-perfil}">Configuración perfil</a>
         <a class="btn btn-danger btn-sm" th:href="@{/logout}">Cerrar sesión</a>
       </div>
     </div>
   </div>
-<<<<<<< HEAD
-=======
-=======
-<nav class="w-50 p-0">
-  <h3 class="m-0">
-    <a th:href="@{/home}" class="text-decoration-none text-white">SublimApp</a>
-    <a th:if="${session.ROL_USUARIO == 'ADMIN'}" th:href="@{/admin/dashboard}" class="btn btn-outline-success ms-3">
-      Dashboard
-    </a>
-  </h3>
-</nav>
-<nav class="p-3 d-flex justify-content-evenly navbar bg-dark w-50 align-items-center">
-  <a th:href="@{/nuevo-pedido}" class="fs-5 text-white text-decoration-none me-3">Pedidos</a>
-  <a th:href="@{/catalogo-telas}" class="fs-5 text-white text-decoration-none me-3">Telas</a>
-  <a th:href="@{/disenios}" class="fs-5 text-white text-decoration-none me-3">Diseños</a>
-  <a th:href="@{/guia-talles}" class="fs-5 text-white text-decoration-none me-3">Guia de talles</a>
-  <a th:href="@{/detalle-pedido}" class="fs-5 text-white text-decoration-none me-3">
-    <i class="fa-solid fa-cart-shopping" style="color: #ffffff;"></i>
-  </a>
-  <a th:href="@{/perfil-usuario}" class="fs-5 text-white text-decoration-none me-3">Perfil</a>
-  <button id="modoOscuroToggle" class="btn btn-outline-light">Modo Oscuro</button>
->>>>>>> origin/alan
->>>>>>> origin/alan
 </nav>
 
 <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>
+
 
 
 
