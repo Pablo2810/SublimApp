@@ -97,12 +97,12 @@ public class ControladorProducto {
             return new ModelAndView("redirect:/nuevo-pedido");
         }
 
-//        try {
-//            archivo = servicioArchivo.registrarArchivo(datosProducto.getArchivo());
-//        } catch (ArchivoNoValido e) {
-//            redirectAttributes.addFlashAttribute("mensajeError", "Ingrese un archivo válido");
-//            return new ModelAndView("redirect:/nuevo-pedido");
-//        }
+        try {
+            archivo = servicioArchivo.registrarArchivo(datosProducto.getArchivo());
+        } catch (ArchivoNoValido e) {
+            redirectAttributes.addFlashAttribute("mensajeError", "Ingrese un archivo válido");
+            return new ModelAndView("redirect:/nuevo-pedido");
+        }
 
         try {
             Producto producto = servicioProducto.registrarProducto(datosProducto.getCantidad(), archivo, prenda, talle, tela);
