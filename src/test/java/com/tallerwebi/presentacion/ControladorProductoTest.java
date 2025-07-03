@@ -101,7 +101,7 @@ public class ControladorProductoTest {
         verify(redirectAttrs).addFlashAttribute("mensajeError", "Por el momento no hay prendas en stock");
     }
 
-   /* @Test
+   /*@Test
     void queSePuedaRegistrarProductoCorrectamente() throws Exception {
         // Crear objetos simulados
         Prenda prenda = new Prenda();
@@ -133,8 +133,8 @@ public class ControladorProductoTest {
         when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(usuario);
 
         when(servicioPrendaMock.buscarPrendaPorId(1L)).thenReturn(prenda);
-        when(servicioTalleMock.obtenerTalle(2L)).thenReturn(talle);
-        when(servicioTelaMock.obtenerTela(3L)).thenReturn(tela);
+       when(servicioTalleMock.obtenerTalle(datosProducto.getTalleId())).thenReturn(talle);
+       when(servicioTelaMock.obtenerTela(3L)).thenReturn(tela);
         when(servicioArchivoMock.registrarArchivo(datosProducto.getArchivo())).thenReturn(archivo);
         when(servicioProductoMock.registrarProducto(5, archivo, prenda, talle, tela)).thenReturn(producto);
         when(servicioPedidoMock.buscarPedidoEstadoPendiente(usuario)).thenReturn(pedido);
@@ -244,7 +244,7 @@ public class ControladorProductoTest {
         ModelAndView modelAndView = controladorProducto.registrarProductoAlPedido(datosProducto, requestMock, redirectAttrs);
 
         assertEquals("redirect:/nuevo-pedido", modelAndView.getViewName());
-        verify(redirectAttrs).addFlashAttribute("mensajeError", "Ocurrió un error al registrar el pedido");
+        verify(redirectAttrs).addFlashAttribute("mensajeError", "Datos inválidos");
 
     }
 
@@ -270,7 +270,7 @@ public class ControladorProductoTest {
         ModelAndView modelAndView = controladorProducto.registrarProductoAlPedido(datosProducto, requestMock, redirectAttrs);
 
         assertEquals("redirect:/nuevo-pedido", modelAndView.getViewName());
-        verify(redirectAttrs).addFlashAttribute("mensajeError", "Ocurrió un error al registrar el pedido");
+        verify(redirectAttrs).addFlashAttribute("mensajeError", "Datos inválidos");
     }
 
 }
