@@ -110,9 +110,8 @@ public class Pedido {
         return productos;
     }
 
-    public void setProductos(HashSet<Producto> productos) {
-        this.productos = productos;
-    }
+    public void setProductos(Set<Producto> productos) { this.productos = productos; }
+
 
     @Override
     public boolean equals(Object o) {
