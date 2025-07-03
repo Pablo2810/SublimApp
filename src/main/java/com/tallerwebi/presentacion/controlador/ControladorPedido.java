@@ -84,18 +84,19 @@ public class ControladorPedido {
 
     @RequestMapping(value = "/pagar-pedido", method = RequestMethod.POST)
     public ModelAndView pagarPedidoPendiente(@RequestParam Long pedidoId){
-        ModelMap model = new ModelMap();
+        //ModelMap model = new ModelMap();
         try {
             servicioPedido.cambiarEstadoPedido(pedidoId, Estado.EN_ESPERA);
             Long diasEspera = servicioMaquina.calcularTiempoEspera();
             servicioPedido.generarPedidoCompleto(pedidoId, UUID.randomUUID().toString(), LocalDate.now(), diasEspera);
+
+            return new ModelAndView("historial-pedidos");
         } catch (Exception e) {
             return new ModelAndView("detalle-pedido");
         }
-        return new ModelAndView("historial-pedidos");
     }
 
-    @RequestMapping(value = "/historial-pedidos")
+    @RequestMapping(value = "/historial-pedidos", method = RequestMethod.GET)
     public ModelAndView historialPedidos(HttpServletRequest request) {
         ModelMap model = new ModelMap();
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");

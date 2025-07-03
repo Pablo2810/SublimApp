@@ -8,40 +8,41 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 py-3">
-  <div class="container-fluid">
-    <!-- Logo / título -->
-    <a class="navbar-brand fs-4" th:href="@{/home}">SublimApp</a>
+<!--<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4 py-3">-->
+<!--  <div class="container-fluid">-->
+<!--    &lt;!&ndash; Logo / título &ndash;&gt;-->
+<!--    <a class="navbar-brand fs-4" th:href="@{/home}">SublimApp</a>-->
 
-    <!-- Botón hamburguesa para móvil -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
-            aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+<!--    &lt;!&ndash; Botón hamburguesa para móvil &ndash;&gt;-->
+<!--    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"-->
+<!--            aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">-->
+<!--      <span class="navbar-toggler-icon"></span>-->
+<!--    </button>-->
 
-    <!-- Enlaces y acciones -->
-    <div class="collapse navbar-collapse justify-content-between" id="navbarContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item"><a class="nav-link fs-5" th:href="@{/nuevo-pedido}">Pedidos</a></li>
-        <li class="nav-item"><a class="nav-link fs-5" th:href="@{/catalogo-telas}">Telas</a></li>
-        <li class="nav-item"><a class="nav-link fs-5" th:href="@{/disenios}">Diseños</a></li>
-        <li class="nav-item"><a class="nav-link fs-5" th:href="@{/guia-talles}">Guía de Talles</a></li>
-        <li class="nav-item"><a class="nav-link fs-5" th:href="@{/perfil-usuario}">Perfil</a></li>
-        <li class="nav-item" th:if="${session.ROL_USUARIO == 'ADMIN'}">
-          <a class="nav-link fs-5 text-success" th:href="@{/admin/dashboard}">Dashboard</a>
-        </li>
-      </ul>
+<!--    &lt;!&ndash; Enlaces y acciones &ndash;&gt;-->
+<!--    <div class="collapse navbar-collapse justify-content-between" id="navbarContent">-->
+<!--      <ul class="navbar-nav me-auto mb-2 mb-lg-0">-->
+<!--        <li class="nav-item"><a class="nav-link fs-5" th:href="@{/nuevo-pedido}">Pedidos</a></li>-->
+<!--        <li class="nav-item"><a class="nav-link fs-5" th:href="@{/catalogo-telas}">Telas</a></li>-->
+<!--        <li class="nav-item"><a class="nav-link fs-5" th:href="@{/disenios}">Diseños</a></li>-->
+<!--        <li class="nav-item"><a class="nav-link fs-5" th:href="@{/guia-talles}">Guía de Talles</a></li>-->
+<!--        <a th:href="@{/detalle-pedido}" class="fs-5 text-white text-decoration-none me-3">-->
+<!--          <i class="fa-solid fa-cart-shopping" style="color: #ffffff;"></i>-->
+<!--        </a>-->
+<!--        <li class="nav-item"><a class="nav-link fs-5" th:href="@{/perfil-usuario}">Perfil</a></li>-->
+<!--        <li class="nav-item" th:if="${session.ROL_USUARIO == 'ADMIN'}">-->
+<!--          <a class="nav-link fs-5 text-success" th:href="@{/admin/dashboard}">Dashboard</a>-->
+<!--        </li>-->
+<!--      </ul>-->
 
-      <!-- Botones a la derecha -->
-      <div class="d-flex align-items-center gap-2">
-        <a class="btn btn-outline-light btn-sm" th:href="@{/configuracion-perfil}">Configuración perfil</a>
-        <a class="btn btn-danger btn-sm" th:href="@{/logout}">Cerrar sesión</a>
-      </div>
-    </div>
-  </div>
-<<<<<<< HEAD
-=======
-=======
+<!--      &lt;!&ndash; Botones a la derecha &ndash;&gt;-->
+<!--      <div class="d-flex align-items-center gap-2">-->
+<!--        <a class="btn btn-outline-light btn-sm" th:href="@{/configuracion-perfil}">Configuración perfil</a>-->
+<!--        <a class="btn btn-danger btn-sm" th:href="@{/logout}">Cerrar sesión</a>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</nav>-->
 <nav class="w-50 p-0">
   <h3 class="m-0">
     <a th:href="@{/home}" class="text-decoration-none text-white">SublimApp</a>
@@ -58,10 +59,10 @@
   <a th:href="@{/detalle-pedido}" class="fs-5 text-white text-decoration-none me-3">
     <i class="fa-solid fa-cart-shopping" style="color: #ffffff;"></i>
   </a>
+<!--  <button id="modoOscuroToggle" class="btn btn-outline-light">Modo Oscuro</button>-->
   <a th:href="@{/perfil-usuario}" class="fs-5 text-white text-decoration-none me-3">Perfil</a>
-  <button id="modoOscuroToggle" class="btn btn-outline-light">Modo Oscuro</button>
->>>>>>> origin/alan
->>>>>>> origin/alan
+  <a class="btn btn-outline-light btn-sm" th:href="@{/configuracion-perfil}">Configuración perfil</a>
+  <a class="btn btn-danger btn-sm" th:href="@{/logout}">Cerrar sesión</a>
 </nav>
 
 <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>

@@ -12,4 +12,5 @@ public interface ServicioProducto {
     //DatosProducto generarDatosProducto(Archivo archivo, Prenda prenda, Integer cantidad, Double precio, Talle talle, Tela tela);
 
     Producto registrarProducto(Integer cantidad, Archivo archivo, Prenda prenda, Talle talle, Tela tela);
+    void eliminarProducto(Long idProducto);
 }

@@ -30,6 +30,11 @@ public class ServicioProductoImpl implements ServicioProducto {
         return repositorioProducto.guardarProducto(producto);
     }
 
+    @Override
+    public void eliminarProducto(Long idProducto) {
+        repositorioProducto.eliminarProducto(idProducto);
+    }
+
     /*@Override
     public DatosProducto generarDatosProducto(Archivo archivo, Prenda prenda, Integer cantidad, Double precio, Talle talle, Tela tela) {
         DatosProducto dtoProducto = new DatosProducto();

@@ -36,8 +36,7 @@
             <th>Tela</th>
             <th>Cantidad</th> <!-- Permitir modificar acá la cantidad -->
             <th>Precio</th>
-            <!-- Agregar columna de acciones -->
-            <th>Total</th> <!-- Sacar de acá, mover al final de la tabla por fuera -->
+            <th>Acciones</th>
         </tr>
         </thead>
         <tbody>
@@ -49,11 +48,17 @@
             <td th:text="${producto.tela.tipoTela} + ' - ' + ${producto.tela.color}">Tela</td>
             <td th:text="${producto.cantidad}">Cantidad</td> <!-- Permitir modificar acá la cantidad -->
             <td th:text="${producto.prenda.precioBase}">Precio prenda</td>
-            <!-- Agregar columna de acciones -->
-            <td>$$$</td> <!-- Sacar de acá, mover al final de la tabla por fuera -->
+            <td>
+                <form th:action="@{'/eliminar-producto/' + ${producto.id}}" method="post">
+                    <input type="submit" value="Eliminar" class="btn-danger">
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>
+    <div>
+        <h5>Monto total: $<span th:text="${pedido.montoTotal}"></span></h5>
+    </div>
     <section class="d-flex container w-75 justify-content-around align-items-center mb-5 my-3">
         <div class="w-25">
             <a th:href="@{/nuevo-pedido}"
