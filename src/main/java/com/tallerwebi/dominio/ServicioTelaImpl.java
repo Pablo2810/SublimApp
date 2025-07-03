@@ -158,4 +158,32 @@ public class ServicioTelaImpl implements ServicioTela {
         return repositorioTela.obtenerTelasPorUsuario(usuario);
     }
 
+    @Override
+    public void consumirTelaParaProducto(Tela telaSeleccionada, Double metrosNecesarios, Usuario usuario)
+            throws StockInsuficiente, TelaNoEncontrada {
+
+        // Buscar si el usuario tiene tela
+        TelaUsuario telaUsuario = repositorioTela.buscarTelaUsuarioPorTipoYColor(usuario,
+                telaSeleccionada.getTipoTela(), telaSeleccionada.getColor());
+
+        // Caso 1: el usuario tiene suficiente
+        if (telaUsuario != null && telaUsuario.getMetros() >= metrosNecesarios) {
+            telaUsuario.setMetros(telaUsuario.getMetros() - metrosNecesarios);
+            repositorioTela.crearOActualizarTela(telaUsuario);
+            return;
+        }
+
+        // Caso 2: la fábrica tiene suficiente
+        if (telaSeleccionada.getMetros() >= metrosNecesarios) {
+            telaSeleccionada.setMetros(telaSeleccionada.getMetros() - metrosNecesarios);
+            repositorioTela.crearOActualizarTela(telaSeleccionada);
+            // No se guarda en stock del usuario
+            return;
+        }
+
+        // Caso 3: ninguno tiene suficiente
+        throw new StockInsuficiente();
+    }
+
+
 }

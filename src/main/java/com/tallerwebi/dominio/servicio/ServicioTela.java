@@ -27,5 +27,8 @@ public interface ServicioTela {
     List<TelaUsuario> obtenerTelasDelUsuario(Usuario usuario);
     void restarMetrosTela(Tela tela, Double metrosTotales);
 
+    void consumirTelaParaProducto(Tela telaSeleccionada, Double metrosNecesarios, Usuario usuario)
+            throws StockInsuficiente, TelaNoEncontrada;
+
     // Tela buscarTelaPorId(Long telaId, Usuario usuario) throws TelaNoEncontrada;
 }
