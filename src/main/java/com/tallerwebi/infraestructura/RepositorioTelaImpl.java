@@ -1,9 +1,6 @@
 package com.tallerwebi.infraestructura;
 
-import com.tallerwebi.dominio.entidad.Tela;
-import com.tallerwebi.dominio.entidad.TelaUsuario;
-import com.tallerwebi.dominio.entidad.TipoTela;
-import com.tallerwebi.dominio.entidad.Usuario;
+import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.repositorio.RepositorioTela;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -92,5 +89,35 @@ public class RepositorioTelaImpl implements RepositorioTela {
     public void guardarTelaFabrica() {
         // no implementado aún
     }
+
+    @Override
+    public TelaUsuario obtenerTelaUsuarioPorId(Long id) {
+        return sessionFactory.getCurrentSession().get(TelaUsuario.class, id);
+    }
+
+    @Override
+    public void guardarTelaUsuario(TelaUsuario telaUsuario) {
+        sessionFactory.getCurrentSession().merge(telaUsuario);
+    }
+
+    @Override
+    public List<TelaUsuario> buscarTelasUsuarioPorUsuarioYEstado(Long usuarioId, EstadoTela estado) {
+        String hql = "FROM TelaUsuario tu WHERE tu.usuario.id = :usuarioId AND tu.estado = :estado";
+        return sessionFactory.getCurrentSession()
+                .createQuery(hql, TelaUsuario.class)
+                .setParameter("usuarioId", usuarioId)
+                .setParameter("estado", estado)
+                .getResultList();
+    }
+
+    @Override
+    public List<TelaUsuario> buscarTelasUsuarioPorUsuario(Long usuarioId) {
+        String hql = "FROM TelaUsuario tu WHERE tu.usuario.id = :usuarioId";
+        return sessionFactory.getCurrentSession()
+                .createQuery(hql, TelaUsuario.class)
+                .setParameter("usuarioId", usuarioId)
+                .getResultList();
+    }
+
 }
 

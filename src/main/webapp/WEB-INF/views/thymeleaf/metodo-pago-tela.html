@@ -35,6 +35,16 @@
         </div>
     </div>
 
+    <div class="mb-3">
+        <select class="form-select" id="tipoEnvio" name="tipoEnvio" required>
+            <option value="" disabled selected>Seleccioná una opción</option>
+            <option value="LOCAL">Retiro en local (gratis)</option>
+            <option value="CABA">Envío a CABA ($1000, 2 a 4 días hábiles)</option>
+            <option value="INTERIOR">Envío al interior ($2000, 4 a 7 días hábiles)</option>
+        </select>
+        <div id="detalleEnvio" class="mt-2 text-muted"></div>
+    </div>
+
     <!-- Datos de la tarjeta -->
     <div id="formulario-tarjeta" style="display: none;">
         <div class="mb-3">

@@ -1,6 +1,6 @@
 package com.tallerwebi.presentacion;
 
-import com.tallerwebi.dominio.entidad.Tela;
+
 import com.tallerwebi.dominio.entidad.TipoTela;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.servicio.ServicioTela;
@@ -12,7 +12,6 @@ import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
@@ -125,7 +124,7 @@ public class ControladorTelaTest {
         String resultado = controlador.confirmarPago(
                 "debito", "1111222233334444", "Carlos Soto", "2028-10", "789",
                 3, "azul", 15.0, 3.0, "lino", "url.jpg",
-                1L, sessionMock, model, redirectAttrs
+                1L, "LOCAL", sessionMock, model, redirectAttrs
         );
 
         assertEquals("redirect:/boleta-tela", resultado);
@@ -141,11 +140,12 @@ public class ControladorTelaTest {
     public void confirmarPagoConCreditoY3Cuotas_DebeCalcularTotalEInteresCorrectamente() {
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
         Model model = new ExtendedModelMap();
+        when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(usuarioMock);
 
         controlador.confirmarPago(
                 "credito", "2222333344445555", "Laura Diaz", "2027-09", "321",
                 3, "rojo", 20.0, 2.0, "algodon", "url.jpg",
-                1L, sessionMock, model, redirectAttrs
+                1L, "LOCAL", sessionMock, model, redirectAttrs
         );
 
         double totalEsperado = 20.0 * 2.0 * 1.08;
@@ -161,11 +161,12 @@ public class ControladorTelaTest {
     public void confirmarPagoDebitoConCuotasMayoresA1_DebeForzarUnaCuota() {
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
         Model model = new ExtendedModelMap();
+        when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(usuarioMock);
 
         controlador.confirmarPago(
                 "debito", "1111222233334444", "Luis Ramos", "2025-08", "111",
                 6, "verde", 10.0, 5.0, "lino", "url.jpg",
-                1L, sessionMock, model, redirectAttrs
+                1L, "LOCAL", sessionMock, model, redirectAttrs
         );
 
         double total = 10.0 * 5.0;
@@ -184,7 +185,7 @@ public class ControladorTelaTest {
         String resultado = controlador.confirmarPago(
                 "paypal", "1234567812345678", "Ana Lopez", "2026-12", "456",
                 3, "azul", 10.0, 1.0, "algodon", "img.jpg",
-                1L, sessionMock, model, redirectAttrs
+                1L, "LOCAL", sessionMock, model, redirectAttrs
         );
 
         assertEquals("metodo-pago-tela", resultado);
@@ -200,7 +201,7 @@ public class ControladorTelaTest {
         String resultado = controlador.confirmarPago(
                 "credito", "9999888877776666", "Marta Sosa", "2030-01", "999",
                 0, "negro", 30.0, 1.0, "lino", "url.jpg",
-                1L, sessionMock, model, redirectAttrs
+                1L, "LOCAL", sessionMock, model, redirectAttrs
         );
 
         assertEquals("metodo-pago-tela", resultado);
@@ -215,7 +216,7 @@ public class ControladorTelaTest {
         String resultado = controlador.confirmarPago(
                 "debito", "1234", "Nombre Apellido", "2025-12", "123",
                 1, "azul", 10.0, 2.0, "algodon", "img.jpg",
-                1L, sessionMock, model, redirectAttrs
+                1L, "LOCAL", sessionMock, model, redirectAttrs
         );
 
         assertEquals("metodo-pago-tela", resultado);
@@ -230,7 +231,7 @@ public class ControladorTelaTest {
         String resultado = controlador.confirmarPago(
                 "credito", "1234567812345678", "   ", "2025-12", "123",
                 1, "azul", 10.0, 2.0, "algodon", "img.jpg",
-                1L, sessionMock, model, redirectAttrs
+                1L, "LOCAL", sessionMock, model, redirectAttrs
         );
 
         assertEquals("metodo-pago-tela", resultado);
@@ -245,7 +246,7 @@ public class ControladorTelaTest {
         String resultado = controlador.confirmarPago(
                 "debito", "1234567812345678", "Maria Gomez", "1225", "123",
                 1, "azul", 10.0, 2.0, "algodon", "img.jpg",
-                1L, sessionMock, model, redirectAttrs
+                1L, "LOCAL", sessionMock, model, redirectAttrs
         );
 
         assertEquals("metodo-pago-tela", resultado);
@@ -260,7 +261,7 @@ public class ControladorTelaTest {
         String resultado = controlador.confirmarPago(
                 "credito", "1234567812345678", "Carlos Perez", "2025-12", "12",
                 1, "azul", 10.0, 2.0, "algodon", "img.jpg",
-                1L, sessionMock, model, redirectAttrs
+                1L, "LOCAL", sessionMock, model, redirectAttrs
         );
 
         assertEquals("metodo-pago-tela", resultado);
@@ -275,12 +276,28 @@ public class ControladorTelaTest {
         String resultado = controlador.confirmarPago(
                 "credito", "1234567812345678", "Juan Pérez", "2026-10", "123",
                 null, "azul", 40.0, 1.0, "algodon", "imagen.jpg",
-                1L, sessionMock, model, redirectAttrs
+                1L, "LOCAL", sessionMock, model, redirectAttrs
         );
 
         assertEquals("metodo-pago-tela", resultado);
         assertEquals("Debe seleccionar una cantidad de cuotas válida.", model.asMap().get("mensajeError"));
     }
+
+    @Test
+    public void confirmarPagoConTipoEnvioInvalido_DebeMostrarError() {
+        RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);
+        Model model = new ExtendedModelMap();
+
+        String resultado = controlador.confirmarPago(
+                "debito", "1234567812345678", "Carlos Sosa", "2026-10", "123",
+                1, "azul", 10.0, 1.0, "algodon", "img.jpg",
+                1L, "volar", sessionMock, model, redirectAttrs
+        );
+
+        assertEquals("metodo-pago-tela", resultado);
+        assertEquals("Método de envío inválido.", model.asMap().get("mensajeError"));
+    }
+
 }
 
 

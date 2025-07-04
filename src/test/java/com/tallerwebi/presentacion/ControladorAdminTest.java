@@ -1,10 +1,11 @@
 package com.tallerwebi.presentacion;
 
-import com.tallerwebi.dominio.entidad.Tela;
+import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
 import com.tallerwebi.dominio.servicio.ServicioTalle;
 import com.tallerwebi.dominio.servicio.ServicioTela;
 import com.tallerwebi.presentacion.controlador.ControladorAdmin;
+import com.tallerwebi.presentacion.dto.DatosModificarPedido;
 import com.tallerwebi.presentacion.dto.DatosTela;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -132,6 +133,81 @@ public class ControladorAdminTest {
         controladorAdmin.editarOCrearTela(1L, dto, archivoMock, redirectAttributes);
 
         verify(redirectAttributes).addFlashAttribute(eq("mensajeError"), contains("Ocurrio un error al crear o actualizar la tela"));
+    }
+
+    @Test
+    void irAlDashboardDevuelveVistaCorrecta() {
+        ModelAndView resultado = controladorAdmin.irAlDashboard(null);
+        assertEquals("home-admin", resultado.getViewName());
+    }
+
+    @Test
+    void editarTelaGetSinIdDevuelveFormularioConTelaNueva() {
+        ModelAndView resultado = controladorAdmin.editarOCrearTela(null);
+        assertEquals("editar-tela", resultado.getViewName());
+        assertTrue(resultado.getModel().get("tela") instanceof Tela);
+    }
+
+    @Test
+    void editarTelaGetConIdDevuelveTelaExistente() {
+        Tela telaMock = new Tela();
+        telaMock.setId(5L);
+        when(servicioTela.obtenerTela(5L)).thenReturn(telaMock);
+
+        ModelAndView resultado = controladorAdmin.editarOCrearTela(5L);
+
+        assertEquals("editar-tela", resultado.getViewName());
+        assertEquals(telaMock, resultado.getModel().get("tela"));
+    }
+
+    @Test
+    void borrarTelaExitoso() {
+        ModelAndView resultado = controladorAdmin.borrarTela(1L, redirectAttributes);
+
+        verify(servicioTela).borrarTela(1L);
+        verify(redirectAttributes).addFlashAttribute(eq("mensaje"), contains("Se borrado la tela"));
+        assertEquals("redirect:/admin/listar-telas", resultado.getViewName());
+    }
+
+    @Test
+    void borrarTelaConErrorAgregaMensajeError() {
+        doThrow(RuntimeException.class).when(servicioTela).borrarTela(anyLong());
+
+        ModelAndView resultado = controladorAdmin.borrarTela(1L, redirectAttributes);
+
+        verify(redirectAttributes).addFlashAttribute(eq("mensajeError"), contains("Ocurrio un error al borrar la tela"));
+        assertEquals("redirect:/admin/listar-telas", resultado.getViewName());
+    }
+
+    @Test
+    void verDetalleTelaUsuarioCuandoNoEsTelaUsuarioRedirigeADashboard() {
+        when(servicioTela.obtenerTela(5L)).thenReturn(new Tela());
+
+        ModelAndView resultado = controladorAdmin.verDetalleTelaUsuario(5L);
+
+        assertEquals("redirect:/admin/dashboard", resultado.getViewName());
+        assertTrue(resultado.getModel().containsKey("mensajeError"));
+    }
+
+    @Test
+    void actualizarEstadoEnvioTelaExitoso() {
+        doNothing().when(servicioTela).cambiarEstadoTela(5L, EstadoTela.EN_VIAJE);
+
+        ModelAndView resultado = controladorAdmin.actualizarEstadoEnvioTela(5L, EstadoTela.EN_VIAJE, redirectAttributes);
+
+        verify(redirectAttributes).addFlashAttribute(eq("mensaje"), contains("actualizado con éxito"));
+        assertEquals("redirect:/admin/estado-envio-telas", resultado.getViewName());
+    }
+
+    @Test
+    void listarTelasUsuarioEstadoDevuelveVistaCorrecta() {
+        when(servicioTela.obtenerTelasUsuario(null)).thenReturn(List.of(new TelaUsuario()));
+
+        ModelAndView resultado = controladorAdmin.listarTelasUsuarioEstado();
+
+        assertEquals("estado-envio-tela-admin", resultado.getViewName());
+        assertNotNull(resultado.getModel().get("telas"));
+        assertNotNull(resultado.getModel().get("estados"));
     }
 
 }

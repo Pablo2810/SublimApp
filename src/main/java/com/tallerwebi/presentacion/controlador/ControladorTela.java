@@ -1,6 +1,7 @@
 package com.tallerwebi.presentacion.controlador;
 
 import com.tallerwebi.dominio.entidad.Tela;
+import com.tallerwebi.dominio.entidad.TipoEnvio;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
 import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
@@ -116,6 +117,7 @@ public class ControladorTela {
                                 @RequestParam String tipoTela,
                                 @RequestParam String imagenUrl,
                                 @RequestParam Long idTela,
+                                @RequestParam String tipoEnvio,
                                 HttpSession session,
                                 Model model,
                                 RedirectAttributes redirectAttributes) {
@@ -166,7 +168,17 @@ public class ControladorTela {
             return "metodo-pago-tela";
         }
 
-        // Calcular total con intereses
+        // Validar tipoEnvio y convertir a enum
+        TipoEnvio envioSeleccionado;
+        try {
+            envioSeleccionado = TipoEnvio.valueOf(tipoEnvio.toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            model.addAttribute("mensajeError", "Método de envío inválido.");
+            cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
+            return "metodo-pago-tela";
+        }
+
+        // Calcular total con costo de envío e intereses
         double interes;
         switch (cuotas) {
             case 2: interes = 0.05; break;
@@ -177,7 +189,9 @@ public class ControladorTela {
         }
 
         double subtotal = precio * metros;
-        double total = subtotal * (1 + interes);
+        double costoEnvio = envioSeleccionado.getCosto();
+        double totalConEnvio = subtotal + costoEnvio;
+        double total = totalConEnvio * (1 + interes);
         double valorCuota = total / cuotas;
 
         // Intentar descontar stock y registrar la compra
@@ -199,8 +213,7 @@ public class ControladorTela {
         }
 
         // Preparar boleta
-        String fechaFormateada = LocalDateTime.now()
-                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+        String fechaFormateada = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
 
         redirectAttributes.addFlashAttribute("fecha", fechaFormateada);
         redirectAttributes.addFlashAttribute("color", color);
@@ -212,6 +225,12 @@ public class ControladorTela {
         redirectAttributes.addFlashAttribute("cuotas", cuotas);
         redirectAttributes.addFlashAttribute("valorCuota", valorCuota);
         redirectAttributes.addFlashAttribute("total", total);
+
+        // Datos de envío para mostrar en boleta
+        redirectAttributes.addFlashAttribute("envioDescripcion", envioSeleccionado.getDescripcion());
+        redirectAttributes.addFlashAttribute("envioCosto", costoEnvio);
+        redirectAttributes.addFlashAttribute("envioTiempo", envioSeleccionado.getTiempoEntrega());
+
         redirectAttributes.addFlashAttribute("mensaje", "Compra realizada con éxito");
 
         return "redirect:/boleta-tela";
@@ -223,19 +242,6 @@ public class ControladorTela {
         return "boleta-tela";
     }
 
-
-    /*********************************************/
-    @RequestMapping(value = "/telas-por-prenda/{prendaId}", method = RequestMethod.GET)
-    @ResponseBody
-    public List<DatosTela> obtenerTelasPorPrenda(
-            @PathVariable("prendaId") Long prendaId,
-            @RequestParam("metrosTalle") Double metrosTalle) {
-        //List<Tela> telas = servicioTela.buscarTelasDePrendaPorIdPrenda(prendaId);
-        List<Tela> telas = servicioTela.buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(prendaId, metrosTalle);
-        return telas.stream()
-                .map(t -> new DatosTela(t.getId(), t.getTipoTela(), t.getMetros(), t.getColor()))
-                .collect(Collectors.toList()); // cambié t.getTipoTela().name() a t.getTipoTela()
-    }
 
 }
 

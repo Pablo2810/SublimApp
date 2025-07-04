@@ -1,9 +1,6 @@
 package com.tallerwebi.dominio.repositorio;
 
-import com.tallerwebi.dominio.entidad.Tela;
-import com.tallerwebi.dominio.entidad.TelaUsuario;
-import com.tallerwebi.dominio.entidad.TipoTela;
-import com.tallerwebi.dominio.entidad.Usuario;
+import com.tallerwebi.dominio.entidad.*;
 
 import java.util.List;
 
@@ -20,4 +17,11 @@ public interface RepositorioTela {
 
     TelaUsuario buscarTelaUsuarioPorTipoYColor(Usuario usuario, TipoTela tipoTela, String color);
 
+    TelaUsuario obtenerTelaUsuarioPorId(Long id);
+
+    void guardarTelaUsuario(TelaUsuario telaUsuario);
+
+    List<TelaUsuario> buscarTelasUsuarioPorUsuarioYEstado(Long usuarioId, EstadoTela estado);
+
+    List<TelaUsuario> buscarTelasUsuarioPorUsuario(Long usuarioId);
 }

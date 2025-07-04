@@ -28,6 +28,13 @@
     </p>
   </div>
 
+  <div th:if="${envioDescripcion != null}">
+    <hr/>
+    <p><strong>Tipo de envío:</strong> <span th:text="${envioDescripcion}"></span></p>
+    <p><strong>Costo de envío:</strong> $<span th:text="${T(java.lang.String).format('%.2f', envioCosto)}"></span></p>
+    <p><strong>Tiempo estimado de entrega:</strong> <span th:text="${envioTiempo}"></span></p>
+  </div>
+
   <p><strong>Fecha de compra:</strong> <span th:text="${fecha}"></span></p>
 </div>
 

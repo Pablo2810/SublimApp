@@ -61,6 +61,12 @@ function mostrarToasts() {
   });
 }
 
+const costosEnvio = {
+  LOCAL: { costo: 0, texto: "Retiro en local (gratis) - Retiro en 1 a 2 días" },
+  CABA: { costo: 1000, texto: "Envío a CABA ($1000) - 2 a 4 días hábiles" },
+  INTERIOR: { costo: 2000, texto: "Envío al interior ($2000) - 4 a 7 días hábiles" }
+};
+
 // Iniciar todas las funciones al cargar el DOM
 document.addEventListener('DOMContentLoaded', () => {
   inicializarModoOscuro();
@@ -69,108 +75,130 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    const metodoInputs = document.querySelectorAll('input[name="metodoPago"]');
-    const cuotasContainer = document.getElementById('cuotas-container');
+  const metodoInputs = document.querySelectorAll('input[name="metodoPago"]');
+  const cuotasContainer = document.getElementById('cuotas-container');
 
-    if (!metodoInputs || !cuotasContainer) return;
+  if (!metodoInputs || !cuotasContainer) return;
 
-    metodoInputs.forEach(input => {
-        input.addEventListener('change', function () {
-            if (this.value === 'credito') {
-                cuotasContainer.style.display = 'block';
-            } else {
-                cuotasContainer.style.display = 'none';
-            }
-        });
+  metodoInputs.forEach(input => {
+    input.addEventListener('change', function () {
+      if (this.value === 'credito') {
+        cuotasContainer.style.display = 'block';
+      } else {
+        cuotasContainer.style.display = 'none';
+      }
     });
+  });
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    const debitoRadio = document.getElementById("debito");
-    const creditoRadio = document.getElementById("credito");
-    const tarjetaForm = document.getElementById("formulario-tarjeta");
-    const cuotasContainer = document.getElementById("cuotas-container");
+  const debitoRadio = document.getElementById("debito");
+  const creditoRadio = document.getElementById("credito");
+  const tarjetaForm = document.getElementById("formulario-tarjeta");
+  const cuotasContainer = document.getElementById("cuotas-container");
 
-    function actualizarFormulario() {
-        if (debitoRadio.checked) {
-            tarjetaForm.style.display = "block";
-            cuotasContainer.style.display = "none";
-        } else if (creditoRadio.checked) {
-            tarjetaForm.style.display = "block";
-            cuotasContainer.style.display = "block";
-        } else {
-            tarjetaForm.style.display = "none";
-            cuotasContainer.style.display = "none";
-        }
+  function actualizarFormulario() {
+    if (debitoRadio.checked) {
+      tarjetaForm.style.display = "block";
+      cuotasContainer.style.display = "none";
+    } else if (creditoRadio.checked) {
+      tarjetaForm.style.display = "block";
+      cuotasContainer.style.display = "block";
+    } else {
+      tarjetaForm.style.display = "none";
+      cuotasContainer.style.display = "none";
     }
+  }
 
-    debitoRadio.addEventListener("change", actualizarFormulario);
-    creditoRadio.addEventListener("change", actualizarFormulario);
+  debitoRadio.addEventListener("change", actualizarFormulario);
+  creditoRadio.addEventListener("change", actualizarFormulario);
 
-    // Ejecutar al cargar la página por si ya hay selección
-    actualizarFormulario();
+  // Ejecutar al cargar la página por si ya hay selección
+  actualizarFormulario();
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    const metodoDebito = document.getElementById("debito");
-    const metodoCredito = document.getElementById("credito");
-    const formularioTarjeta = document.getElementById("formulario-tarjeta");
-    const cuotasContainer = document.getElementById("cuotas-container");
-    const resumenPago = document.getElementById("resumenPago");
-    const totalResumen = document.getElementById("totalResumen");
-    const detalleCuotas = document.getElementById("detalleCuotas");
+  const metodoDebito = document.getElementById("debito");
+  const metodoCredito = document.getElementById("credito");
+  const formularioTarjeta = document.getElementById("formulario-tarjeta");
+  const cuotasContainer = document.getElementById("cuotas-container");
+  const resumenPago = document.getElementById("resumenPago");
+  const totalResumen = document.getElementById("totalResumen");
+  const detalleCuotas = document.getElementById("detalleCuotas");
+  const tipoEnvioSelect = document.getElementById("tipoEnvio");
+  const detalleEnvio = document.getElementById("detalleEnvio");
 
-    const precio = parseFloat(document.querySelector('input[name="precio"]').value);
-    const metros = parseFloat(document.querySelector('input[name="metros"]').value);
+  const precio = parseFloat(document.querySelector('input[name="precio"]').value);
+  const metros = parseFloat(document.querySelector('input[name="metros"]').value);
 
-    const cuotasSelect = document.getElementById("cuotas");
+  const cuotasSelect = document.getElementById("cuotas");
 
-    function actualizarResumen() {
-        let metodo = metodoCredito.checked ? "credito" : "debito";
-        let cuotas = metodo === "credito" ? parseInt(cuotasSelect.value) : 1;
+  function actualizarResumen() {
+    const envioSeleccionado = tipoEnvioSelect ? tipoEnvioSelect.value : "LOCAL";
 
-        let total = precio * metros;
-        let interes = 0;
+    let metodo = metodoCredito.checked ? "credito" : "debito";
+    let cuotas = metodo === "credito" ? parseInt(cuotasSelect.value) : 1;
 
-        if (metodo === "credito") {
-            if (cuotas === 2) interes = 0.05;
-            else if (cuotas === 3) interes = 0.08;
-            else if (cuotas === 6) interes = 0.12;
-            else if (cuotas === 12) interes = 0.20;
-        }
+    let costoEnvio = costosEnvio[envioSeleccionado]?.costo || 0;
+    let textoEnvio = costosEnvio[envioSeleccionado]?.texto || "";
 
-        let totalConInteres = total * (1 + interes);
-        let valorCuota = totalConInteres / cuotas;
+    let total = precio * metros + costoEnvio;
+    let interes = 0;
 
-        resumenPago.style.display = "block";
-        totalResumen.textContent = "$" + totalConInteres.toFixed(2);
-
-        if (cuotas > 1) {
-            detalleCuotas.textContent = cuotas + " cuotas de $" + valorCuota.toFixed(2) + " cada una.";
-        } else {
-            detalleCuotas.textContent = metodo === "credito"
-                ? "Pago único con crédito sin cuotas."
-                : "Pago único con débito.";
-        }
+    if (metodo === "credito") {
+      if (cuotas === 2) interes = 0.05;
+      else if (cuotas === 3) interes = 0.08;
+      else if (cuotas === 6) interes = 0.12;
+      else if (cuotas === 12) interes = 0.20;
     }
 
-    metodoCredito.addEventListener("change", function () {
-        formularioTarjeta.style.display = "block";
-        cuotasContainer.style.display = "block";
-        actualizarResumen();
-    });
+    let totalConInteres = total * (1 + interes);
+    let valorCuota = totalConInteres / cuotas;
 
-    metodoDebito.addEventListener("change", function () {
-        formularioTarjeta.style.display = "block";
-        cuotasContainer.style.display = "none";
-        resumenPago.style.display = "block";
+    resumenPago.style.display = "block";
+    totalResumen.textContent = "$" + totalConInteres.toFixed(2);
+    detalleCuotas.textContent = cuotas > 1
+      ? `${cuotas} cuotas de $${valorCuota.toFixed(2)} cada una.`
+      : metodo === "credito"
+        ? "Pago único con crédito sin cuotas."
+        : "Pago único con débito.";
 
-        let total = precio * metros;
-        totalResumen.textContent = "$" + total.toFixed(2);
-        detalleCuotas.textContent = "Pago único con débito.";
-    });
+    if (detalleEnvio) {
+      detalleEnvio.textContent = textoEnvio;
+    }
+  }
 
-    cuotasSelect.addEventListener("change", actualizarResumen);
+  if (tipoEnvioSelect) {
+    tipoEnvioSelect.addEventListener("change", actualizarResumen);
+  }
+
+  metodoCredito.addEventListener("change", function () {
+    formularioTarjeta.style.display = "block";
+    cuotasContainer.style.display = "block";
+    actualizarResumen();
+  });
+
+  metodoDebito.addEventListener("change", function () {
+    formularioTarjeta.style.display = "block";
+    cuotasContainer.style.display = "none";
+    resumenPago.style.display = "block";
+
+    const envioSeleccionado = tipoEnvioSelect ? tipoEnvioSelect.value : "LOCAL";
+    let costoEnvio = costosEnvio[envioSeleccionado]?.costo || 0;
+
+    let total = precio * metros + costoEnvio;
+    totalResumen.textContent = "$" + total.toFixed(2);
+    detalleCuotas.textContent = "Pago único con débito.";
+
+    if (detalleEnvio) {
+      detalleEnvio.textContent = costosEnvio[envioSeleccionado]?.texto || "";
+    }
+  });
+
+  cuotasSelect.addEventListener("change", actualizarResumen);
+
+  // Ejecutar al cargar la página por si ya hay selección
+  actualizarResumen();
 });
 
 function imprimirBoleta() {
@@ -204,3 +232,4 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }, false);
 });
+

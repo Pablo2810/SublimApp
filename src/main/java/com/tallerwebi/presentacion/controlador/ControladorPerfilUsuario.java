@@ -1,6 +1,8 @@
 package com.tallerwebi.presentacion.controlador;
 
+import com.tallerwebi.dominio.entidad.EstadoTela;
 import com.tallerwebi.dominio.entidad.Pedido;
+import com.tallerwebi.dominio.entidad.TelaUsuario;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
 import com.tallerwebi.dominio.servicio.ServicioStorageImagen;
@@ -45,11 +47,14 @@ public class ControladorPerfilUsuario {
         }
 
         ModelMap model = new ModelMap();
+
         List<Pedido> pedidos = servicioPedido.listarPedidosDelUsuario(usuario.getId());
+
+        List<TelaUsuario> telasEntregadas = servicioTela.obtenerTelasUsuarioPorEstado(usuario.getId(), EstadoTela.ENTREGADO);
 
         model.put("usuario", usuario);
         model.put("pedidos", pedidos);
-        model.put("telas", servicioTela.obtenerTelasDelUsuario(usuario));
+        model.put("telas", telasEntregadas);
 
         if (exito != null) model.put("exito", exito);
         if (error != null) model.put("error", error);
@@ -101,7 +106,6 @@ public class ControladorPerfilUsuario {
         return new ModelAndView("redirect:/configuracion-perfil");
     }
 
-
     @GetMapping("/configuracion-perfil")
     public ModelAndView configuracionPerfil(HttpServletRequest request,
                                             @ModelAttribute("exito") String exito,
@@ -120,13 +124,30 @@ public class ControladorPerfilUsuario {
         return new ModelAndView("configuracion_perfil", model);
     }
 
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate(); // invalida la sesión del usuario
-        return "redirect:/login"; // redirige al login u otra página pública
+    @GetMapping("/estado-envio-tela")
+    public ModelAndView verEstadoEnvioTelas(HttpServletRequest request) {
+        Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
+        if (usuario == null) {
+            return new ModelAndView("redirect:/login");
+        }
+
+        ModelMap model = new ModelMap();
+
+        List<TelaUsuario> telas = servicioTela.obtenerTelasUsuario(usuario.getId());
+
+        model.put("usuario", usuario);
+        model.put("telas", telas);
+
+        return new ModelAndView("estado-envio-tela", model);
     }
 
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/login";
+    }
 }
+
 
 
 

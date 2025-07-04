@@ -1,6 +1,7 @@
 package com.tallerwebi.presentacion.controlador;
 
 import com.tallerwebi.dominio.entidad.*;
+import com.tallerwebi.dominio.excepcion.TelaUsuarioNoEncontrada;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
 import com.tallerwebi.dominio.servicio.ServicioTalle;
 import com.tallerwebi.dominio.servicio.ServicioTela;
@@ -205,4 +206,44 @@ public class ControladorAdmin {
         return new ModelAndView("redirect:/admin/pedidos-solicitados");
     }
 
+    @GetMapping("/tela-usuario/{id}")
+    public ModelAndView verDetalleTelaUsuario(@PathVariable Long id) {
+        ModelMap model = new ModelMap();
+        Tela tela = servicioTela.obtenerTela(id);
+
+        if (!(tela instanceof TelaUsuario)) {
+            model.put("mensajeError", "No se encontró la tela del usuario.");
+            return new ModelAndView("redirect:/admin/dashboard", model);
+        }
+
+        model.put("tela", tela);
+        model.put("estados", EstadoTela.values());
+
+        return new ModelAndView("editar-envio-tela", model);
+    }
+
+    @PostMapping("/actualizar-envio-tela/{id}")
+    public ModelAndView actualizarEstadoEnvioTela(@PathVariable Long id,
+                                                  @RequestParam("estado") EstadoTela nuevoEstado,
+                                                  RedirectAttributes redirectAttributes) {
+        try {
+            servicioTela.cambiarEstadoTela(id, nuevoEstado);
+            redirectAttributes.addFlashAttribute("mensaje", "Estado de envío actualizado con éxito.");
+        } catch (TelaUsuarioNoEncontrada e) {
+            redirectAttributes.addFlashAttribute("mensajeError", "No se encontró la tela del usuario.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("mensajeError", "No se pudo actualizar el estado de la tela.");
+        }
+        return new ModelAndView("redirect:/admin/estado-envio-telas");
+    }
+
+
+    @GetMapping("/estado-envio-telas")
+    public ModelAndView listarTelasUsuarioEstado() {
+        ModelMap model = new ModelMap();
+        List<TelaUsuario> telasUsuario = servicioTela.obtenerTelasUsuario(null); // null para todas o filtrar si querés
+        model.put("telas", telasUsuario);
+        model.put("estados", EstadoTela.values());
+        return new ModelAndView("estado-envio-tela-admin", model);
+    }
 }
