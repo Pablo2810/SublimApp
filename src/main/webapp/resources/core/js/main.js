@@ -233,3 +233,136 @@ document.addEventListener("DOMContentLoaded", function () {
   }, false);
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  const todas = window.todasLasTelas || [];
+  const cont = document.getElementById("contenedorTelas");
+  const btn = document.getElementById("btnVerMas");
+  const filtroTipo = document.getElementById("filtroTipoTela");
+  const filtroColor = document.getElementById("filtroColor");
+  const ordenPrecio = document.getElementById("ordenarPorPrecio");
+  const ordenStock = document.getElementById("ordenarPorStock");
+
+  let mostrados = 6;
+  let filtradas = [...todas];
+
+  function renderizar() {
+    cont.innerHTML = "";
+
+    if (filtradas.length === 0) {
+      cont.innerHTML = `
+        <div class="col-12 text-center text-danger fs-5">
+          No se encontraron telas con esos filtros.
+        </div>`;
+      btn.style.display = "none";
+      return;
+    }
+
+    const visibles = filtradas.slice(0, mostrados);
+    visibles.forEach(t => {
+      const sinStock = t.metros <= 0;
+      const card = document.createElement("div");
+      card.className = "col-md-4 col-sm-6 animate";
+      card.innerHTML = `
+        <div class="card shadow h-100 border border-light${sinStock ? " sin-stock" : ""}">
+          <img src="${t.imagenUrl}" class="card-img-top" style="height:200px;object-fit:cover;" />
+          <div class="card-body d-flex flex-column justify-content-between">
+            <div>
+              <h5 class="card-title">${t.tipoTela}</h5>
+              <p><strong>Color:</strong> ${t.color}</p>
+              <p><strong>Precio:</strong> $${t.precio}</p>
+              <p><strong>Stock:</strong> ${t.metros.toFixed(2)}</p>
+            </div>
+            ${
+              sinStock
+                ? `<button class="btn btn-secondary mt-3" disabled>Sin stock</button>`
+                : `<a href="/detalle-tela-id/${t.id}" class="btn btn-primary mt-3">Comprar</a>`
+            }
+          </div>
+        </div>
+      `;
+      cont.appendChild(card);
+    });
+
+    if (filtradas.length > 6) {
+      btn.style.display = "inline-block";
+      btn.textContent = mostrados >= filtradas.length ? "Ver menos" : "Ver más";
+    } else {
+      btn.style.display = "none";
+    }
+  }
+
+  function filtrar() {
+    const tipo = filtroTipo.value;
+    const color = filtroColor.value;
+    const ordenP = ordenPrecio.value;
+    const ordenS = ordenStock.value;
+
+    filtradas = todas.filter(t =>
+      (tipo === "" || t.tipoTela === tipo) &&
+      (color === "" || t.color === color)
+    );
+
+    if (ordenP) {
+      if (ordenP === "precio-desc") {
+        filtradas.sort((a, b) => b.precio - a.precio);
+      } else if (ordenP === "precio-asc") {
+        filtradas.sort((a, b) => a.precio - b.precio);
+      }
+    } else if (ordenS) {
+      if (ordenS === "desc") {
+        filtradas.sort((a, b) => b.metros - a.metros);
+      } else if (ordenS === "asc") {
+        filtradas.sort((a, b) => a.metros - b.metros);
+      }
+    }
+
+    mostrados = 6;
+    renderizar();
+  }
+
+  btn.addEventListener("click", () => {
+    if (mostrados >= filtradas.length) {
+      mostrados = 6;
+    } else {
+      mostrados += 6;
+    }
+    renderizar();
+  });
+
+  filtroTipo.addEventListener("change", filtrar);
+  filtroColor.addEventListener("change", filtrar);
+  ordenPrecio.addEventListener("change", filtrar);
+  ordenStock.addEventListener("change", filtrar);
+
+  filtrar();
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+        const inner = document.getElementById("carrusel-inner");
+        const items = inner.children;
+        const prev = document.getElementById("btn-prev");
+        const next = document.getElementById("btn-next");
+
+        let currentIndex = 0;
+
+        function updateCarousel() {
+            const itemWidth = items[0].offsetWidth + 16; // ancho + margin
+            inner.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
+        }
+
+        next.addEventListener("click", () => {
+            if (currentIndex < items.length - 3) {
+                currentIndex++;
+                updateCarousel();
+            }
+        });
+
+        prev.addEventListener("click", () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCarousel();
+            }
+        });
+
+        window.addEventListener("resize", updateCarousel);
+});

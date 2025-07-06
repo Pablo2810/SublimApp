@@ -16,17 +16,27 @@ import java.util.List;
 
 @Transactional
 public interface ServicioTela {
+
     void agregarTelasDeFabrica();
+
     List<MisTelas> obtenerTelasDeFabrica();
+
     List<Tela> obtenerTelas();
+
     Tela obtenerTela(Long id);
+
     void crearOActualizar(DatosTela datosTela, MultipartFile archivo);
+
     void borrarTela(Long id);
+
     void dejarSinStockTelaDeFabrica();
-    List<Tela> buscarTelasDePrendaPorIdPrenda(Long prendaId);
+
     void comprarTelaDeFabrica(Long idTela, Double metrosComprados, Usuario usuario) throws TelaNoEncontrada, StockInsuficiente;
-    List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle);
+
     List<TelaUsuario> obtenerTelasDelUsuario(Usuario usuario);
+
+    List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle);
+
     void restarMetrosTela(Tela tela, Double metrosTotales);
 
     void consumirTelaParaProducto(Tela telaSeleccionada, Double metrosNecesarios, Usuario usuario)
@@ -40,5 +50,6 @@ public interface ServicioTela {
 
     void cambiarEstadoTela(Long idTelaUsuario, EstadoTela nuevoEstado) throws TelaUsuarioNoEncontrada;
 
-    // Tela buscarTelaPorId(Long telaId, Usuario usuario) throws TelaNoEncontrada;
+    List <MisTelas> obtenerTelasParaCarrusel();
+
 }

@@ -1,9 +1,6 @@
 package com.tallerwebi.dominio;
 
-import com.tallerwebi.dominio.entidad.EstadoTela;
-import com.tallerwebi.dominio.entidad.Tela;
-import com.tallerwebi.dominio.entidad.TelaUsuario;
-import com.tallerwebi.dominio.entidad.Usuario;
+import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
 import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
 import com.tallerwebi.dominio.excepcion.TelaUsuarioNoEncontrada;
@@ -84,11 +81,6 @@ public class ServicioTelaImpl implements ServicioTela {
     @Override
     public void dejarSinStockTelaDeFabrica() {
 
-    }
-
-    @Override
-    public List<Tela> buscarTelasDePrendaPorIdPrenda(Long prendaId) {
-        return repositorioTela.buscarTelasDePrendaPorIdPrenda(prendaId);
     }
 
     @Override
@@ -208,5 +200,24 @@ public class ServicioTelaImpl implements ServicioTela {
         }
     }
 
+    @Override
+    public List<MisTelas> obtenerTelasParaCarrusel() {
+        List<MisTelas> todas = this.obtenerTelasDeFabrica();
+
+        return todas.stream()
+                .filter(t -> (
+                        (t.getTipoTela() == TipoTela.LINO && t.getColor().equalsIgnoreCase("azul")) ||
+                                (t.getTipoTela() == TipoTela.W15 && t.getColor().equalsIgnoreCase("blanco")) ||
+                                (t.getTipoTela() == TipoTela.NEOPRENO && t.getColor().equalsIgnoreCase("marron")) ||
+                                (t.getTipoTela() == TipoTela.ALGODON && t.getColor().equalsIgnoreCase("rojo")) ||
+                                (t.getTipoTela() == TipoTela.SET && t.getColor().equalsIgnoreCase("amarillo")) ||
+                                (t.getTipoTela() == TipoTela.LINO && t.getColor().equalsIgnoreCase("verde agua")) ||
+                                (t.getTipoTela() == TipoTela.W15 && t.getColor().equalsIgnoreCase("negro")) ||
+                                (t.getTipoTela() == TipoTela.NEOPRENO && t.getColor().equalsIgnoreCase("lila")) ||
+                                (t.getTipoTela() == TipoTela.ALGODON && t.getColor().equalsIgnoreCase("gris")) ||
+                                (t.getTipoTela() == TipoTela.SET && t.getColor().equalsIgnoreCase("rosa"))
+                ))
+                .collect(Collectors.toList());
+    }
 
 }

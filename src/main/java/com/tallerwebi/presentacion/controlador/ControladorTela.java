@@ -1,26 +1,22 @@
 package com.tallerwebi.presentacion.controlador;
 
-import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.TipoEnvio;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
 import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
 import com.tallerwebi.dominio.servicio.ServicioTela;
-import com.tallerwebi.presentacion.dto.DatosTela;
 import com.tallerwebi.presentacion.dto.MisTelas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class ControladorTela {
@@ -45,15 +41,18 @@ public class ControladorTela {
     @GetMapping("/catalogo-telas")
     public String mostrarCatalogoTelas(Model model) {
         List<MisTelas> telas = servicioTela.obtenerTelasDeFabrica();
+        List<MisTelas> telasCarrusel = servicioTela.obtenerTelasParaCarrusel();
 
         if (telas == null || telas.isEmpty()) {
             model.addAttribute("mensajeError", "No se pudieron cargar las telas de la fábrica.");
         } else {
             model.addAttribute("telas", telas);
+            model.addAttribute("telasCarrusel", telasCarrusel);
         }
 
         return "catalogo-telas";
     }
+
 
     // 4. Mostrar detalle de una tela del catálogo
     @GetMapping("/detalle-tela-id/{id}")
@@ -242,11 +241,4 @@ public class ControladorTela {
         return "boleta-tela";
     }
 
-
 }
-
-
-
-
-
-
