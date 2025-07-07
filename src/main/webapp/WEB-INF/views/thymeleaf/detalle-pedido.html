@@ -74,38 +74,42 @@
              aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <input type="hidden" id="pedido-id" th:name="pedidoId" th:value="${pedido.id}"/>
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">En que divisa pensas abonar?</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <h6 class="mb-5 text-center text-dark">
-                            Total a pagar: $(ARS) <span th:text="${pedido.montoTotal}"></span>
-                        </h6>
-                        <div class="d-flex justify-content-around text-dark">
-                            <div class="form-check">
-                                <input type="hidden" class="precio-total" th:value="${pedido.montoTotal}">
-                                <input class="form-check-input" type="radio" name="moneda" value="PESOS_ARGENTINOS"
-                                       checked>
-                                <label class="form-check-label">
-                                    ARG
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input type="hidden" class="precio-total" th:value="${cotizacionDolar}">
-                                <input class="form-check-input" type="radio" name="moneda" value="DOLAR">
-                                <label class="form-check-label">
-                                    USD <b th:text="${cotizacionDolar}"></b>
-                                </label>
+                    <form th:action="@{pagar-pedido}" method="POST" id="formulario">
+                        <input type="hidden" id="pedido-id" th:name="pedidoId" th:value="${pedido.id}"/>
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">En que divisa pensas abonar?</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h6 class="mb-5 text-center text-dark">
+                                Total a pagar: $(ARS) <span th:text="${pedido.montoTotal}"></span>
+                            </h6>
+                            <div class="d-flex justify-content-around text-dark">
+                                <div class="form-check">
+                                    <input type="hidden" class="valor-cotizacion" th:value="1">
+                                    <input class="form-check-input" type="radio" name="moneda" value="PESOS_ARGENTINOS"
+                                           checked>
+                                    <label class="form-check-label">
+                                        ARG
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="hidden" class="valor-cotizacion" th:value="${cotizacionDolar}">
+                                    <input class="form-check-input" type="radio" name="moneda" value="DOLAR">
+                                    <label class="form-check-label">
+                                        USD <b th:text="${cotizacionDolar}"></b>
+                                    </label>
+                                </div>
+
+                                <input type="hidden" name="cotizacion" id="cotizacion-input">
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="button" id="completar-pago" class="btn btn-primary">Completar pago</button>
-                    </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="button" id="completar-pago" class="btn btn-primary">Completar pago</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -122,24 +126,25 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll('input[name="moneda"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                const cotizacion = this.dataset.cotizacion;
+                document.getElementById('cotizacionInput').value = cotizacion;
+            });
+        });
+
         const btnCompletarPago = document.querySelector("#completar-pago");
-        const pedidoId = document.querySelector("#pedido-id").value;
 
         btnCompletarPago.addEventListener("click", () => {
             const monedaSeleccionada = document.querySelector("input[name='moneda']:checked");
-            const precioTotal = monedaSeleccionada.parentElement.querySelector(".precio-total").value;
+            const cotizacion = monedaSeleccionada.parentElement.querySelector(".valor-cotizacion").value;
+            const cotizacionInput = document.querySelector("#cotizacion-input");
+            const formulario = document.querySelector("#formulario");
 
-            if (precioTotal) {
-                fetch(`/spring/pagar-pedido/${pedidoId}?moneda=${monedaSeleccionada.value}&precioTotal=${precioTotal}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error("Error al completar pago");
-                        }
-                        return response.json();
-                    })
-                    .catch(error => {
-                        console.error('Error al completar pago:', error);
-                    });
+            if (cotizacion) {
+                cotizacionInput.value = Number(cotizacion);
+
+                formulario.submit();
             }
         });
     });

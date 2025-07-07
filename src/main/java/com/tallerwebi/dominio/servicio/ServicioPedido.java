@@ -9,9 +9,9 @@ import java.util.List;
 
 @Transactional
 public interface ServicioPedido {
-    Pedido registrarPedido(String codigoPedido, Usuario usuario, HashSet<Producto> productos);
-    Double calcularCostoTotal(Pedido pedido);
-    Pedido registrarPedidoConDescuento(String codigoPedido, Usuario usuario, HashSet<Producto> productos, Promocion promocion);
+//    Pedido registrarPedido(String codigoPedido, Usuario usuario, HashSet<Producto> productos);
+    Double calcularCostoTotal(Pedido pedido, double cotizacion);
+//    Pedido registrarPedidoConDescuento(String codigoPedido, Usuario usuario, HashSet<Producto> productos, Promocion promocion);
     List<Pedido> listarPedidosDelUsuario(Long idUsuario);
     List<Pedido> listarPedidos();
     Pedido obtenerPedido(Long id);
@@ -24,5 +24,5 @@ public interface ServicioPedido {
 
     List<Pedido> listarPedidosDelUsuarioNoPendiente(Long id);
 
-    void generarPedidoCompleto(Long id, Moneda monedaDePago, String codigoPedido, LocalDate fechaCreacion, int diasEspera);
+    void generarPedidoCompleto(Long id, Moneda monedaDePago, double cotizacion, String codigoPedido, LocalDate fechaCreacion, int diasEspera);
 }
