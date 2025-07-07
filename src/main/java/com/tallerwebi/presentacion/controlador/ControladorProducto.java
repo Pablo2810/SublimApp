@@ -7,6 +7,7 @@ import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
 import com.tallerwebi.dominio.servicio.*;
 import com.tallerwebi.presentacion.dto.DatosPrenda;
 import com.tallerwebi.presentacion.dto.DatosProducto;
+import com.tallerwebi.presentacion.dto.ResultadoCotizaciones;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -30,6 +31,7 @@ public class ControladorProducto {
     private final ServicioArchivo servicioArchivo;
     private final ServicioProducto servicioProducto;
     private final ServicioPedido servicioPedido;
+    private final ServicioCotizacion servicioCotizacion;
 
     @Autowired
     public ControladorProducto(ServicioProducto servicioProducto,
@@ -37,13 +39,15 @@ public class ControladorProducto {
                                ServicioPrenda servicioPrenda,
                                ServicioTela servicioTela,
                                ServicioArchivo servicioArchivo,
-                               ServicioPedido servicioPedido) {
+                               ServicioPedido servicioPedido,
+                               ServicioCotizacion servicioCotizacion) {
         this.servicioPrenda = servicioPrenda;
         this.servicioTalle = servicioTalle;
         this.servicioTela = servicioTela;
         this.servicioArchivo = servicioArchivo;
         this.servicioProducto = servicioProducto;
         this.servicioPedido = servicioPedido;
+        this.servicioCotizacion = servicioCotizacion;
     }
 
     @RequestMapping(path = "/nuevo-pedido", method = RequestMethod.GET)
@@ -132,7 +136,14 @@ public class ControladorProducto {
                 return new ModelAndView("redirect:/nuevo-pedido");
             }
 
+            ResultadoCotizaciones cotizaciones = servicioCotizacion.obtenerCotizaciones();
+            double precioDolares = pedido.getMontoTotal() * cotizaciones.getConversionRates().get("USD");
+            double precioEuros = pedido.getMontoTotal() * cotizaciones.getConversionRates().get("EUR");
+
             model.put("pedido", pedido);
+            model.put("precioDolares", precioDolares);
+            model.put("precioEuros", precioEuros);
+
             return new ModelAndView("detalle-pedido", model);
 
         } catch (Exception e) {

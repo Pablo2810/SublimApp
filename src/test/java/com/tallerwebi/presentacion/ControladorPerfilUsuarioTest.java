@@ -1,4 +1,5 @@
 package com.tallerwebi.presentacion;
+import com.tallerwebi.config.RestTemplateConfig;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.servicio.ServicioStorageImagen;
 import com.tallerwebi.dominio.servicio.ServicioUsuario;
@@ -27,7 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {
         SpringWebTestConfig.class,
         HibernateTestConfig.class,
-        TestBeansConfig.class
+        TestBeansConfig.class,
+        RestTemplateConfig.class
 })
 @WebAppConfiguration
 public class ControladorPerfilUsuarioTest {

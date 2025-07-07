@@ -1,12 +1,7 @@
 package com.tallerwebi.presentacion.controlador;
 
 import com.tallerwebi.dominio.entidad.*;
-import com.tallerwebi.dominio.servicio.ServicioMaquina;
-import com.tallerwebi.dominio.servicio.ServicioPedido;
-import com.tallerwebi.dominio.servicio.ServicioProducto;
-import com.tallerwebi.dominio.servicio.ServicioUsuario;
-import com.tallerwebi.presentacion.dto.DatosPedido;
-import org.dom4j.rule.Mode;
+import com.tallerwebi.dominio.servicio.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -14,11 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Controller
@@ -40,38 +32,39 @@ public class ControladorPedido {
         this.servicioProducto = servicioProducto;
         this.servicioMaquina = servicioMaquina;
     }
-/*
-    @RequestMapping(path = "/nuevo-pedido", method = RequestMethod.GET)
-    public ModelAndView nuevoPedido() {
-        ModelMap model = new ModelMap();
-        model.put("datosPedido", new DatosPedido());
-        return new ModelAndView("nuevo-pedido", model);
-    }
 
-    @RequestMapping(path = "/detalle-pedido", method = RequestMethod.POST)
-    public ModelAndView procesarPedido(@ModelAttribute("datosPedido") DatosPedido datosPedido, HttpServletRequest request) {
-        Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
-        ModelMap model = new ModelMap();
-        HashSet<Producto> productos = new HashSet<>();
+    /*
+        @RequestMapping(path = "/nuevo-pedido", method = RequestMethod.GET)
+        public ModelAndView nuevoPedido() {
+            ModelMap model = new ModelMap();
+            model.put("datosPedido", new DatosPedido());
+            return new ModelAndView("nuevo-pedido", model);
+        }
 
-        Pedido pedido = servicioPedido.registrarPedido(UUID.randomUUID().toString(), usuario, productos);
+        @RequestMapping(path = "/detalle-pedido", method = RequestMethod.POST)
+        public ModelAndView procesarPedido(@ModelAttribute("datosPedido") DatosPedido datosPedido, HttpServletRequest request) {
+            Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
+            ModelMap model = new ModelMap();
+            HashSet<Producto> productos = new HashSet<>();
 
-        model.put("pedidoNuevo", pedido);
+            Pedido pedido = servicioPedido.registrarPedido(UUID.randomUUID().toString(), usuario, productos);
 
-        return new ModelAndView("detalle-pedido", model);
-    }
+            model.put("pedidoNuevo", pedido);
 
-    @RequestMapping("/historial-pedidos")
-    public ModelAndView historialPedidos() {
-        ModelMap model = new ModelMap();
-        List<Pedido> pedidos = servicioPedido.listarPedidosDelUsuario(1L);
+            return new ModelAndView("detalle-pedido", model);
+        }
 
-        model.put("mensajeSinPedidos", "Todavia no tienes pedidos");
-        model.put("pedidos", pedidos);
+        @RequestMapping("/historial-pedidos")
+        public ModelAndView historialPedidos() {
+            ModelMap model = new ModelMap();
+            List<Pedido> pedidos = servicioPedido.listarPedidosDelUsuario(1L);
 
-        return new ModelAndView("historial-pedidos", model);
-    }
-*/
+            model.put("mensajeSinPedidos", "Todavia no tienes pedidos");
+            model.put("pedidos", pedidos);
+
+            return new ModelAndView("historial-pedidos", model);
+        }
+    */
     @RequestMapping(value = "/detalle-pedido", method = RequestMethod.GET)
     public ModelAndView mostrarCarrito(ModelMap model, HttpServletRequest request) {
         if (!model.containsAttribute("pedido")) {
@@ -83,16 +76,16 @@ public class ControladorPedido {
     }
 
     @RequestMapping(value = "/pagar-pedido", method = RequestMethod.POST)
-    public ModelAndView pagarPedidoPendiente(@RequestParam Long pedidoId){
-        ModelMap model = new ModelMap();
+    public ModelAndView pagarPedidoPendiente(@RequestParam Long pedidoId, @RequestParam("moneda") Moneda moneda,
+                                             @RequestParam("precioTotal") double cotizacion) {
         try {
             servicioPedido.cambiarEstadoPedido(pedidoId, Estado.EN_ESPERA);
-            Long diasEspera = servicioMaquina.calcularTiempoEspera();
-            servicioPedido.generarPedidoCompleto(pedidoId, UUID.randomUUID().toString(), LocalDate.now(), diasEspera);
+            int diasEspera = servicioMaquina.calcularTiempoEspera();
+            servicioPedido.generarPedidoCompleto(pedidoId, moneda, UUID.randomUUID().toString(), LocalDate.now(), diasEspera);
         } catch (Exception e) {
-            return new ModelAndView("detalle-pedido");
+            return new ModelAndView("redirect:/detalle-pedido");
         }
-        return new ModelAndView("historial-pedidos");
+        return new ModelAndView("redirect:/historial-pedidos");
     }
 
     @RequestMapping(value = "/historial-pedidos")

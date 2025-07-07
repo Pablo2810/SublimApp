@@ -34,6 +34,7 @@ public class ControladorProductoTest {
     private ServicioArchivo servicioArchivoMock;
     private ServicioProducto servicioProductoMock;
     private ServicioPedido servicioPedidoMock;
+    private ServicioCotizacion servicioCotizacionMock;
     private HttpServletRequest requestMock;
     private HttpSession sessionMock;
     private RedirectAttributes redirectAttrs;
@@ -49,7 +50,8 @@ public class ControladorProductoTest {
         requestMock = mock(HttpServletRequest.class);
         sessionMock = mock(HttpSession.class);
         redirectAttrs = mock(RedirectAttributes.class);
-        controladorProducto = new ControladorProducto(servicioProductoMock, servicioTalleMock, servicioPrendaMock, servicioTelaMock, servicioArchivoMock, servicioPedidoMock);
+        controladorProducto = new ControladorProducto(servicioProductoMock, servicioTalleMock, servicioPrendaMock,
+                servicioTelaMock, servicioArchivoMock, servicioPedidoMock, servicioCotizacionMock);
     }
 
     private DatosProducto crearDatosProductoEjemplo() {

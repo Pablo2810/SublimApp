@@ -1,5 +1,6 @@
 package com.tallerwebi.integracion;
 
+import com.tallerwebi.config.RestTemplateConfig;
 import com.tallerwebi.integracion.config.HibernateTestConfig;
 import com.tallerwebi.integracion.config.SpringWebTestConfig;
 import com.tallerwebi.dominio.entidad.Usuario;
@@ -33,7 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {
 		SpringWebTestConfig.class,
 		HibernateTestConfig.class,
-		TestBeansConfig.class
+		TestBeansConfig.class,
+		RestTemplateConfig.class
 })
 public class ControladorLoginTest {
 

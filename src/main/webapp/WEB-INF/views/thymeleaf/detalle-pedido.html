@@ -10,7 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
     <!-- Boostrap core css -->
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.4.0/css/all.min.css}" />
+    <script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.4.0/css/all.min.css}"/>
     <!-- custom style -->
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
     <link rel="stylesheet" th:href="@{/css/modoOscuro.css}">
@@ -21,7 +22,8 @@
     </style>
 </head>
 <body class="p-0 m-0">
-<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
+<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center"
+     th:insert="templates/nav :: nav"></div>
 <main class="p-3">
     <h2 class="text-center text-white">
         Pedido realizado:
@@ -35,7 +37,7 @@
             <th>Talle</th>
             <th>Tela</th>
             <th>Cantidad</th> <!-- Permitir modificar acá la cantidad -->
-            <th>Precio</th>
+            <th>Precio de prenda</th>
             <!-- Agregar columna de acciones -->
             <th>Total</th> <!-- Sacar de acá, mover al final de la tabla por fuera -->
         </tr>
@@ -60,11 +62,55 @@
                class="btn btn-outline-light w-100"
                style="padding: 10px 20px;">Realizar otro producto</a>
         </div>
-        <!-- Agregar div acá con precio total del pedido -->
-        <form th:action="@{/pagar-pedido}" method="post" style="display: inline;" class="w-25">
-            <input type="hidden" th:name="pedidoId" th:value="${pedido.id}" />
-            <button type="submit" class="w-100 btn-lg">Pagar Pedido</button>
-        </form>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Pagar pedido
+        </button>
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <input type="hidden" id="pedido-id" th:name="pedidoId" th:value="${pedido.id}"/>
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">En que divisa pensas abonar?</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h6 class="mb-5 text-center text-dark">
+                            Total a pagar: $(ARS) <span th:text="${pedido.montoTotal}"></span>
+                        </h6>
+                        <div class="d-flex justify-content-around text-dark">
+                            <div class="form-check">
+                                <input type="hidden" class="precio-total" th:value="${pedido.montoTotal}">
+                                <input class="form-check-input" type="radio" name="moneda" value="PESOS_ARGENTINOS"
+                                       checked>
+                                <label class="form-check-label">
+                                    ARG
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input type="hidden" class="precio-total" value="421">
+                                <input class="form-check-input" type="radio" name="moneda" value="DOLAR">
+                                <label class="form-check-label">
+                                    USD <b th:text="${precioDolares}"></b>
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input type="hidden" class="precio-total" th:value="${precioEuros}">
+                                <input class="form-check-input" type="radio" name="moneda" value="EURO">
+                                <label class="form-check-label">
+                                    EUR <b th:text="${precioEuros}"></b>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" id="completar-pago" class="btn btn-primary">Completar pago</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="w-25">
             <!-- sacar de acá, no es necesario -->
             <a th:href="@{/historial-pedidos}"
@@ -75,5 +121,32 @@
 </main>
 <footer th:insert="templates/footer :: footer"></footer>
 <script th:src="@{/js/main.js}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const btnCompletarPago = document.querySelector("#completar-pago");
+        const pedidoId = document.querySelector("#pedido-id").value;
+
+        btnCompletarPago.addEventListener("click", () => {
+            const monedaSeleccionada = document.querySelector("input[name='moneda']:checked");
+            const precioTotal = monedaSeleccionada.parentElement.querySelector(".precio-total").value;
+
+            if (precioTotal) {
+                console.log('peticion')
+                fetch(`/spring/pagar-pedido/${pedidoId}?moneda=${monedaSeleccionada.value}&precioTotal=${precioTotal}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Error al completar pago");
+                        }
+                        return response.json();
+                    })
+                    .catch(error => {
+                        console.error('Error al completar pago:', error);
+                    });
+            }
+        });
+    });
+</script>
+
 </body>
 </html>
