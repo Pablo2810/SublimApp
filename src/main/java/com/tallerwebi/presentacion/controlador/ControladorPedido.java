@@ -76,19 +76,29 @@ public class ControladorPedido {
     }
 
     @RequestMapping(value = "/pagar-pedido", method = RequestMethod.POST)
-    public ModelAndView pagarPedidoPendiente(@RequestParam Long pedidoId, @RequestParam("moneda") Moneda moneda,
-                                             @RequestParam("precioTotal") double cotizacion) {
+    public ModelAndView pagarPedidoPendiente(@RequestParam Long pedidoId,
+                                             @RequestParam("moneda") Moneda moneda,
+                                             @RequestParam("precioTotal") double precioTotal,
+                                             HttpServletRequest request){
         try {
             servicioPedido.cambiarEstadoPedido(pedidoId, Estado.EN_ESPERA);
             int diasEspera = servicioMaquina.calcularTiempoEspera();
             servicioPedido.generarPedidoCompleto(pedidoId, moneda, UUID.randomUUID().toString(), LocalDate.now(), diasEspera);
+
+            return new ModelAndView("historial-pedidos");
         } catch (Exception e) {
-            return new ModelAndView("redirect:/detalle-pedido");
+            ModelMap model = new ModelMap();
+            // Recuperar el pedido con estado pendiente del usuario
+            Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
+            Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario);
+            model.put("pedido", pedido);
+
+            return new ModelAndView("detalle-pedido", model);
         }
-        return new ModelAndView("redirect:/historial-pedidos");
     }
 
-    @RequestMapping(value = "/historial-pedidos")
+
+    @RequestMapping(value = "/historial-pedidos", method = RequestMethod.GET)
     public ModelAndView historialPedidos(HttpServletRequest request) {
         ModelMap model = new ModelMap();
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");

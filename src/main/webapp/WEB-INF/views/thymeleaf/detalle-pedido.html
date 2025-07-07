@@ -37,9 +37,8 @@
             <th>Talle</th>
             <th>Tela</th>
             <th>Cantidad</th> <!-- Permitir modificar acá la cantidad -->
-            <th>Precio de prenda</th>
-            <!-- Agregar columna de acciones -->
-            <th>Total</th> <!-- Sacar de acá, mover al final de la tabla por fuera -->
+            <th>Precio</th>
+            <th>Acciones</th>
         </tr>
         </thead>
         <tbody>
@@ -51,11 +50,17 @@
             <td th:text="${producto.tela.tipoTela} + ' - ' + ${producto.tela.color}">Tela</td>
             <td th:text="${producto.cantidad}">Cantidad</td> <!-- Permitir modificar acá la cantidad -->
             <td th:text="${producto.prenda.precioBase}">Precio prenda</td>
-            <!-- Agregar columna de acciones -->
-            <td>$$$</td> <!-- Sacar de acá, mover al final de la tabla por fuera -->
+            <td>
+                <form th:action="@{'/eliminar-producto/' + ${producto.id}}" method="post">
+                    <input type="submit" value="Eliminar" class="btn-danger">
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>
+    <div>
+        <h5>Monto total: $<span th:text="${pedido.montoTotal}"></span></h5>
+    </div>
     <section class="d-flex container w-75 justify-content-around align-items-center mb-5 my-3">
         <div class="w-25">
             <a th:href="@{/nuevo-pedido}"
@@ -89,17 +94,10 @@
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input type="hidden" class="precio-total" value="421">
+                                <input type="hidden" class="precio-total" th:value="${cotizacionDolar}">
                                 <input class="form-check-input" type="radio" name="moneda" value="DOLAR">
                                 <label class="form-check-label">
-                                    USD <b th:text="${precioDolares}"></b>
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input type="hidden" class="precio-total" th:value="${precioEuros}">
-                                <input class="form-check-input" type="radio" name="moneda" value="EURO">
-                                <label class="form-check-label">
-                                    EUR <b th:text="${precioEuros}"></b>
+                                    USD <b th:text="${cotizacionDolar}"></b>
                                 </label>
                             </div>
                         </div>
@@ -132,7 +130,6 @@
             const precioTotal = monedaSeleccionada.parentElement.querySelector(".precio-total").value;
 
             if (precioTotal) {
-                console.log('peticion')
                 fetch(`/spring/pagar-pedido/${pedidoId}?moneda=${monedaSeleccionada.value}&precioTotal=${precioTotal}`)
                     .then(response => {
                         if (!response.ok) {

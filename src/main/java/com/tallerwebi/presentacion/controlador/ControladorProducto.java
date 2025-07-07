@@ -1,5 +1,7 @@
 package com.tallerwebi.presentacion.controlador;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.excepcion.ArchivoNoValido;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
@@ -11,13 +13,15 @@ import com.tallerwebi.presentacion.dto.ResultadoCotizaciones;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -31,7 +35,6 @@ public class ControladorProducto {
     private final ServicioArchivo servicioArchivo;
     private final ServicioProducto servicioProducto;
     private final ServicioPedido servicioPedido;
-    private final ServicioCotizacion servicioCotizacion;
 
     @Autowired
     public ControladorProducto(ServicioProducto servicioProducto,
@@ -39,15 +42,13 @@ public class ControladorProducto {
                                ServicioPrenda servicioPrenda,
                                ServicioTela servicioTela,
                                ServicioArchivo servicioArchivo,
-                               ServicioPedido servicioPedido,
-                               ServicioCotizacion servicioCotizacion) {
+                               ServicioPedido servicioPedido) {
         this.servicioPrenda = servicioPrenda;
         this.servicioTalle = servicioTalle;
         this.servicioTela = servicioTela;
         this.servicioArchivo = servicioArchivo;
         this.servicioProducto = servicioProducto;
         this.servicioPedido = servicioPedido;
-        this.servicioCotizacion = servicioCotizacion;
     }
 
     @RequestMapping(path = "/nuevo-pedido", method = RequestMethod.GET)
@@ -136,20 +137,51 @@ public class ControladorProducto {
                 return new ModelAndView("redirect:/nuevo-pedido");
             }
 
-            ResultadoCotizaciones cotizaciones = servicioCotizacion.obtenerCotizaciones();
-            double precioDolares = pedido.getMontoTotal() * cotizaciones.getConversionRates().get("USD");
-            double precioEuros = pedido.getMontoTotal() * cotizaciones.getConversionRates().get("EUR");
+            double cotizacionDolar = 0.0;
+            try {
+                URL url = new URL("https://dolarapi.com/v1/dolares/blue");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                if (conn.getResponseCode() == 200) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    StringBuilder json = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        json.append(line);
+                    }
+                    reader.close();
 
-            model.put("pedido", pedido);
-            model.put("precioDolares", precioDolares);
-            model.put("precioEuros", precioEuros);
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode jsonNode = mapper.readTree(json.toString());
+                    if (jsonNode.get("venta").asDouble() <= 0.0) {
+                        model.addAttribute("mensajeError", "No se pudo obtener la cotización válida del dólar.");
+                        return new ModelAndView("redirect:/nuevo-pedido");
+                    }
+                    cotizacionDolar = jsonNode.get("venta").asDouble();
 
-            return new ModelAndView("detalle-pedido", model);
+                    model.put("pedido", pedido);
+                    model.put("cotizacionDolar", cotizacionDolar);
+
+                    return new ModelAndView("detalle-pedido", model);
+                } else {
+                    model.addAttribute("mensajeError", "Error al consultar cotización del dólar.");
+                    return new ModelAndView("redirect:/nuevo-pedido");
+                }
+            } catch (Exception e) {
+                model.addAttribute("mensajeError", "Error al obtener la cotización del dólar.");
+                return new ModelAndView("redirect:/nuevo-pedido");
+            }
 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("mensajeError", "Ocurrió un error al registrar el pedido");
             return new ModelAndView("redirect:/nuevo-pedido");
         }
+    }
+
+    @RequestMapping(path = "/eliminar-producto/{id}", method = RequestMethod.GET)
+    public ModelAndView eliminarProductoDePedido (@PathVariable Long id) {
+        servicioProducto.eliminarProducto(id);
+        return new ModelAndView("detalle-pedido");
     }
 
 }

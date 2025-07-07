@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Estado de Envío de Telas</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap y Font Awesome -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.4.0/css/all.min.css}" />
+
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/modoOscuro.css}"/>
+
+    <style>
+        body {
+            font-family: "Lexend Deca", sans-serif;
+        }
+    </style>
+</head>
+
+<body class="p-0 m-0">
+
+<!-- Navbar -->
+<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center"
+     th:insert="templates/nav :: nav"></div>
+
+<!-- Contenido principal -->
+<div class="container mt-4">
+    <h2 class="mb-4">Estado de Envío de Telas</h2>
+
+    <div th:if="${telas.isEmpty()}">
+        <p class="text-muted">Aún no compraste ninguna tela.</p>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 g-4" th:each="tela : ${telas}">
+        <div class="col">
+            <div class="card shadow-sm">
+                <img th:src="${tela.imagenUrl}" class="card-img-top" alt="Imagen de tela"
+                     style="max-height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${tela.tipoTela + ' - ' + tela.color}">Tipo - Color</h5>
+                    <p class="card-text">
+                        <strong>Metros:</strong>
+                        <span th:text="${tela.metros}">0</span>
+                    </p>
+                    <p class="card-text">
+                        <strong>Estado de envío:</strong>
+                        <span class="badge" th:classappend="${tela.estado.claseCss}" th:text="${tela.estado.descripcion}">Estado</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="/perfil-usuario" class="btn btn-secondary mt-4">
+        <i class="fas fa-arrow-left me-2"></i>Volver al perfil
+    </a>
+</div>
+
+<!-- Footer -->
+<footer th:insert="templates/footer :: footer"></footer>
+
+<!-- Scripts -->
+<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+
+</body>
+</html>
+
