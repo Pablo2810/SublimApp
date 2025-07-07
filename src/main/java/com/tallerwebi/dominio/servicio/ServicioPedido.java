@@ -24,5 +24,5 @@ public interface ServicioPedido {
 
     List<Pedido> listarPedidosDelUsuarioNoPendiente(Long id);
 
-    void generarPedidoCompleto(Long id, String codigoPedido, LocalDate fechaCreacion, Long diasEspera);
+    void generarPedidoCompleto(Long id, Moneda monedaDePago, String codigoPedido, LocalDate fechaCreacion, int diasEspera);
 }

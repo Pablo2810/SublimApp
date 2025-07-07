@@ -4,16 +4,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Taller Web I</title>
-    <!-- font google -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
-    <!-- Boostrap core css -->
+    <!-- Bootstrap core CSS -->
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.4.0/css/all.min.css}" />
-    <!-- custom style -->
+    <script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.js}"></script>
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.4.0/css/all.min.css}"/>
+    <!-- Custom styles -->
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
-    <link rel="stylesheet" th:href="@{/css/modoOscuro.css}">
+    <link rel="stylesheet" th:href="@{/css/modoOscuro.css}"/>
     <style>
         body {
             font-family: "Lexend Deca", sans-serif;
@@ -21,64 +22,137 @@
     </style>
 </head>
 <body class="p-0 m-0">
-<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
+
+<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center"
+     th:insert="templates/nav :: nav"></div>
+
 <main class="p-3">
+
     <h2 class="text-center text-white">
         Pedido realizado:
         <span th:class="${pedido.estado.claseCss}" th:text="${pedido.estado.descripcion}"></span>
     </h2>
+
+    <div class="text-center text-white my-3">
+        <p><strong>Código del pedido:</strong> <span th:text="${pedido.codigoPedido}">ABC123</span></p>
+        <p><strong>Estado:</strong> <span th:text="${pedido.estado.descripcion}">Estado</span></p>
+    </div>
+
     <table class="table table-dark table-hover text-center w-75 container mb-4">
         <thead>
         <tr>
-            <th>Imágen</th> <!-- Cambiar por imagen -->
+            <th>Imagen</th>
             <th>Prenda</th>
             <th>Talle</th>
             <th>Tela</th>
-            <th>Cantidad</th> <!-- Permitir modificar acá la cantidad -->
+            <th>Cantidad</th>
             <th>Precio</th>
             <th>Acciones</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="producto : ${pedido.productos}">
-            <!-- Agregar input hidden con id de producto? -->
-            <td>Imagen</td> <!-- Cambiar por imagen -->
+            <td>Imagen</td> <!-- Reemplazar por imagen real si está disponible -->
             <td th:text="${producto.prenda.descripcion}">Prenda</td>
             <td th:text="${producto.talle.descripcion}">Talle</td>
             <td th:text="${producto.tela.tipoTela} + ' - ' + ${producto.tela.color}">Tela</td>
-            <td th:text="${producto.cantidad}">Cantidad</td> <!-- Permitir modificar acá la cantidad -->
-            <td th:text="${producto.prenda.precioBase}">Precio prenda</td>
+            <td th:text="${producto.cantidad}">Cantidad</td>
+            <td th:text="${producto.prenda.precioBase}">Precio</td>
             <td>
                 <form th:action="@{'/eliminar-producto/' + ${producto.id}}" method="post">
-                    <input type="submit" value="Eliminar" class="btn-danger">
+                    <input type="submit" value="Eliminar" class="btn btn-danger">
                 </form>
             </td>
         </tr>
         </tbody>
     </table>
-    <div>
-        <h5>Monto total: $<span th:text="${pedido.montoTotal}"></span></h5>
+
+    <div class="text-center">
+        <h5 class="text-white">Monto total: $<span th:text="${pedido.montoTotal}">0.0</span></h5>
     </div>
+
     <section class="d-flex container w-75 justify-content-around align-items-center mb-5 my-3">
+
         <div class="w-25">
-            <a th:href="@{/nuevo-pedido}"
-               class="btn btn-outline-light w-100"
-               style="padding: 10px 20px;">Realizar otro producto</a>
+            <a th:href="@{/nuevo-pedido}" class="btn btn-outline-light w-100">Realizar otro producto</a>
         </div>
-        <!-- Agregar div acá con precio total del pedido -->
-        <form th:action="@{/pagar-pedido}" method="post" style="display: inline;" class="w-25">
-            <input type="hidden" th:name="pedidoId" th:value="${pedido.id}" />
-            <button type="submit" class="w-100 btn-lg">Pagar Pedido</button>
-        </form>
+
+        <!-- Botón para abrir modal de pago -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPago">
+            Pagar pedido
+        </button>
+
+        <!-- Modal de pago -->
+        <div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form th:action="@{/pagar-pedido}" method="post">
+                        <input type="hidden" name="pedidoId" th:value="${pedido.id}"/>
+                        <input type="hidden" name="precioTotal" id="precioTotalInput"/>
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalPagoLabel">¿En qué divisa pensás abonar?</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h6 class="mb-4 text-center text-dark">
+                                Total a pagar: $(ARS) <span th:text="${pedido.montoTotal}">0.0</span>
+                            </h6>
+                            <div class="d-flex justify-content-around text-dark">
+                                <div class="form-check">
+                                    <input type="hidden" class="precio-total" th:value="${pedido.montoTotal}"/>
+                                    <input class="form-check-input" type="radio" name="moneda" value="PESOS_ARGENTINOS" checked>
+                                    <label class="form-check-label">ARG</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="hidden" class="precio-total" th:value="${precioDolares}"/>
+                                    <input class="form-check-input" type="radio" name="moneda" value="DOLAR">
+                                    <label class="form-check-label">USD <b th:text="${precioDolares}">0.0</b></label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="hidden" class="precio-total" th:value="${precioEuros}"/>
+                                    <input class="form-check-input" type="radio" name="moneda" value="EURO">
+                                    <label class="form-check-label">EUR <b th:text="${precioEuros}">0.0</b></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="submit" class="btn btn-primary" id="completar-pago">Completar pago</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <div class="w-25">
-            <!-- sacar de acá, no es necesario -->
-            <a th:href="@{/historial-pedidos}"
-               class="btn btn-secondary w-100"
-               style="padding: 10px 20px;"> Ver lista de pedidos </a>
+            <a th:href="@{/historial-pedidos}" class="btn btn-secondary w-100">Ver lista de pedidos</a>
         </div>
     </section>
+
 </main>
+
 <footer th:insert="templates/footer :: footer"></footer>
+
 <script th:src="@{/js/main.js}"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const radios = document.querySelectorAll("input[name='moneda']");
+        const inputTotal = document.getElementById("precioTotalInput");
+
+        const actualizarPrecioTotal = () => {
+            const seleccionado = document.querySelector("input[name='moneda']:checked");
+            const precio = seleccionado.parentElement.querySelector(".precio-total").value;
+            inputTotal.value = precio;
+        };
+
+        radios.forEach(radio => {
+            radio.addEventListener("change", actualizarPrecioTotal);
+        });
+
+        actualizarPrecioTotal(); // Ejecutar al cargar la página
+    });
+</script>
+
 </body>
 </html>

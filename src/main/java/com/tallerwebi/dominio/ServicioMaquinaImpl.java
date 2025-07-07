@@ -10,8 +10,8 @@ import java.util.Random;
 public class ServicioMaquinaImpl implements ServicioMaquina {
 
     @Override
-    public Long calcularTiempoEspera() {
+    public int calcularTiempoEspera() {
         Random random = new Random();
-        return random.nextLong();
+        return random.nextInt(10) + 1;
     }
 }

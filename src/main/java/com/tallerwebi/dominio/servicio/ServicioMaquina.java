@@ -4,5 +4,5 @@ import javax.transaction.Transactional;
 
 @Transactional
 public interface ServicioMaquina {
-    Long calcularTiempoEspera();
+    int calcularTiempoEspera();
 }

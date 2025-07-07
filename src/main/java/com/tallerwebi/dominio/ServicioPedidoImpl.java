@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 @Service("servicioPedido")
 @Transactional
@@ -50,9 +51,12 @@ public class ServicioPedidoImpl implements ServicioPedido {
     @Override
     public Double calcularCostoTotal(Pedido pedido) {
         Double precioTotal = 0.0;
+        Moneda monedaDePago = pedido.getMonedaDePago();
+
         for (Producto producto : pedido.getProductos()) {
             precioTotal += producto.getPrecio();
         };
+
         return precioTotal;
     }
 
@@ -63,11 +67,12 @@ public class ServicioPedidoImpl implements ServicioPedido {
     }
 
     @Override
-    public void generarPedidoCompleto(Long id, String codigoPedido, LocalDate fechaCreacion, Long diasEspera) {
+    public void generarPedidoCompleto(Long id, Moneda moneda, String codigoPedido, LocalDate fechaCreacion, int diasEspera) {
         Pedido pedido = obtenerPedido(id);
         pedido.setCodigoPedido(codigoPedido);
         pedido.setFechaCreacion(fechaCreacion);
         pedido.setFechaEntrega(LocalDate.now().plusDays(diasEspera));
+        pedido.setMonedaDePago(moneda);
         pedido.setMontoTotal(calcularCostoTotal(pedido));
         pedido.setMontoFinal(pedido.getMontoTotal());
         repositorioPedido.actualizar(pedido);
@@ -96,10 +101,16 @@ public class ServicioPedidoImpl implements ServicioPedido {
             pedido.setEstado(Estado.PENDIENTE);
             pedido.setUsuarioPedido(usuario);
             pedido.setProductos(new HashSet<>());
+            pedido.setFechaCreacion(LocalDate.now());
+            pedido.setFechaEntrega(LocalDate.now().plusDays(3)); // Valor por defecto
+            pedido.setCodigoPedido(UUID.randomUUID().toString());
+            pedido.setMontoTotal(0.0);
+            pedido.setMontoFinal(0.0);
             repositorioPedido.guardar(pedido);
         }
         return pedido;
     }
+
 
     @Override
     public Pedido obtenerPedido(Long id) {
@@ -108,6 +119,12 @@ public class ServicioPedidoImpl implements ServicioPedido {
 
     @Override
     public void asociarProductoPedido(Pedido pedido){
+        double total = 0.0;
+        for (Producto producto: pedido.getProductos()) {
+            total += producto.getPrecio() * producto.getCantidad();
+        }
+        pedido.setMontoTotal(total);
+
         repositorioPedido.actualizar(pedido);
     }
 
