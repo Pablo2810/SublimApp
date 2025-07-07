@@ -3,7 +3,6 @@ package com.tallerwebi.infraestructura;
 import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.repositorio.RepositorioTela;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +12,7 @@ import java.util.List;
 public class RepositorioTelaImpl implements RepositorioTela {
 
     @Autowired
-    private SessionFactory sessionFactory;
+    SessionFactory sessionFactory;
 
     @Override
     public List<Tela> listarTelas() {
@@ -46,34 +45,6 @@ public class RepositorioTelaImpl implements RepositorioTela {
     }
 
     @Override
-    public List<Tela> buscarTelasDePrendaPorIdPrenda(Long prendaId) {
-        return sessionFactory.getCurrentSession()
-                .createCriteria(Tela.class)
-                .createAlias("prendas", "p")
-                .add(Restrictions.eq("p.id", prendaId))
-                .list();
-    }
-
-    @Override
-    public List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle) {
-        return sessionFactory.getCurrentSession()
-                .createCriteria(Tela.class)
-                .createAlias("prendas", "p")
-                .add(Restrictions.eq("p.id", prendaId))
-                .add(Restrictions.ge("metros", metrosTalle))
-                .list();
-    }
-
-    @Override
-    public List<TelaUsuario> obtenerTelasPorUsuario(Usuario usuario) {
-        String hql = "FROM TelaUsuario WHERE usuario = :usuario";
-        return sessionFactory.getCurrentSession()
-                .createQuery(hql, TelaUsuario.class)
-                .setParameter("usuario", usuario)
-                .getResultList();
-    }
-
-    @Override
     public TelaUsuario buscarTelaUsuarioPorTipoYColor(Usuario usuario, TipoTela tipoTela, String color) {
         String hql = "FROM TelaUsuario tu WHERE tu.usuario = :usuario AND tu.tipoTela = :tipoTela AND tu.color = :color";
         return sessionFactory.getCurrentSession()
@@ -83,21 +54,6 @@ public class RepositorioTelaImpl implements RepositorioTela {
                 .setParameter("color", color)
                 .uniqueResultOptional()
                 .orElse(null);
-    }
-
-    @Override
-    public void guardarTelaFabrica() {
-        // no implementado aún
-    }
-
-    @Override
-    public TelaUsuario obtenerTelaUsuarioPorId(Long id) {
-        return sessionFactory.getCurrentSession().get(TelaUsuario.class, id);
-    }
-
-    @Override
-    public void guardarTelaUsuario(TelaUsuario telaUsuario) {
-        sessionFactory.getCurrentSession().merge(telaUsuario);
     }
 
     @Override

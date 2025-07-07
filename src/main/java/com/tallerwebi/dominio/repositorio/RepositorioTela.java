@@ -1,9 +1,11 @@
 package com.tallerwebi.dominio.repositorio;
 
 import com.tallerwebi.dominio.entidad.*;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface RepositorioTela {
 
     List<Tela> listarTelas();
@@ -14,21 +16,9 @@ public interface RepositorioTela {
 
     void borrarTela(Tela id);
 
-    void guardarTelaFabrica();
-
     List<Tela> listarTelasDeFabrica();
 
-    List<Tela> buscarTelasDePrendaPorIdPrenda(Long prendaId);
-
-    List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle);
-
-    List<TelaUsuario> obtenerTelasPorUsuario(Usuario usuario);
-
     TelaUsuario buscarTelaUsuarioPorTipoYColor(Usuario usuario, TipoTela tipoTela, String color);
-
-    TelaUsuario obtenerTelaUsuarioPorId(Long id);
-
-    void guardarTelaUsuario(TelaUsuario telaUsuario);
 
     List<TelaUsuario> buscarTelasUsuarioPorUsuarioYEstado(Long usuarioId, EstadoTela estado);
 

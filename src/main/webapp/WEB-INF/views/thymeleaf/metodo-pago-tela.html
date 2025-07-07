@@ -21,6 +21,17 @@
     <input type="hidden" name="tipoTela" th:value="${tipoTela}" />
     <input type="hidden" name="imagenUrl" th:value="${imagenUrl}" />
 
+    <!-- Selección de moneda -->
+    <div class="mb-3">
+        <label class="form-label">Elegí la moneda de pago:</label><br>
+        <div class="btn-group" role="group" aria-label="Moneda de pago">
+            <input type="radio" class="btn-check" name="pagoEnDolares" id="pagoPesos" value="false" autocomplete="off" checked>
+            <label class="btn btn-outline-primary" for="pagoPesos">Pesos</label>
+
+            <input type="radio" class="btn-check" name="pagoEnDolares" id="pagoDolares" value="true" autocomplete="off">
+            <label class="btn btn-outline-primary" for="pagoDolares">Dólares</label>
+        </div>
+    </div>
 
     <!-- Método de pago -->
     <div class="mb-3">
@@ -35,6 +46,7 @@
         </div>
     </div>
 
+    <!-- Tipo de envío -->
     <div class="mb-3">
         <select class="form-select" id="tipoEnvio" name="tipoEnvio" required>
             <option value="" disabled selected>Seleccioná una opción</option>
@@ -81,6 +93,9 @@
     <div class="alert alert-info" id="resumenPago" style="display: none;">
         <strong>Total estimado:</strong> <span id="totalResumen"></span><br>
         <span id="detalleCuotas"></span>
+        <div id="tipoCambioDolar" style="display:none; margin-top:8px; font-size:0.9em; color:#555;">
+            Tipo de cambio dólar blue: <strong id="valorDolar"></strong>
+        </div>
     </div>
 
     <button type="submit" class="btn btn-success">Confirmar Pago</button>
@@ -93,7 +108,7 @@
 
 <!-- Scripts -->
 <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
-<script type="text/javascript" th:src="@{/js/main.js}"></script>
+<script th:src="@{/js/main.js}"></script>
 </body>
 </html>
 

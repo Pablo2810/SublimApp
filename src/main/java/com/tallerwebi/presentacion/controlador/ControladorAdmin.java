@@ -237,7 +237,6 @@ public class ControladorAdmin {
         return new ModelAndView("redirect:/admin/estado-envio-telas");
     }
 
-
     @GetMapping("/estado-envio-telas")
     public ModelAndView listarTelasUsuarioEstado() {
         ModelMap model = new ModelMap();
