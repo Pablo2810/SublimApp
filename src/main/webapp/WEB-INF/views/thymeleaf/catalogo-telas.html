@@ -4,18 +4,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>Taller Web I</title>
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet" />
-    <!-- Bootstrap core CSS -->
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
-    <!-- Custom styles -->
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/modoOscuro.css}" />
+    <link rel="stylesheet" th:href="@{/css/catalogo-telas.css}"/>
+
     <style>
         body {
-            font-family: "Lexend Deca", sans-serif;
+          font-family: "Lexend Deca", sans-serif;
         }
     </style>
 </head>
@@ -29,25 +28,98 @@
         </a>
     </div>
 
-    <section>
-        <h2 class="p-5 mb-3 text-center fw-semibold text-primary">Explora nuestro Catálogo de Telas</h2>
-        <div class="row g-4">
-            <div class="col-md-4" th:each="tela : ${telas}">
-                <div class="card shadow h-100 border border-2 border-light rounded-0 p-2">
-                    <img th:src="@{${tela.imagenUrl}}"
-                         th:alt="'Imagen de tela ' + ${tela.tipoTela} + ' color ' + ${tela.color}"
-                         class="w-100"
-                         style="height: 300px; object-fit: cover;" />
-                    <div class="card-body d-flex flex-column justify-content-between">
-                        <div>
-                            <h5 class="card-title text-primary" th:text="${tela.tipoTela}">Tipo Tela</h5>
-                            <p class="card-text"><strong>Color:</strong> <span th:text="${tela.color}">Color</span></p>
-                            <p class="card-text"><strong>Precio por metro:</strong> $<span th:text="${tela.precio}">0.00</span></p>
+    <section class="mb-5">
+        <h2 class="text-center text-primary fw-bold mb-4">Telas destacadas</h2>
+
+        <div class="position-relative px-2">
+            <div class="d-flex overflow-hidden" id="carrusel-personalizado">
+                <div class="d-flex flex-nowrap" style="transition: transform 0.4s;" id="carrusel-inner">
+                    <div class="me-3" style="min-width: 32%;" th:each="tela : ${telasCarrusel}">
+                        <div class="card h-100 shadow-sm border border-light" th:classappend="${tela.metros == 0} ? ' sin-stock' : ''">
+                            <img th:src="@{${tela.imagenUrl}}" class="card-img-top" style="height: 160px; object-fit: cover;" />
+                            <div class="card-body text-center d-flex flex-column justify-content-between">
+                                <div>
+                                    <h6 class="fw-bold text-primary" th:text="${tela.tipoTela} + ' - ' + ${tela.color}"></h6>
+                                    <p th:text="'$' + ${tela.precio}"></p>
+                                    <p th:if="${tela.metros == 0}" class="text-danger fw-bold">Sin stock</p>
+                                    <p th:if="${tela.metros > 0}" class="text-success">Stock: <span th:text="${tela.metros}"></span> mts</p>
+                                </div>
+                                <div>
+                                    <a th:if="${tela.metros > 0}" th:href="@{'/detalle-tela-id/' + ${tela.id}}" class="btn btn-success btn-sm mt-2">Comprar</a>
+                                    <button th:if="${tela.metros == 0}" class="btn btn-secondary btn-sm mt-2" disabled>Sin stock</button>
+                                </div>
+                            </div>
                         </div>
-                        <a th:href="@{'/detalle-tela-id/' + ${tela.id}}" class="btn btn-primary mt-3">Comprar</a>
                     </div>
                 </div>
             </div>
+
+            <!-- Controles -->
+            <button id="btn-prev" class="btn btn-outline-secondary position-absolute top-50 start-0 translate-middle-y">
+                &#10094;
+            </button>
+            <button id="btn-next" class="btn btn-outline-secondary position-absolute top-50 end-0 translate-middle-y">
+                &#10095;
+            </button>
+        </div>
+    </section>
+
+    <!-- Catálogo dinámico -->
+    <section id="catalogo-telas" class="mt-5">
+        <h2 class="text-center fw-bold text-primary mb-4">Explora nuestro Catálogo</h2>
+        <!-- Filtros -->
+        <div class="row mb-4 justify-content-center">
+            <div class="col-md-3">
+                <select class="form-select" id="filtroTipoTela">
+                    <option value="">Todos los tipos</option>
+                    <option value="ALGODON">Algodón</option>
+                    <option value="LINO">Lino</option>
+                    <option value="NEOPRENO">Neopreno</option>
+                    <option value="POLIESTER">Poliéster</option>
+                    <option value="SET">Set</option>
+                    <option value="W15">W15</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="filtroColor">
+                    <option value="">Todos los colores</option>
+                    <option value="rojo">Rojo</option>
+                    <option value="azul">Azul</option>
+                    <option value="rosa">Rosa</option>
+                    <option value="gris">Gris</option>
+                    <option value="celeste">Celeste</option>
+                    <option value="verde">Verde</option>
+                    <option value="verde agua">Verde agua</option>
+                    <option value="marron">Marrón</option>
+                    <option value="naranja">Naranja</option>
+                    <option value="negro">Negro</option>
+                    <option value="gris oscuro">Gris oscuro</option>
+                    <option value="amarillo">Amarillo</option>
+                    <option value="amarillo oscuro">Amarillo oscuro</option>
+                    <option value="lila">Lila</option>
+                    <option value="blanco">Blanco</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="ordenarPorPrecio">
+                    <option value="">Ordenar por precio</option>
+                    <option value="precio-desc">Mayor precio primero</option>
+                    <option value="precio-asc">Menor precio primero</option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <select class="form-select" id="ordenarPorStock">
+                    <option value="">Orden por defecto</option>
+                    <option value="desc">Más stock primero</option>
+                    <option value="asc">Menos stock primero</option>
+                </select>
+            </div>
+        </div>
+        <!-- select filtros -->
+        <div class="row g-4 justify-content-center" id="contenedorTelas"></div>
+        <div class="text-center mt-4">
+            <button class="btn btn-outline-primary fw-semibold px-4" id="btnVerMas">Ver más</button>
         </div>
     </section>
 </main>
@@ -56,11 +128,10 @@
 <footer th:insert="templates/footer :: footer"></footer>
 
 <!-- Scripts -->
-<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+<script th:inline="javascript">
+    window.todasLasTelas = /*[[${telas}]]*/ [];
+</script>
 <script th:src="@{/js/main.js}"></script>
 </body>
 </html>
-
-
-
-

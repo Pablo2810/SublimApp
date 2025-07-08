@@ -203,6 +203,23 @@ public class ControladorPerfilUsuarioTest {
                 .andExpect(model().attributeExists("error"));
     }
 
+    @Test
+    public void verEstadoEnvioTelasSinSesionRedirigeALogin() throws Exception {
+        mockMvc.perform(get("/estado-envio-tela"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
+    }
+
+    @Test
+    public void verEstadoEnvioTelasConSesionDevuelveVistaYModelo() throws Exception {
+        mockMvc.perform(get("/estado-envio-tela")
+                        .sessionAttr("usuarioLogueado", usuario))
+                .andExpect(status().isOk())
+                .andExpect(view().name("estado-envio-tela"))
+                .andExpect(model().attributeExists("usuario"))
+                .andExpect(model().attributeExists("telas"));
+    }
+
 }
 
 

@@ -51,12 +51,23 @@
                 </div>
             </div>
         </div>
+
         <div class="row">
             <div class="col-4">
                 <div class="card" style="width: 18rem;">
                     <img th:src="@{/img/pedidos.jpg}" class="card-img p-1">
                     <div class="card-body">
-                        <a th:href="@{/admin/pedidos-solicitados}" href="#" class="btn btn-primary w-100">Pedidos de usuarios</a>
+                        <a th:href="@{/admin/pedidos-solicitados}" class="btn btn-primary w-100">Pedidos de usuarios</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NUEVA TARJETA: Estado de envío de telas -->
+            <div class="col-4">
+                <div class="card" style="width: 18rem;">
+                    <img th:src="@{/img/envios.jpg}" class="card-img p-1">
+                    <div class="card-body">
+                        <a th:href="@{/admin/envios-telas}" class="btn btn-primary w-100">Estado de envío de telas</a>
                     </div>
                 </div>
             </div>
