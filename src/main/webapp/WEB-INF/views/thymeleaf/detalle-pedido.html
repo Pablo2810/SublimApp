@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>Taller Web I</title>
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet" />
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
     <script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.js}"></script>
-    <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.4.0/css/all.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.4.0/css/all.min.css}" />
     <!-- Custom styles -->
-    <link rel="stylesheet" th:href="@{/css/main.css}"/>
-    <link rel="stylesheet" th:href="@{/css/modoOscuro.css}"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/modoOscuro.css}" />
     <style>
         body {
             font-family: "Lexend Deca", sans-serif;
@@ -38,6 +38,10 @@
         <p><strong>Estado:</strong> <span th:text="${pedido.estado.descripcion}">Estado</span></p>
     </div>
 
+    <div class="text-center text-danger" th:if="${error}">
+        <p th:text="${error}"></p>
+    </div>
+
     <table class="table table-dark table-hover text-center w-75 container mb-4">
         <thead>
         <tr>
@@ -46,29 +50,32 @@
             <th>Talle</th>
             <th>Tela</th>
             <th>Cantidad</th>
-            <th>Precio</th>
+            <th>Precio Unitario</th>
+            <th>Subtotal</th>
             <th>Acciones</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="producto : ${pedido.productos}">
-            <td>Imagen</td> <!-- Reemplazar por imagen real si está disponible -->
+            <td>Imagen</td> <!-- Podés reemplazar con imagen real si existe -->
             <td th:text="${producto.prenda.descripcion}">Prenda</td>
             <td th:text="${producto.talle.descripcion}">Talle</td>
             <td th:text="${producto.tela.tipoTela} + ' - ' + ${producto.tela.color}">Tela</td>
             <td th:text="${producto.cantidad}">Cantidad</td>
-            <td th:text="${producto.prenda.precioBase}">Precio</td>
+            <td>$<span th:text="${#numbers.formatDecimal(producto.precio, 1, 'COMMA', 2, 'POINT')}">0.0</span></td>
+            <td>$<span th:text="${#numbers.formatDecimal(producto.precio * producto.cantidad, 1, 'COMMA', 2, 'POINT')}">0.0</span></td>
             <td>
-                <form th:action="@{'/eliminar-producto/' + ${producto.id}}" method="post">
-                    <input type="submit" value="Eliminar" class="btn btn-danger">
+                <form th:if="${pedido.estado.name() == 'PENDIENTE'}" th:action="@{'/eliminar-producto/' + ${producto.id}}" method="post">
+                    <input type="submit" value="Eliminar" class="btn btn-danger btn-sm" />
                 </form>
             </td>
         </tr>
         </tbody>
     </table>
 
-    <div class="text-center">
-        <h5 class="text-white">Monto total: $<span th:text="${pedido.montoTotal}">0.0</span></h5>
+    <div class="text-center text-white mb-2">
+        <p><strong>Monto total:</strong> $<span th:text="${#numbers.formatDecimal(pedido.montoTotal, 1, 'COMMA', 2, 'POINT')}">0.0</span></p>
+        <p><strong>Monto final:</strong> $<span th:text="${#numbers.formatDecimal(pedido.montoFinal != null ? pedido.montoFinal : pedido.montoTotal, 1, 'COMMA', 2, 'POINT')}">0.0</span></p>
     </div>
 
     <section class="d-flex container w-75 justify-content-around align-items-center mb-5 my-3">
@@ -77,40 +84,40 @@
             <a th:href="@{/nuevo-pedido}" class="btn btn-outline-light w-100">Realizar otro producto</a>
         </div>
 
-        <!-- Botón para abrir modal de pago -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPago">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPago"
+                th:if="${pedido.estado.name() == 'PENDIENTE'}">
             Pagar pedido
         </button>
 
         <!-- Modal de pago -->
-        <div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true">
+        <div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true" th:if="${pedido.estado.name() == 'PENDIENTE'}">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <form th:action="@{/pagar-pedido}" method="post">
-                        <input type="hidden" name="pedidoId" th:value="${pedido.id}"/>
-                        <input type="hidden" name="precioTotal" id="precioTotalInput"/>
+                        <input type="hidden" name="pedidoId" th:value="${pedido.id}" />
+                        <input type="hidden" name="precioTotal" id="precioTotalInput" />
                         <div class="modal-header">
                             <h5 class="modal-title" id="modalPagoLabel">¿En qué divisa pensás abonar?</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                         </div>
                         <div class="modal-body">
                             <h6 class="mb-4 text-center text-dark">
-                                Total a pagar: $(ARS) <span th:text="${pedido.montoTotal}">0.0</span>
+                                Total a pagar: $(ARS) <span th:text="${#numbers.formatDecimal(pedido.montoTotal, 1, 'COMMA', 2, 'POINT')}">0.0</span>
                             </h6>
                             <div class="d-flex justify-content-around text-dark">
                                 <div class="form-check">
-                                    <input type="hidden" class="precio-total" th:value="${pedido.montoTotal}"/>
-                                    <input class="form-check-input" type="radio" name="moneda" value="PESOS_ARGENTINOS" checked>
+                                    <input type="hidden" class="precio-total" th:value="${pedido.montoTotal}" />
+                                    <input class="form-check-input" type="radio" name="moneda" value="PESOS_ARGENTINOS" checked />
                                     <label class="form-check-label">ARG</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="hidden" class="precio-total" th:value="${precioDolares}"/>
-                                    <input class="form-check-input" type="radio" name="moneda" value="DOLAR">
+                                    <input type="hidden" class="precio-total" th:value="${precioDolares}" />
+                                    <input class="form-check-input" type="radio" name="moneda" value="DOLAR" />
                                     <label class="form-check-label">USD <b th:text="${precioDolares}">0.0</b></label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="hidden" class="precio-total" th:value="${precioEuros}"/>
-                                    <input class="form-check-input" type="radio" name="moneda" value="EURO">
+                                    <input type="hidden" class="precio-total" th:value="${precioEuros}" />
+                                    <input class="form-check-input" type="radio" name="moneda" value="EURO" />
                                     <label class="form-check-label">EUR <b th:text="${precioEuros}">0.0</b></label>
                                 </div>
                             </div>
@@ -132,7 +139,7 @@
 </main>
 
 <footer th:insert="templates/footer :: footer"></footer>
-
+<script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/main.js}"></script>
 
 <script>

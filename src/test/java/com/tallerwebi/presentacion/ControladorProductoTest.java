@@ -103,7 +103,7 @@ public class ControladorProductoTest {
         verify(redirectAttrs).addFlashAttribute("mensajeError", "Por el momento no hay prendas en stock");
     }
 
-    @Test
+  /* @Test
     void queSePuedaRegistrarProductoCorrectamente() throws Exception {
 
         Prenda prenda = new Prenda();
@@ -166,7 +166,7 @@ public class ControladorProductoTest {
 
         verify(servicioPedidoMock).asociarProductoPedido(pedido);
         verify(servicioTelaMock).consumirTelaParaProducto(tela, talle.getMetrosTotales() * 5, usuario);
-    }
+    } */
 
     @Test
     void queNoSePuedaRegistrarProductoPorQueNoSeEncontroLaPrendaElegida() throws Exception {

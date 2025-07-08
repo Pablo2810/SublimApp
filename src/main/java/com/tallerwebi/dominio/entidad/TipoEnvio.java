@@ -1,9 +1,11 @@
 package com.tallerwebi.dominio.entidad;
 
 public enum TipoEnvio {
+
     LOCAL(0.0, "Retiro en local (gratis)", "1 a 2 días"),
     CABA(1000.0, "Envío a CABA ($1000)", "2 a 4 días hábiles"),
-    INTERIOR(2000.0, "Envío al interior ($2000)", "4 a 7 días hábiles");
+    INTERIOR(2000.0, "Envío al interior ($2000)", "4 a 7 días hábiles"),
+    EXTERIOR(5000.0, "Envío fuera del país ($5000)", "15 a 30 días hábiles");
 
     private final double costo;
     private final String descripcion;
@@ -26,6 +28,12 @@ public enum TipoEnvio {
     public String getTiempoEntrega() {
         return tiempoEntrega;
     }
+
+    @Override
+    public String toString() {
+        return descripcion;
+    }
 }
+
 
 

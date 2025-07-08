@@ -161,4 +161,23 @@ public class ServicioPedidoImpl implements ServicioPedido {
                 estadoAnterior.equals(Estado.SUBLIMANDO) && nuevoEstado.equals(Estado.A_RETIRAR);
     }
 
+    @Override
+    @Transactional
+    public void eliminarProductoDelPedido(Pedido pedido, Long productoId) {
+        if (pedido == null || pedido.getProductos() == null) return;
+
+        // Buscar producto en el pedido
+        Producto productoAEliminar = pedido.getProductos()
+                .stream()
+                .filter(p -> p.getId().equals(productoId))
+                .findFirst()
+                .orElse(null);
+
+        if (productoAEliminar != null) {
+            pedido.getProductos().remove(productoAEliminar);
+            // Guardar cambios en la base
+            repositorioPedido.actualizar(pedido);
+        }
+    }
+
 }

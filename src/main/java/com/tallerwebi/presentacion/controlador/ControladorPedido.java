@@ -72,6 +72,7 @@ public class ControladorPedido {
         if (!model.containsAttribute("pedido")) {
             Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
             Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario);
+            servicioPedido.asociarProductoPedido(pedido);
             model.addAttribute("pedido", pedido);
         }
         return new ModelAndView("detalle-pedido", model);
@@ -117,4 +118,24 @@ public class ControladorPedido {
             return new ModelAndView("detalle-pedido", model);
         }
     }
+
+    @PostMapping("/eliminar-producto/{productoId}")
+    public ModelAndView eliminarProducto(@PathVariable Long productoId, HttpServletRequest request) {
+        Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
+        Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario);
+
+        if (pedido != null && pedido.getEstado() == Estado.PENDIENTE) {
+            // Lógica para eliminar producto de pedido (depende de tu implementación)
+            servicioPedido.eliminarProductoDelPedido(pedido, productoId);
+
+            // Recalcular total
+            servicioPedido.asociarProductoPedido(pedido);
+        } else {
+            // No permitido borrar producto si pedido no está en PENDIENTE
+            // Podés mostrar mensaje o loguear
+        }
+
+        return new ModelAndView("redirect:/detalle-pedido");
+    }
+
 }
