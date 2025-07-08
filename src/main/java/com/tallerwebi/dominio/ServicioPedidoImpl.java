@@ -2,9 +2,11 @@ package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.repositorio.RepositorioPedido;
+import com.tallerwebi.dominio.servicio.ServicioEmail;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -16,10 +18,12 @@ import java.util.List;
 public class ServicioPedidoImpl implements ServicioPedido {
 
     RepositorioPedido repositorioPedido;
+    ServicioEmail servicioEmail;
 
     @Autowired
-    public ServicioPedidoImpl(RepositorioPedido repositorioPedido) {
+    public ServicioPedidoImpl(RepositorioPedido repositorioPedido, ServicioEmail servicioEmail) {
         this.repositorioPedido = repositorioPedido;
+        this.servicioEmail = servicioEmail;
     }
 
     // comento estos dos metodos que no se usan
@@ -135,6 +139,12 @@ public class ServicioPedidoImpl implements ServicioPedido {
 
             if (puedeCambiarElEstado(pedido.getEstado(), nuevoEstado)) {
                 repositorioPedido.cambiarEstadoPedido(pedido, nuevoEstado);
+                servicioEmail.enviarCorreoEstadoPedido(pedido.getUsuarioPedido().getEmail(), pedido,
+                        ServletUriComponentsBuilder
+                                .fromCurrentContextPath()
+                                .path("/historial-pedidos")
+                                .build()
+                                .toUriString());
                 return true;
             }
         } catch (Exception e) {
