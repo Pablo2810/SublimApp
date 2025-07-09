@@ -164,4 +164,16 @@ public class ServicioPedidoImpl implements ServicioPedido {
                 estadoAnterior.equals(Estado.SUBLIMANDO) && nuevoEstado.equals(Estado.A_RETIRAR);
     }
 
+    @Override
+    public void cancelarPedido(Long id) {
+        Pedido pedido = obtenerPedido(id);
+
+        if (pedido.getEstado().equals(Estado.PENDIENTE) || pedido.getEstado().equals(Estado.EN_ESPERA)) {
+            pedido.setEstado(Estado.CANCELADO);
+            repositorioPedido.actualizar(pedido);
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
 }

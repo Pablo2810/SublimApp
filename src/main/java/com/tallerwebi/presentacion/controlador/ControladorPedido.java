@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
@@ -79,7 +80,7 @@ public class ControladorPedido {
     public ModelAndView pagarPedidoPendiente(@RequestParam Long pedidoId,
                                              @RequestParam("moneda") Moneda moneda,
                                              @RequestParam("cotizacion") double cotizacion,
-                                             HttpServletRequest request){
+                                             HttpServletRequest request) {
         try {
             servicioPedido.cambiarEstadoPedido(pedidoId, Estado.EN_ESPERA);
             int diasEspera = servicioMaquina.calcularTiempoEspera();
@@ -102,11 +103,34 @@ public class ControladorPedido {
     public ModelAndView historialPedidos(HttpServletRequest request) {
         ModelMap model = new ModelMap();
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
-        List<Pedido> pedidos = servicioPedido.listarPedidosDelUsuarioNoPendiente(usuario.getId());
 
-        model.put("mensajeSinPedidos", "Todavia no tienes pedidos");
-        model.put("pedidos", pedidos);
+        if (usuario != null) {
+            try {
+                List<Pedido> pedidos = servicioPedido.listarPedidosDelUsuarioNoPendiente(usuario.getId());
+
+                model.put("mensajeSinPedidos", "Todavia no tienes pedidos");
+                model.put("pedidos", pedidos);
+            } catch (Exception e) {
+                return new ModelAndView("redirect:/home");
+            }
+        } else {
+            return new ModelAndView("redirect:/login");
+        }
 
         return new ModelAndView("historial-pedidos", model);
     }
+
+    @RequestMapping(value = "/cancelar-pedido/{id}", method = RequestMethod.POST)
+    public ModelAndView cancelarPedido(@PathVariable("id") Long id,
+                                       RedirectAttributes redirectAttributes) {
+        try {
+            servicioPedido.cancelarPedido(id);
+            redirectAttributes.addFlashAttribute("mensaje", "Cancelaste tu pedido");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("mensajeError", "Ya no es posible cancelar este pedido");
+        }
+
+        return new ModelAndView("redirect:/historial-pedidos");
+    }
+
 }
