@@ -12,6 +12,12 @@ public class TelaUsuario extends Tela {
     @Enumerated(EnumType.STRING)
     private EstadoTela estado;
 
+    @Enumerated(EnumType.STRING)
+    private TipoEnvio tipoEnvio;
+
+    private String direccionEntrega;
+
+
     public EstadoTela getEstado() {
         return estado;
     }

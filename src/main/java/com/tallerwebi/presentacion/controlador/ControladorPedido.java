@@ -66,39 +66,20 @@ public class ControladorPedido {
             return new ModelAndView("historial-pedidos", model);
         }
     */
+
+    // Muestra el pedido pendiente (carrito)
     @RequestMapping(value = "/detalle-pedido", method = RequestMethod.GET)
     public ModelAndView mostrarCarrito(ModelMap model, HttpServletRequest request) {
         if (!model.containsAttribute("pedido")) {
             Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
             Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario);
+            servicioPedido.asociarProductoPedido(pedido);
             model.addAttribute("pedido", pedido);
         }
         return new ModelAndView("detalle-pedido", model);
     }
 
-    @RequestMapping(value = "/pagar-pedido", method = RequestMethod.POST)
-    public ModelAndView pagarPedidoPendiente(@RequestParam Long pedidoId,
-                                             @RequestParam("moneda") Moneda moneda,
-                                             @RequestParam("cotizacion") double cotizacion,
-                                             HttpServletRequest request) {
-        try {
-            servicioPedido.cambiarEstadoPedido(pedidoId, Estado.EN_ESPERA);
-            int diasEspera = servicioMaquina.calcularTiempoEspera();
-            servicioPedido.generarPedidoCompleto(pedidoId, moneda, cotizacion, UUID.randomUUID().toString(), LocalDate.now(), diasEspera);
-
-            return new ModelAndView("redirect:/historial-pedidos");
-        } catch (Exception e) {
-            ModelMap model = new ModelMap();
-            // Recuperar el pedido con estado pendiente del usuario
-            Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
-            Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario);
-            model.put("pedido", pedido);
-
-            return new ModelAndView("detalle-pedido", model);
-        }
-    }
-
-
+    // Muestra historial de pedidos ya pagados o no pendientes
     @RequestMapping(value = "/historial-pedidos", method = RequestMethod.GET)
     public ModelAndView historialPedidos(HttpServletRequest request) {
         ModelMap model = new ModelMap();
@@ -120,6 +101,7 @@ public class ControladorPedido {
         return new ModelAndView("historial-pedidos", model);
     }
 
+
     @RequestMapping(value = "/cancelar-pedido/{id}", method = RequestMethod.POST)
     public ModelAndView cancelarPedido(@PathVariable("id") Long id,
                                        RedirectAttributes redirectAttributes) {
@@ -131,6 +113,53 @@ public class ControladorPedido {
         }
 
         return new ModelAndView("redirect:/historial-pedidos");
+    }
+
+    // Procesa el pago del pedido pendiente
+    @RequestMapping(value = "/pagar-pedido", method = RequestMethod.POST)
+    public ModelAndView pagarPedidoPendiente(@RequestParam Long pedidoId,
+                                             @RequestParam("moneda") Moneda moneda,
+                                             @RequestParam("cotizacion") double cotizacion,
+                                             HttpServletRequest request) {
+        try {
+            // Cambiar estado a EN_ESPERA
+            boolean cambioExitoso = servicioPedido.cambiarEstadoPedido(pedidoId, Estado.EN_ESPERA);
+            if (!cambioExitoso) {
+                throw new RuntimeException("No se pudo cambiar el estado del pedido");
+            }
+            // Calcular demora y completar pedido
+            int diasEspera = servicioMaquina.calcularTiempoEspera();
+            servicioPedido.generarPedidoCompleto(pedidoId, moneda, cotizacion, UUID.randomUUID().toString(), LocalDate.now(), diasEspera);
+            // Redirigir a historial
+            return new ModelAndView("redirect:/historial-pedidos");
+        } catch (Exception e) {
+            // En caso de error mostrar detalle pedido con mensaje
+            ModelMap model = new ModelMap();
+            Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
+            Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario);
+            model.put("pedido", pedido);
+            model.put("error", "Error al procesar el pago, por favor intente nuevamente.");
+            return new ModelAndView("detalle-pedido", model);
+        }
+    }
+
+    @PostMapping("/eliminar-producto/{productoId}")
+    public ModelAndView eliminarProducto(@PathVariable Long productoId, HttpServletRequest request) {
+        Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
+        Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario);
+
+        if (pedido != null && pedido.getEstado() == Estado.PENDIENTE) {
+            // Lógica para eliminar producto de pedido (depende de tu implementación)
+            servicioPedido.eliminarProductoDelPedido(pedido, productoId);
+
+            // Recalcular total
+            servicioPedido.asociarProductoPedido(pedido);
+        } else {
+            // No permitido borrar producto si pedido no está en PENDIENTE
+            // Podés mostrar mensaje o loguear
+        }
+
+        return new ModelAndView("redirect:/detalle-pedido");
     }
 
 }

@@ -12,6 +12,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.UUID;
 
 @Service("servicioPedido")
 @Transactional
@@ -104,10 +105,16 @@ public class ServicioPedidoImpl implements ServicioPedido {
             pedido.setEstado(Estado.PENDIENTE);
             pedido.setUsuarioPedido(usuario);
             pedido.setProductos(new HashSet<>());
+            pedido.setFechaCreacion(LocalDate.now());
+            pedido.setFechaEntrega(LocalDate.now().plusDays(3)); // Valor por defecto
+            pedido.setCodigoPedido(UUID.randomUUID().toString());
+            pedido.setMontoTotal(0.0);
+            pedido.setMontoFinal(0.0);
             repositorioPedido.guardar(pedido);
         }
         return pedido;
     }
+
 
     @Override
     public Pedido obtenerPedido(Long id) {
@@ -173,6 +180,24 @@ public class ServicioPedidoImpl implements ServicioPedido {
             repositorioPedido.actualizar(pedido);
         } else {
             throw new IllegalArgumentException();
+        }
+    }
+
+    @Transactional
+    public void eliminarProductoDelPedido(Pedido pedido, Long productoId) {
+        if (pedido == null || pedido.getProductos() == null) return;
+
+        // Buscar producto en el pedido
+        Producto productoAEliminar = pedido.getProductos()
+                .stream()
+                .filter(p -> p.getId().equals(productoId))
+                .findFirst()
+                .orElse(null);
+
+        if (productoAEliminar != null) {
+            pedido.getProductos().remove(productoAEliminar);
+            // Guardar cambios en la base
+            repositorioPedido.actualizar(pedido);
         }
     }
 

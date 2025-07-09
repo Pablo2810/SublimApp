@@ -244,6 +244,5 @@ public class RepositorioTelaTest {
         assertEquals(1, resultado.size());
     }
 
-
 }
 

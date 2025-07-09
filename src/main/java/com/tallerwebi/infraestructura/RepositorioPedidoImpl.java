@@ -110,7 +110,7 @@ public class RepositorioPedidoImpl implements RepositorioPedido {
     @Override
     public void cambiarEstadoPedido(Pedido pedido, Estado nuevoEstado) {
         pedido.setEstado(nuevoEstado);
-        this.sessionFactory.getCurrentSession().update(pedido);
+        sessionFactory.getCurrentSession().merge(pedido);
     }
 
     @Override
@@ -160,7 +160,7 @@ public class RepositorioPedidoImpl implements RepositorioPedido {
 
     @Override
     public void actualizar(Pedido pedido) {
-        sessionFactory.getCurrentSession().update(pedido);
+        sessionFactory.getCurrentSession().merge(pedido);
     }
 
     @Override

@@ -26,4 +26,5 @@ public interface ServicioPedido {
 
     void generarPedidoCompleto(Long id, Moneda monedaDePago, double cotizacion, String codigoPedido, LocalDate fechaCreacion, int diasEspera);
     void cancelarPedido(Long id);
+    void eliminarProductoDelPedido(Pedido pedido, Long productoId);
 }
