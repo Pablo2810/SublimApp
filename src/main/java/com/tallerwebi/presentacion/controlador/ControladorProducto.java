@@ -35,6 +35,7 @@ public class ControladorProducto {
     private final ServicioArchivo servicioArchivo;
     private final ServicioProducto servicioProducto;
     private final ServicioPedido servicioPedido;
+    private final ServicioCotizacionDolar servicioCotizacionDolar;
 
     @Autowired
     public ControladorProducto(ServicioProducto servicioProducto,
@@ -42,13 +43,15 @@ public class ControladorProducto {
                                ServicioPrenda servicioPrenda,
                                ServicioTela servicioTela,
                                ServicioArchivo servicioArchivo,
-                               ServicioPedido servicioPedido) {
+                               ServicioPedido servicioPedido,
+                               ServicioCotizacionDolar servicioCotizacionDolar) {
         this.servicioPrenda = servicioPrenda;
         this.servicioTalle = servicioTalle;
         this.servicioTela = servicioTela;
         this.servicioArchivo = servicioArchivo;
         this.servicioProducto = servicioProducto;
         this.servicioPedido = servicioPedido;
+        this.servicioCotizacionDolar = servicioCotizacionDolar;
     }
 
     @RequestMapping(path = "/nuevo-pedido", method = RequestMethod.GET)
@@ -137,40 +140,16 @@ public class ControladorProducto {
                 return new ModelAndView("redirect:/nuevo-pedido");
             }
 
-            double cotizacionDolar = 0.0;
             try {
-                URL url = new URL("https://dolarapi.com/v1/dolares/blue");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                if (conn.getResponseCode() == 200) {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    StringBuilder json = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        json.append(line);
-                    }
-                    reader.close();
-
-                    ObjectMapper mapper = new ObjectMapper();
-                    JsonNode jsonNode = mapper.readTree(json.toString());
-                    if (jsonNode.get("venta").asDouble() <= 0.0) {
-                        model.addAttribute("mensajeError", "No se pudo obtener la cotización válida del dólar.");
-                        return new ModelAndView("redirect:/nuevo-pedido");
-                    }
-                    cotizacionDolar = jsonNode.get("venta").asDouble();
-
-                    model.put("pedido", pedido);
-                    model.put("cotizacionDolar", cotizacionDolar);
-
-                    return new ModelAndView("detalle-pedido", model);
-                } else {
-                    model.addAttribute("mensajeError", "Error al consultar cotización del dólar.");
-                    return new ModelAndView("redirect:/nuevo-pedido");
-                }
+                double cotizacionDolar = servicioCotizacionDolar.obtenerCotizacionDolar();
+                model.put("cotizacionDolar", cotizacionDolar);
             } catch (Exception e) {
-                model.addAttribute("mensajeError", "Error al obtener la cotización del dólar.");
+                model.addAttribute("mensajeError", "Error al consultar cotización del dólar.");
                 return new ModelAndView("redirect:/nuevo-pedido");
             }
+
+            model.put("pedido", pedido);
+            return new ModelAndView("detalle-pedido", model);
 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("mensajeError", "Ocurrió un error al registrar el pedido");
