@@ -4,7 +4,6 @@ import javax.persistence.*;
 
 @Entity
 public class Talle {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,8 +13,13 @@ public class Talle {
     private Prenda prenda;
 
     private String descripcion;
-
     private Double metrosTotales;
+
+    private Double cinturaMIN;
+    private Double cinturaMAX;
+
+    private Double pechoMIN;
+    private Double pechoMAX;
 
     public Long getId() {
         return id;
@@ -48,4 +52,20 @@ public class Talle {
     public void setMetrosTotales(Double metrosTotales) {
         this.metrosTotales = metrosTotales;
     }
+
+    public Double getCinturaMIN() { return cinturaMIN; }
+
+    public void setCinturaMIN(Double cinturaMIN) { this.cinturaMIN = cinturaMIN; }
+
+    public Double getCinturaMAX() { return cinturaMAX; }
+
+    public void setCinturaMAX(Double cinturaMAX) { this.cinturaMAX = cinturaMAX; }
+
+    public Double getPechoMIN() { return pechoMIN; }
+
+    public void setPechoMIN(Double pechoMIN) { this.pechoMIN = pechoMIN; }
+
+    public Double getPechoMAX() { return pechoMAX; }
+
+    public void setPechoMAX(Double pechoMAX) { this.pechoMAX = pechoMAX; }
 }

@@ -2,6 +2,7 @@ package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidad.Talle;
 import com.tallerwebi.dominio.entidad.Tela;
+import com.tallerwebi.presentacion.dto.DatosMedida;
 import com.tallerwebi.presentacion.dto.DatosTalle;
 import org.springframework.stereotype.Service;
 import com.tallerwebi.dominio.repositorio.RepositorioTalle;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Comparator;
 import java.util.List;
 
 @Service("servicioTalle")
@@ -65,6 +67,24 @@ public class ServicioTalleImpl implements ServicioTalle {
     @Override
     public List<Talle> buscarTallesDePrendaPorId(Long id) {
         return repositorioTalle.buscarTallesDePrendaPorId(id);
+    }
+
+    @Override
+    public Talle recomendarTalle(DatosMedida medidas) {
+        List<Talle> talles = repositorioTalle.obtenerTalles();
+        talles.sort(Comparator.comparing(Talle::getMetrosTotales));
+
+        for (Talle talle: talles) {
+            if (this.entraEnElRango(talle, medidas)){
+                return talle;
+            }
+        }
+        return null;
+    }
+
+    private Boolean entraEnElRango(Talle talle, DatosMedida m) {
+        return (m.getCintura() >= talle.getCinturaMIN() && m.getCintura() <= talle.getCinturaMAX()) &&
+               (m.getPecho() >= talle.getPechoMIN() && m.getPecho() <= talle.getPechoMAX());
     }
 
     /*

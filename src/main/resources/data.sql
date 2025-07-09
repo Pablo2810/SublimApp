@@ -81,12 +81,18 @@ INSERT INTO prenda_tela (prendas_id, telas_id) VALUES (4, 7);
 INSERT INTO prenda_tela (prendas_id, telas_id) VALUES (4, 8);
 
 -- Talles relacionados a Prenda
-INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('S', 68, 1);
-INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('M', 70, 1);
-INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('L', 72, 1);
-INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('XL', 74, 1);
-INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('2XL', 76, 1);
+INSERT INTO Talle(prenda, descripcion, metrosTotales, cinturaMIN, cinturaMAX, pechoMIN, pechoMAX)
+          VALUES (1, 'S', 68, 71, 76, 86, 91);
+INSERT INTO Talle(prenda, descripcion, metrosTotales, cinturaMIN, cinturaMAX, pechoMIN, pechoMAX)
+          VALUES (1, 'M', 70, 77, 82, 92, 97);
+INSERT INTO Talle(prenda, descripcion, metrosTotales, cinturaMIN, cinturaMAX, pechoMIN, pechoMAX)
+          VALUES (1, 'L', 72, 83, 88, 98, 103);
+INSERT INTO Talle(prenda, descripcion, metrosTotales, cinturaMIN, cinturaMAX, pechoMIN, pechoMAX)
+          VALUES (1, 'XL', 74, 89, 94, 104, 109);
+INSERT INTO Talle(prenda, descripcion, metrosTotales, cinturaMIN, cinturaMAX, pechoMIN, pechoMAX)
+          VALUES (1, 'XXL', 76, 95, 100, 110, 115);
 
+/*
 INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('S', 38, 2);
 INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('M', 40, 2);
 INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('L', 42, 2);
@@ -103,4 +109,4 @@ INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('S', 70, 4);
 INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('M', 72, 4);
 INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('L', 74, 4);
 INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('XL', 76, 4);
-INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('2XL', 78, 4);
+INSERT INTO Talle(descripcion, metrosTotales, prenda) VALUES ('2XL', 78, 4);*/
