@@ -12,10 +12,10 @@ public class ControladorHome {
         return "thymeleaf/home";
     }
 
-    @GetMapping("/guia-talles")
+    /*@GetMapping("/guia-talles")
     public ModelAndView verGuiaDeTalles(){
         return new ModelAndView("guia-talles");
-    }
+    }*/
 
     @GetMapping("/disenios")
     public ModelAndView verDiseniosPersonalizados(){

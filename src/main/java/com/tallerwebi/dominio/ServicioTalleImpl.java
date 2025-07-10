@@ -2,6 +2,7 @@ package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidad.Talle;
 import com.tallerwebi.dominio.entidad.Tela;
+import com.tallerwebi.presentacion.dto.DatosMedida;
 import com.tallerwebi.presentacion.dto.DatosTalle;
 import org.springframework.stereotype.Service;
 import com.tallerwebi.dominio.repositorio.RepositorioTalle;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Comparator;
 import java.util.List;
 
 @Service("servicioTalle")
@@ -65,6 +67,38 @@ public class ServicioTalleImpl implements ServicioTalle {
     @Override
     public List<Talle> buscarTallesDePrendaPorId(Long id) {
         return repositorioTalle.buscarTallesDePrendaPorId(id);
+    }
+
+    @Override
+    public Talle recomendarTalle(DatosMedida medidas) {
+        List<Talle> talles = repositorioTalle.buscarTallesPorPais(medidas.getPais());
+        talles.sort(Comparator.comparing(Talle::getMetrosTotales)); // O por descripción si preferís
+
+        for (int i = 0; i < talles.size(); i++) {
+            Talle talle = talles.get(i);
+            if (this.entraEnElRango(talle, medidas)) {
+                if (medidas.getPreferencia().equalsIgnoreCase("ajustado")) {
+                    return talle;
+                } else if (medidas.getPreferencia().equalsIgnoreCase("holgado")) {
+                    if (i + 1 < talles.size()) {
+                        return talles.get(i + 1);
+                    } else {
+                        return talle;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<Talle> buscarTallesPorPais(String pais) {
+        return repositorioTalle.buscarTallesPorPais(pais);
+    }
+
+    private Boolean entraEnElRango(Talle talle, DatosMedida m) {
+        return (m.getCintura() >= talle.getCinturaMIN() && m.getCintura() <= talle.getCinturaMAX()) &&
+               (m.getPecho() >= talle.getPechoMIN() && m.getPecho() <= talle.getPechoMAX());
     }
 
     /*

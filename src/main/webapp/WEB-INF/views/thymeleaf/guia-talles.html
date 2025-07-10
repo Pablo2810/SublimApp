@@ -21,42 +21,73 @@
 <body>
 <div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
 <main class="main p-5" style="height:fit-content;">
+    <section>
+        <form th:action="@{/guia-talles/recomendado}" method="post" th:object="${medidas}" class="container w-75 d-flex flex-column align-items-center">
+            <div class="mb-3">
+                <div class="d-flex flex-wrap gap-3">
+                    <label th:each="pais : ${paises}" class="text-center">
+                        <input type="radio" th:field="*{pais}" th:value="${pais.nombre}" class="d-block mx-auto mb-1">
+                        <img th:src="${pais.banderaUrl}" th:alt="${pais.nombre}" width="60" class="rounded border">
+                    </label>
+                </div>
+            </div>
+            <div class="d-flex w-100">
+                <div class="mb-3 w-25 p-2">
+                    <label>Cintura (en cm o in):</label>
+                    <input type="number" th:field="*{cintura}" class="form-control" required>
+                </div>
+
+                <div class="mb-3 w-25 p-2">
+                    <label>Pecho (en cm o in):</label>
+                    <input type="number" th:field="*{pecho}" class="form-control" required>
+                </div>
+
+                <div class="mb-3 w-25 p-2">
+                    <label>Unidad:</label>
+                    <select th:field="*{unidad}" class="form-select">
+                        <option value="cm">Centímetros</option>
+                        <option value="in">Pulgadas</option>
+                    </select>
+                </div>
+
+                <div class="mb-3 w-25 p-2">
+                    <label>Preferencia:</label>
+                    <select th:field="*{preferencia}" class="form-select">
+                        <option value="ajustado">Ajustado</option>
+                        <option value="holgado">Holgado</option>
+                    </select>
+                </div>
+            </div>
+            <p th:if="${error != null}" class="my-3 fs-5 text-light text-center btn btn-disable btn-danger" th:text="${error}"></p>
+            <button type="submit" class="btn btn-primary">Recomendar Talle</button>
+        </form>
+    </section>
     <section class="d-flex flex-row justify-content-center align-items-center">
-        <div class="w-50 bg-white p-5 d-flex rounded-5 tabla-talles shadow-lg" style="height:504.100px;">
-            <table class="table table-striped table-bordered border-dark">
-                <caption>Tabla de medidas por talle</caption>
-                <thead class="text-center">
+        <div class="w-75 bg-white p-5 d-flex rounded-5 tabla-talles shadow-lg">
+            <table id="tablaTalles" class="table table-striped table-bordered border-dark">
+                <caption class="text-center fs-5 fw-bold mb-2">Tabla de medidas por talle: <span th:text="${medidas.pais}"></span></caption>
+                <thead class="text-center table-dark">
                 <tr>
                     <th>Talle</th>
-                    <th>A</th>
-                    <th>B</th>
+                    <th>Cintura (mín - máx)</th>
+                    <th>Pecho (mín - máx)</th>
+                    <th>Largo</th>
                 </tr>
                 </thead>
                 <tbody class="text-center">
-                <tr>
-                    <td>S</td>
-                    <td>51</td>
-                    <td>69</td>
-                </tr>
-                <tr>
-                    <td>M</td>
-                    <td>53</td>
-                    <td>71</td>
-                </tr>
-                <tr>
-                    <td>L</td>
-                    <td>55</td>
-                    <td>74</td>
-                </tr>
-                <tr>
-                    <td>XL</td>
-                    <td>57</td>
-                    <td>77</td>
-                </tr>
-                <tr>
-                    <td>2XL</td>
-                    <td>59</td>
-                    <td>79</td>
+                <tr th:each="talle : ${talles}"
+                    th:classappend="${talleRecomendado != null and talle.id != null and talle.id.equals(talleRecomendado.id)} ? 'table-primary fw-bold text-dark border border-dark' : ''"
+                >
+                    <td th:text="${talle.descripcion}">S</td>
+                    <td>
+                        <span th:text="${talle.cinturaMIN}"></span> -
+                        <span th:text="${talle.cinturaMAX}"></span>
+                    </td>
+                    <td>
+                        <span th:text="${talle.pechoMIN}"></span> -
+                        <span th:text="${talle.pechoMAX}"></span>
+                    </td>
+                    <td th:text="${talle.metrosTotales}">1.5</td>
                 </tr>
                 </tbody>
             </table>
@@ -67,5 +98,6 @@
     </section>
 </main>
 <footer th:insert="templates/footer :: footer"></footer>
+
 </body>
 </html>
