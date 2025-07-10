@@ -1,9 +1,8 @@
 package com.tallerwebi.presentacion.controlador;
 
-import com.tallerwebi.dominio.entidad.EstadoTela;
-import com.tallerwebi.dominio.entidad.Pedido;
-import com.tallerwebi.dominio.entidad.TelaUsuario;
-import com.tallerwebi.dominio.entidad.Usuario;
+import com.tallerwebi.dominio.entidad.*;
+import com.tallerwebi.dominio.excepcion.CancelacionNoPermitida;
+import com.tallerwebi.dominio.excepcion.CompraTelaNoEncontrada;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
 import com.tallerwebi.dominio.servicio.ServicioStorageImagen;
 import com.tallerwebi.dominio.servicio.ServicioTela;
@@ -87,7 +86,7 @@ public class ControladorPerfilUsuario {
         usuario.setTelefono(telefono);
 
         if (password != null && !password.isEmpty()) {
-            if (passwordActual == null || !usuario.getPassword().equals(passwordActual)) {
+            if (!usuario.getPassword().equals(passwordActual)) {
                 redirectAttrs.addFlashAttribute("error", "La contraseña actual es incorrecta.");
                 return new ModelAndView("redirect:/configuracion-perfil");
             }
@@ -133,12 +132,34 @@ public class ControladorPerfilUsuario {
 
         ModelMap model = new ModelMap();
 
-        List<TelaUsuario> telas = servicioTela.obtenerTelasUsuario(usuario.getId());
+        List<CompraTela> comprasEnDeposito = servicioTela.obtenerComprasDeTelasPorUsuarioYEstado(usuario.getId(), EstadoTela.EN_DEPOSITO);
 
         model.put("usuario", usuario);
-        model.put("telas", telas);
+        model.put("compras", comprasEnDeposito);
 
         return new ModelAndView("estado-envio-tela", model);
+    }
+
+    @PostMapping("/cancelar-compra-tela/{idCompra}")
+    public String cancelarCompraTela(@PathVariable Long idCompra, HttpSession session, RedirectAttributes redirectAttributes) {
+        Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuario == null) {
+            redirectAttributes.addFlashAttribute("mensajeError", "Debes iniciar sesión para cancelar la compra.");
+            return "redirect:/login";
+        }
+
+        try {
+            servicioTela.cancelarCompraTela(idCompra, usuario);
+            redirectAttributes.addFlashAttribute("mensaje", "Compra cancelada con éxito.");
+        } catch (CompraTelaNoEncontrada e) {
+            redirectAttributes.addFlashAttribute("mensajeError", "Compra no encontrada.");
+        } catch (CancelacionNoPermitida e) {
+            redirectAttributes.addFlashAttribute("mensajeError", e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("mensajeError", "Ocurrió un error al cancelar la compra.");
+        }
+
+        return "redirect:/estado-envio-tela";
     }
 
     @GetMapping("/logout")

@@ -10,7 +10,7 @@
         <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080;">
 
             <!-- Toast Éxito -->
-            <div th:if="${mensaje != null}"
+            <div th:if="${mensaje != null and !#strings.isEmpty(mensaje)}"
                  class="toast align-items-center text-bg-success border-0 show"
                  role="alert" aria-live="assertive" aria-atomic="true"
                  data-bs-delay="3000">
@@ -22,7 +22,7 @@
             </div>
 
             <!-- Toast Error -->
-            <div th:if="${mensajeError != null}"
+            <div th:if="${mensajeError != null and !#strings.isEmpty(mensajeError)}"
                  class="toast align-items-center text-bg-danger border-0 show"
                  role="alert" aria-live="assertive" aria-atomic="true"
                  data-bs-delay="5000">
@@ -34,7 +34,7 @@
             </div>
 
             <!-- Toast Advertencia -->
-            <div th:if="${mensajeAdvertencia != null}"
+            <div th:if="${mensajeAdvertencia != null and !#strings.isEmpty(mensajeAdvertencia)}"
                  class="toast align-items-center text-bg-warning border-0 show"
                  role="alert" aria-live="assertive" aria-atomic="true"
                  data-bs-delay="4000">
@@ -44,7 +44,6 @@
                             data-bs-dismiss="toast" aria-label="Cerrar"></button>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
