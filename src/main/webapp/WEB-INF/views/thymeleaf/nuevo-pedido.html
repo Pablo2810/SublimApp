@@ -96,6 +96,8 @@
                  style="height: 100%; border-bottom-left-radius: 0px!important; border-top-left-radius: 0px!important;">
         </div>
     </main>
+
+    <div th:replace="templates/toasts :: toasts"></div>
     <footer th:insert="templates/footer :: footer"></footer>
     <!-- Bootstrap JS -->
     <script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
@@ -114,7 +116,7 @@
                 telaSelect.innerHTML = '<option value="" disabled selected>Seleccione una tela</option>';
 
                 if (prendaId) {
-                    fetch('/talles-por-prenda/' + prendaId)
+                    fetch('/spring/talles-por-prenda/' + prendaId)
                         .then(response => {
                             if (!response.ok) {
                                 throw new Error("Error al cargar los talles");
@@ -143,13 +145,13 @@
 
                 if (talleId) {
                     try {
-                        const responseTalle = await fetch('/talle-por-id/' + talleId);
+                        const responseTalle = await fetch('/spring/talle-por-id/' + talleId);
                         if (!responseTalle.ok) throw new Error("Error al cargar el talle");
 
                         const talle = await responseTalle.json();
                         const metrosTalle = talle.metrosTotales;
 
-                        const url = `/telas-por-prenda/${prendaSelect.value}?metrosTalle=${metrosTalle}`;
+                        const url = `/spring/telas-por-prenda/${prendaSelect.value}?metrosTalle=${metrosTalle}`;
                         const responseTelas = await fetch(url);
                         const telas = await responseTelas.json();
 

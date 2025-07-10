@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Estado Envío de Telas</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+  <link rel="stylesheet" th:href="@{/css/main.css}"/>
+
+  <style>
+    body {
+        font-family: "Lexend Deca", sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center"
+     th:insert="templates/nav :: nav"></div>
+
+<div class="container py-4">
+  <h2 class="mb-4">Gestionar Envíos de Telas</h2>
+
+  <div th:if="${telas.isEmpty()}">
+    <p class="text-muted">No hay telas compradas por los usuarios.</p>
+  </div>
+
+  <div class="row row-cols-1 row-cols-md-2 g-4" th:each="tela : ${telas}">
+    <div class="col">
+      <div class="card shadow-sm">
+        <img th:src="${tela.imagenUrl}" class="card-img-top" style="max-height: 200px; object-fit: cover;" alt="Imagen de tela">
+        <div class="card-body">
+          <h5 class="card-title" th:text="${tela.tipoTela} + ' - ' + ${tela.color}"></h5>
+          <p class="card-text">Usuario: <span th:text="${tela.usuario.nombre}"></span></p>
+          <p class="card-text">Metros: <span th:text="${tela.metros}"></span></p>
+
+          <form th:action="@{'/admin/actualizar-envio-tela/' + ${tela.id}}" method="post" class="d-flex align-items-center gap-2">
+            <select class="form-select" name="estado">
+              <option th:each="estado : ${estados}"
+                      th:value="${estado.name()}"
+                      th:text="${estado.descripcion}"
+                      th:selected="${estado == tela.estado}">
+              </option>
+            </select>
+            <button type="submit" class="btn btn-success">Actualizar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer th:insert="templates/footer :: footer"></footer>
+</body>
+</html>
+

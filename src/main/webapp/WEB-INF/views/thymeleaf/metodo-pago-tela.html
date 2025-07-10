@@ -6,13 +6,24 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/modoOscuro.css}"/>
+    <style>
+        #sugerenciasDireccion {
+          position: absolute;
+          z-index: 1050;
+          width: 100%;
+          max-height: 180px;
+          overflow-y: auto;
+          cursor: pointer;
+        }
+    </style>
 </head>
 <body class="p-0 m-0">
 <div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
 
 <h2 class="mb-4">Seleccionar Método de Pago</h2>
 
-<form th:action="@{/confirmar-pago}" method="post" class="card p-4 shadow-sm">
+<form th:action="@{/confirmar-pago}" method="post" class="card p-4 shadow-sm position-relative" accept-charset="UTF-8">
+
     <!-- Datos ocultos de la tela -->
     <input type="hidden" name="idTela" th:value="${idTela}" />
     <input type="hidden" name="color" th:value="${color}" />
@@ -20,7 +31,20 @@
     <input type="hidden" name="metros" th:value="${metros}" />
     <input type="hidden" name="tipoTela" th:value="${tipoTela}" />
     <input type="hidden" name="imagenUrl" th:value="${imagenUrl}" />
+    <input type="hidden" id="tipoEnvio" name="tipoEnvio" value="LOCAL" />
+    <input type="hidden" id="jsonDireccion" name="jsonDireccion" value="" />
 
+    <!-- Selección de moneda -->
+    <div class="mb-3">
+        <label class="form-label">Elegí la moneda de pago:</label><br>
+        <div class="btn-group" role="group" aria-label="Moneda de pago">
+            <input type="radio" class="btn-check" name="pagoEnDolares" id="pagoPesos" value="false" autocomplete="off" checked>
+            <label class="btn btn-outline-primary" for="pagoPesos">Pesos</label>
+
+            <input type="radio" class="btn-check" name="pagoEnDolares" id="pagoDolares" value="true" autocomplete="off">
+            <label class="btn btn-outline-primary" for="pagoDolares">Dólares</label>
+        </div>
+    </div>
 
     <!-- Método de pago -->
     <div class="mb-3">
@@ -33,6 +57,26 @@
             <input class="form-check-input" type="radio" name="metodoPago" value="credito" id="credito">
             <label class="form-check-label" for="credito">Crédito</label>
         </div>
+    </div>
+
+    <!-- Envio -->
+    <div class="mb-3">
+        <label class="form-label">¿Querés retiro en local o envío a domicilio?</label><br>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="opcionEnvio" id="opcionLocal" value="LOCAL" checked>
+            <label class="form-check-label" for="opcionLocal">Retiro en local (Gratis)</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="opcionEnvio" id="opcionEnvioDomicilio" value="ENVIO">
+            <label class="form-check-label" for="opcionEnvioDomicilio">Envío a domicilio</label>
+        </div>
+    </div>
+
+    <div class="mb-3 position-relative" id="contenedorDireccion" style="display:none;">
+        <label for="direccionEnvio" class="form-label text-dark">Dirección completa de envío</label>
+        <input id="direccionEnvio" name="direccionEnvio" type="text" class="form-control" placeholder="Ej: Av. Córdoba 1234, CABA" autocomplete="off">
+        <ul id="sugerenciasDireccion" class="list-group"></ul>
+        <div class="form-text">Especificá calle, número, ciudad y país.</div>
     </div>
 
     <!-- Datos de la tarjeta -->
@@ -71,6 +115,9 @@
     <div class="alert alert-info" id="resumenPago" style="display: none;">
         <strong>Total estimado:</strong> <span id="totalResumen"></span><br>
         <span id="detalleCuotas"></span>
+        <div id="tipoCambioDolar" style="display:none; margin-top:8px; font-size:0.9em; color:#555;">
+            Tipo de cambio dólar blue: <strong id="valorDolar"></strong>
+        </div>
     </div>
 
     <button type="submit" class="btn btn-success">Confirmar Pago</button>
@@ -81,11 +128,11 @@
 <div th:replace="templates/toasts :: toasts"></div>
 <footer th:insert="templates/footer :: footer"></footer>
 
-<!-- Scripts -->
-<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
-<script type="text/javascript" th:src="@{/js/main.js}"></script>
+<script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+<script th:inline="javascript">
+    window.datosPago = { cotizacionDolar: [[${cotizacionDolar}]] };
+</script>
+<script th:src="@{/js/metodo-pago-tela.js}"></script>
+<script th:src="@{/js/main.js}"></script>
 </body>
 </html>
-
-
-

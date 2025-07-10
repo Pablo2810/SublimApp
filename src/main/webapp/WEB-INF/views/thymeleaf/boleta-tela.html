@@ -8,27 +8,67 @@
   <link rel="stylesheet" th:href="@{/css/modoOscuro.css}" />
 </head>
 <body class="p-0 m-0">
-<div
-        class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center"
-        th:insert="templates/nav :: nav"
-></div>
+<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center"
+     th:insert="templates/nav :: nav"></div>
 
 <h2 class="mb-4">Boleta de Compra</h2>
 
 <div id="boleta" class="card p-4">
+
+  <div class="text-center mb-4">
+    <img th:src="@{${imagenUrl}}" alt="Imagen de la tela" class="img-thumbnail" style="max-height: 200px;" />
+  </div>
+
+  <p><strong>Tipo de tela:</strong> <span th:text="${tipoTela}"></span></p>
   <p><strong>Color de la tela:</strong> <span th:text="${color}"></span></p>
-  <p><strong>Precio por metro:</strong> $<span th:text="${T(java.lang.String).format('%.2f', precio)}"></span></p>
+
+  <p><strong>Precio por metro:</strong>
+    <span th:text="${pagoEnDolares} ? 'U$D ' + ${T(java.lang.String).format('%.2f', precio / cotizacionDolar)} : '$' + ${T(java.lang.String).format('%.2f', precio)}"></span>
+  </p>
+
   <p><strong>Cantidad de metros:</strong> <span th:text="${metros}"></span></p>
-  <p><strong>Total a pagar:</strong> $<span th:text="${T(java.lang.String).format('%.2f', total)}"></span></p>
+
+  <p><strong>Método de pago:</strong>
+    <span th:text="${metodoPago == 'credito' ? 'Tarjeta de Crédito' : 'Tarjeta de Débito'}"></span>
+  </p>
+
+  <p><strong>Total a pagar:</strong>
+    <span th:text="${pagoEnDolares} ? 'U$D ' + ${T(java.lang.String).format('%.2f', total)} : '$' + ${T(java.lang.String).format('%.2f', total)}"></span>
+  </p>
 
   <div th:if="${cuotas != null and cuotas > 1}">
     <p>
       <strong>Pago en:</strong> <span th:text="${cuotas}"></span> cuotas de
-      $<span th:text="${T(java.lang.String).format('%.2f', valorCuota)}"></span> cada una
+      <span th:text="${pagoEnDolares} ? 'U$D ' + ${T(java.lang.String).format('%.2f', valorCuota)} : '$' + ${T(java.lang.String).format('%.2f', valorCuota)}"></span> cada una
     </p>
   </div>
 
+  <div th:if="${pagoEnDolares}">
+    <hr/>
+    <p><strong>Equivalente en pesos:</strong> $<span th:text="${T(java.lang.String).format('%.2f', totalEquivalente)}"></span></p>
+  </div>
+
+  <div th:if="${envioDescripcion != null}">
+    <hr/>
+    <p><strong>Tipo de envío:</strong> <span th:text="${envioDescripcion}"></span></p>
+    <p><strong>Costo de envío:</strong>
+      <span th:text="${pagoEnDolares}
+        ? 'U$D ' + ${T(java.lang.String).format('%.2f', envioCosto / cotizacionDolar)}
+        : '$' + ${T(java.lang.String).format('%.2f', envioCosto)}"></span>
+    </p>
+    <p><strong>Tiempo estimado de entrega:</strong> <span th:text="${envioTiempo}"></span></p>
+
+    <div th:if="${direccionCompleta != null}">
+      <p><strong>Dirección de envío:</strong> <span th:text="${direccionCompleta}"></span></p>
+    </div>
+  </div>
+
   <p><strong>Fecha de compra:</strong> <span th:text="${fecha}"></span></p>
+
+  <div th:if="${pagoEnDolares}" class="alert alert-info mt-3">
+    <p><strong>Tipo de cambio dólar blue:</strong> $<span th:text="${T(java.lang.String).format('%.2f', cotizacionDolar)}"></span></p>
+    <small>El pago en dólares se calcula según el tipo de cambio blue del día.</small>
+  </div>
 </div>
 
 <div class="mt-4 d-flex gap-3 flex-wrap">

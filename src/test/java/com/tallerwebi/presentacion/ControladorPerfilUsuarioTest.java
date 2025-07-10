@@ -1,4 +1,6 @@
 package com.tallerwebi.presentacion;
+import com.tallerwebi.config.EmailConfig;
+import com.tallerwebi.config.RestTemplateConfig;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.servicio.ServicioStorageImagen;
 import com.tallerwebi.dominio.servicio.ServicioUsuario;
@@ -27,7 +29,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {
         SpringWebTestConfig.class,
         HibernateTestConfig.class,
-        TestBeansConfig.class
+        TestBeansConfig.class,
+        RestTemplateConfig.class,
+        EmailConfig.class
 })
 @WebAppConfiguration
 public class ControladorPerfilUsuarioTest {
@@ -201,6 +205,23 @@ public class ControladorPerfilUsuarioTest {
                 .andExpect(model().attributeExists("usuario"))
                 .andExpect(model().attributeExists("exito"))
                 .andExpect(model().attributeExists("error"));
+    }
+
+    @Test
+    public void verEstadoEnvioTelasSinSesionRedirigeALogin() throws Exception {
+        mockMvc.perform(get("/estado-envio-tela"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
+    }
+
+    @Test
+    public void verEstadoEnvioTelasConSesionDevuelveVistaYModelo() throws Exception {
+        mockMvc.perform(get("/estado-envio-tela")
+                        .sessionAttr("usuarioLogueado", usuario))
+                .andExpect(status().isOk())
+                .andExpect(view().name("estado-envio-tela"))
+                .andExpect(model().attributeExists("usuario"))
+                .andExpect(model().attributeExists("telas"));
     }
 
 }

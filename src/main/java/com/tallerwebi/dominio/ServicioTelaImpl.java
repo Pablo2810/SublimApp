@@ -1,10 +1,9 @@
 package com.tallerwebi.dominio;
 
-import com.tallerwebi.dominio.entidad.Tela;
-import com.tallerwebi.dominio.entidad.TelaUsuario;
-import com.tallerwebi.dominio.entidad.Usuario;
+import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
 import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
+import com.tallerwebi.dominio.excepcion.TelaUsuarioNoEncontrada;
 import com.tallerwebi.dominio.repositorio.RepositorioTela;
 import com.tallerwebi.dominio.servicio.ServicioStorageImagen;
 import com.tallerwebi.dominio.servicio.ServicioTela;
@@ -24,27 +23,27 @@ import java.util.stream.Collectors;
 public class ServicioTelaImpl implements ServicioTela {
     @Autowired
     private RepositorioTela repositorioTela;
+
     @Autowired
     private ServicioStorageImagen servicioStorageImagen;
 
-    @Autowired
-    public ServicioTelaImpl(RepositorioTela repositorioTela) {
+    public ServicioTelaImpl(RepositorioTela repositorioTela, ServicioStorageImagen servicioStorageImagen) {
         this.repositorioTela = repositorioTela;
+        this.servicioStorageImagen = servicioStorageImagen;
     }
+
 
     @Override
-    public void agregarTelasDeFabrica() {
-
-    }
-
     public List<Tela> obtenerTelas() {
         return repositorioTela.listarTelas();
     }
 
+    @Override
     public Tela obtenerTela(Long id) {
         return repositorioTela.obtenerTela(id);
     }
 
+    @Override
     public void crearOActualizar(DatosTela datosTela, MultipartFile archivo) {
         Tela tela = new Tela();
 
@@ -69,6 +68,7 @@ public class ServicioTelaImpl implements ServicioTela {
         repositorioTela.crearOActualizarTela(tela);
     }
 
+    @Override
     public void borrarTela(Long id) {
         try {
             Tela tela = obtenerTela(id);
@@ -76,17 +76,6 @@ public class ServicioTelaImpl implements ServicioTela {
         } catch (Exception e) {
             throw new RuntimeException();
         }
-    }
-
-
-    @Override
-    public void dejarSinStockTelaDeFabrica() {
-
-    }
-
-    @Override
-    public List<Tela> buscarTelasDePrendaPorIdPrenda(Long prendaId) {
-        return repositorioTela.buscarTelasDePrendaPorIdPrenda(prendaId);
     }
 
     @Override
@@ -102,7 +91,8 @@ public class ServicioTelaImpl implements ServicioTela {
     }
 
     @Override
-    public void comprarTelaDeFabrica(Long idTela, Double metrosComprados, Usuario usuario) throws TelaNoEncontrada, StockInsuficiente {
+    public void comprarTelaDeFabrica(Long idTela, Double metrosComprados, Usuario usuario)
+            throws TelaNoEncontrada, StockInsuficiente {
         Tela tela = repositorioTela.obtenerTela(idTela);
         if (tela == null) {
             throw new TelaNoEncontrada();
@@ -117,14 +107,15 @@ public class ServicioTelaImpl implements ServicioTela {
         repositorioTela.crearOActualizarTela(tela);
 
         // Buscar si el usuario ya tiene una tela igual (por tipo + color)
-        TelaUsuario telaExistente = repositorioTela.buscarTelaUsuarioPorTipoYColor(usuario, tela.getTipoTela(), tela.getColor());
+        TelaUsuario telaExistente = repositorioTela.buscarTelaUsuarioPorTipoYColor(
+                usuario, tela.getTipoTela(), tela.getColor());
 
         if (telaExistente != null) {
             // Ya tiene una tela igual, sumamos metros
             telaExistente.setMetros(telaExistente.getMetros() + metrosComprados);
             repositorioTela.crearOActualizarTela(telaExistente);
         } else {
-            // No tiene una igual, creamos una nueva
+            // No tiene una igual, creamos una nueva con estado "EN_DEPOSITO"
             TelaUsuario telaComprada = new TelaUsuario();
             telaComprada.setTipoTela(tela.getTipoTela());
             telaComprada.setColor(tela.getColor());
@@ -132,51 +123,70 @@ public class ServicioTelaImpl implements ServicioTela {
             telaComprada.setPrecio(tela.getPrecio());
             telaComprada.setMetros(metrosComprados);
             telaComprada.setUsuario(usuario);
+            telaComprada.setEstado(EstadoTela.EN_DEPOSITO); // ← NUEVO
 
             repositorioTela.crearOActualizarTela(telaComprada);
         }
     }
 
     @Override
-    public List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle) {
-        return repositorioTela.buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(prendaId, metrosTalle);
-    }
-
-    @Override
-    public void restarMetrosTela(Tela tela, Double metrosTotales) {
-        if (tela != null) {
-            tela.setMetros(tela.getMetros() - metrosTotales);
-            repositorioTela.crearOActualizarTela(tela);
-        } else {
-            throw new TelaNoEncontrada();
-        }
-
-    }
-
-    @Override
-    public List<TelaUsuario> obtenerTelasDelUsuario(Usuario usuario) {
-        return repositorioTela.obtenerTelasPorUsuario(usuario);
-    }
-
-    @Override
     public void consumirTelaParaProducto(Tela telaSeleccionada, Double metrosNecesarios, Usuario usuario)
             throws StockInsuficiente, TelaNoEncontrada {
 
-        // Buscar si el usuario tiene tela
-        TelaUsuario telaUsuario = repositorioTela.buscarTelaUsuarioPorTipoYColor(usuario,
-                telaSeleccionada.getTipoTela(), telaSeleccionada.getColor());
-
-        if (telaUsuario != null && telaUsuario.getMetros() >= metrosNecesarios) {
-            telaUsuario.setMetros(telaUsuario.getMetros() - metrosNecesarios);
-            repositorioTela.crearOActualizarTela(telaUsuario);
-        } else if (telaSeleccionada.getMetros() >= metrosNecesarios) {
+        if (telaSeleccionada.getMetros() >= metrosNecesarios) {
             telaSeleccionada.setMetros(telaSeleccionada.getMetros() - metrosNecesarios);
             repositorioTela.crearOActualizarTela(telaSeleccionada);
-            // No se guarda en stock del usuario
         } else {
             throw new StockInsuficiente();
         }
     }
 
+    @Override
+    public List<TelaUsuario> obtenerTelasUsuarioPorEstado(Long usuarioId, EstadoTela estado) {
+        return repositorioTela.buscarTelasUsuarioPorUsuarioYEstado(usuarioId, estado);
+    }
+
+    @Override
+    public List<TelaUsuario> obtenerTelasUsuario(Long usuarioId) {
+        return repositorioTela.buscarTelasUsuarioPorUsuario(usuarioId);
+    }
+
+    @Override
+    public void cambiarEstadoTela(Long idTelaUsuario, EstadoTela nuevoEstado) throws TelaUsuarioNoEncontrada {
+        Tela tela = repositorioTela.obtenerTela(idTelaUsuario);
+
+        if (tela instanceof TelaUsuario) {
+            TelaUsuario telaUsuario = (TelaUsuario) tela;
+            telaUsuario.setEstado(nuevoEstado);
+            repositorioTela.crearOActualizarTela(telaUsuario);
+        } else {
+            throw new TelaUsuarioNoEncontrada();
+        }
+    }
+
+    @Override
+    public List<MisTelas> obtenerTelasParaCarrusel() {
+        List<MisTelas> todas = this.obtenerTelasDeFabrica();
+
+        return todas.stream()
+                .filter(t -> (
+                        (t.getTipoTela() == TipoTela.LINO && t.getColor().equalsIgnoreCase("azul")) ||
+                                (t.getTipoTela() == TipoTela.W15 && t.getColor().equalsIgnoreCase("blanco")) ||
+                                (t.getTipoTela() == TipoTela.NEOPRENO && t.getColor().equalsIgnoreCase("marron")) ||
+                                (t.getTipoTela() == TipoTela.ALGODON && t.getColor().equalsIgnoreCase("rojo")) ||
+                                (t.getTipoTela() == TipoTela.SET && t.getColor().equalsIgnoreCase("amarillo")) ||
+                                (t.getTipoTela() == TipoTela.LINO && t.getColor().equalsIgnoreCase("verde agua")) ||
+                                (t.getTipoTela() == TipoTela.W15 && t.getColor().equalsIgnoreCase("negro")) ||
+                                (t.getTipoTela() == TipoTela.NEOPRENO && t.getColor().equalsIgnoreCase("lila")) ||
+                                (t.getTipoTela() == TipoTela.ALGODON && t.getColor().equalsIgnoreCase("gris")) ||
+                                (t.getTipoTela() == TipoTela.SET && t.getColor().equalsIgnoreCase("rosa"))
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle) {
+        return repositorioTela.buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(prendaId, metrosTalle);
+    }
 
 }
