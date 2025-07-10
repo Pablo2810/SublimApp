@@ -10,5 +10,7 @@ public interface RepositorioTalle {
     Talle obtenerTalle(Long id);
     void borrarTalle(Talle talle);
     List<Talle> buscarTallesDePrendaPorId(Long id);
+
+    List<Talle> buscarTallesPorPais(String pais);
     // Talle buscarTallePorId(Long id);
 }

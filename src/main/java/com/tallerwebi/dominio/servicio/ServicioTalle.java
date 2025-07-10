@@ -1,6 +1,7 @@
 package com.tallerwebi.dominio.servicio;
 
 import com.tallerwebi.dominio.entidad.Talle;
+import com.tallerwebi.presentacion.dto.DatosMedida;
 import com.tallerwebi.presentacion.dto.DatosTalle;
 
 import javax.transaction.Transactional;
@@ -13,5 +14,9 @@ public interface ServicioTalle {
     Talle obtenerTalle(Long id);
     void borrarTalle(Long id);
     List<Talle> buscarTallesDePrendaPorId(Long id);
+
+    Talle recomendarTalle(DatosMedida medidas);
+
+    List<Talle> buscarTallesPorPais(String pais);
     // Talle buscarTallePorId(Long talleId);
 }
