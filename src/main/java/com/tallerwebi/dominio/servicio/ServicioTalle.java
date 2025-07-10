@@ -16,5 +16,7 @@ public interface ServicioTalle {
     List<Talle> buscarTallesDePrendaPorId(Long id);
 
     Talle recomendarTalle(DatosMedida medidas);
+
+    List<Talle> buscarTallesPorPais(String pais);
     // Talle buscarTallePorId(Long talleId);
 }

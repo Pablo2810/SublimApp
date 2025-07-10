@@ -73,6 +73,23 @@ public class ControladorTalle {
         return new ModelAndView("guia-talles", model);
     }
 
+    @GetMapping("/talles-por-pais")
+    @ResponseBody
+    public List<DatosTalle> obtenerTallesPorPais(@RequestParam String pais) {
+        List<Talle> talles = servicioTalle.buscarTallesPorPais(pais);
+        return talles.stream()
+                .map(t -> new DatosTalle(
+                        t.getId(),
+                        t.getDescripcion(),
+                        t.getCinturaMIN(),
+                        t.getCinturaMAX(),
+                        t.getPechoMIN(),
+                        t.getPechoMAX(),
+                        t.getMetrosTotales()
+                ))
+                .collect(Collectors.toList());
+    }
+
     private void transformarPulgadasEnCentimetros(DatosMedida medidas) {
         medidas.setCintura(medidas.getCintura() * 2.54);
         medidas.setPecho(medidas.getPecho() * 2.54);

@@ -21,6 +21,8 @@ public class Talle {
     private Double pechoMIN;
     private Double pechoMAX;
 
+    private String pais;
+
     public Long getId() {
         return id;
     }
@@ -68,4 +70,8 @@ public class Talle {
     public Double getPechoMAX() { return pechoMAX; }
 
     public void setPechoMAX(Double pechoMAX) { this.pechoMAX = pechoMAX; }
+
+    public String getPais() { return pais; }
+
+    public void setPais(String pais) { this.pais = pais; }
 }

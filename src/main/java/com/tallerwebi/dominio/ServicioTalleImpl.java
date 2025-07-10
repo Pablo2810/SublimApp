@@ -82,6 +82,11 @@ public class ServicioTalleImpl implements ServicioTalle {
         return null;
     }
 
+    @Override
+    public List<Talle> buscarTallesPorPais(String pais) {
+        return repositorioTalle.buscarTallesPorPais(pais);
+    }
+
     private Boolean entraEnElRango(Talle talle, DatosMedida m) {
         return (m.getCintura() >= talle.getCinturaMIN() && m.getCintura() <= talle.getCinturaMAX()) &&
                (m.getPecho() >= talle.getPechoMIN() && m.getPecho() <= talle.getPechoMAX());
