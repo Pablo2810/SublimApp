@@ -71,12 +71,21 @@ public class ServicioTalleImpl implements ServicioTalle {
 
     @Override
     public Talle recomendarTalle(DatosMedida medidas) {
-        List<Talle> talles = repositorioTalle.obtenerTalles();
-        talles.sort(Comparator.comparing(Talle::getMetrosTotales));
+        List<Talle> talles = repositorioTalle.buscarTallesPorPais(medidas.getPais());
+        talles.sort(Comparator.comparing(Talle::getMetrosTotales)); // O por descripción si preferís
 
-        for (Talle talle: talles) {
-            if (this.entraEnElRango(talle, medidas)){
-                return talle;
+        for (int i = 0; i < talles.size(); i++) {
+            Talle talle = talles.get(i);
+            if (this.entraEnElRango(talle, medidas)) {
+                if (medidas.getPreferencia().equalsIgnoreCase("ajustado")) {
+                    return talle;
+                } else if (medidas.getPreferencia().equalsIgnoreCase("holgado")) {
+                    if (i + 1 < talles.size()) {
+                        return talles.get(i + 1);
+                    } else {
+                        return talle;
+                    }
+                }
             }
         }
         return null;

@@ -65,7 +65,7 @@
     <section class="d-flex flex-row justify-content-center align-items-center">
         <div class="w-75 bg-white p-5 d-flex rounded-5 tabla-talles shadow-lg">
             <table id="tablaTalles" class="table table-striped table-bordered border-dark">
-                <caption class="text-center fs-5 fw-bold mb-2">Tabla de medidas por talle</caption>
+                <caption class="text-center fs-5 fw-bold mb-2">Tabla de medidas por talle: <span th:text="${medidas.pais}"></span></caption>
                 <thead class="text-center table-dark">
                 <tr>
                     <th>Talle</th>
@@ -75,8 +75,9 @@
                 </tr>
                 </thead>
                 <tbody class="text-center">
-                <!--<tr th:each="talle : ${talles}"
-                    th:classappend="${talleRecomendado != null and talle.id == talleRecomendado.id} ? 'table-primary fw-bold text-dark border border-dark' : ''">
+                <tr th:each="talle : ${talles}"
+                    th:classappend="${talleRecomendado != null and talle.id != null and talle.id.equals(talleRecomendado.id)} ? 'table-primary fw-bold text-dark border border-dark' : ''"
+                >
                     <td th:text="${talle.descripcion}">S</td>
                     <td>
                         <span th:text="${talle.cinturaMIN}"></span> -
@@ -87,7 +88,7 @@
                         <span th:text="${talle.pechoMAX}"></span>
                     </td>
                     <td th:text="${talle.metrosTotales}">1.5</td>
-                </tr>-->
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -97,35 +98,6 @@
     </section>
 </main>
 <footer th:insert="templates/footer :: footer"></footer>
-<script>
-    document.querySelectorAll('input[name="pais"]').forEach(radio => {
-        radio.addEventListener('change', async e => {
-            const pais = e.target.value;
-
-            try {
-                const url = /*[[${'/talles-por-pais'}]]*/ '/talles-por-pais';
-                const response = await fetch(`${url}?pais=${encodeURIComponent(pais)}`);
-                if (!response.ok) throw new Error("Error al obtener los talles");
-
-                const talles = await response.json();
-
-                console.log("Talles del país seleccionado:", talles);
-
-                // Mostrar resultado en pantalla si querés:
-                const contenedor = document.getElementById("resultadoTalles");
-                contenedor.innerHTML = "";
-                talles.forEach(talle => {
-                    const div = document.createElement("div");
-                    div.textContent = `Talle: ${talle.descripcion}, Cintura: ${talle.cinturaMin}-${talle.cinturaMax}, Pecho: ${talle.pechoMin}-${talle.pechoMax}`;
-                    contenedor.appendChild(div);
-                });
-            } catch (err) {
-                console.error("Error:", err);
-            }
-        });
-    });
-
-</script>
 
 </body>
 </html>

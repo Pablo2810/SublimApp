@@ -45,8 +45,9 @@ public class ControladorTalle {
     @GetMapping("/guia-talles")
     public ModelAndView mostrarGuia() {
         ModelMap model = new ModelMap();
+        String pais = "Argentina";
         model.put("paises", servicioPais.obtenerPaises());
-        model.put("talles", servicioTalle.obtenerTalles());
+        model.put("talles", servicioTalle.buscarTallesPorPais(pais));
         model.put("medidas", new DatosMedida());
         return new ModelAndView("guia-talles", model);
     }
@@ -64,10 +65,9 @@ public class ControladorTalle {
         if (talleRecomendado == null){
             model.put("error", "Las medidas que usaste no son validas");
         }
-
-        model.put("talleRecomendado", talleRecomendado);
-        model.put("talles", servicioTalle.obtenerTalles());
         model.put("paises", servicioPais.obtenerPaises());
+        model.put("talles", servicioTalle.buscarTallesPorPais(medidas.getPais()));
+        model.put("talleRecomendado", talleRecomendado);
         model.put("medidas", medidas);
 
         return new ModelAndView("guia-talles", model);
