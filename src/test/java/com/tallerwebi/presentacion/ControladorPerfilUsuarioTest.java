@@ -80,7 +80,7 @@ public class ControladorPerfilUsuarioTest {
     @Test
     public void muestraPerfilSiUsuarioEstaEnSesion() throws Exception {
         when(servicioPedido.listarPedidosDelUsuario(usuario.getId())).thenReturn(Collections.emptyList());
-        when(servicioTela.obtenerTelasUsuarioPorEstado(eq(usuario.getId()), any())).thenReturn(Collections.emptyList());
+        when(servicioTela.obtenerComprasDeTelasPorUsuarioYEstado(eq(usuario.getId()), any())).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/perfil-usuario")
                         .sessionAttr("usuarioLogueado", usuario))
@@ -88,7 +88,7 @@ public class ControladorPerfilUsuarioTest {
                 .andExpect(view().name("perfil-usuario"))
                 .andExpect(model().attributeExists("usuario"))
                 .andExpect(model().attributeExists("pedidos"))
-                .andExpect(model().attributeExists("telas"));
+                .andExpect(model().attributeExists("telasEntregadas"));
     }
 
     @Test

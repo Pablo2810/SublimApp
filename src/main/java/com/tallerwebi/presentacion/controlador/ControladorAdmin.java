@@ -1,6 +1,7 @@
 package com.tallerwebi.presentacion.controlador;
 
 import com.tallerwebi.dominio.entidad.*;
+import com.tallerwebi.dominio.excepcion.CompraTelaNoEncontrada;
 import com.tallerwebi.dominio.excepcion.TelaUsuarioNoEncontrada;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
 import com.tallerwebi.dominio.servicio.ServicioTalle;
@@ -227,22 +228,33 @@ public class ControladorAdmin {
                                                   @RequestParam("estado") EstadoTela nuevoEstado,
                                                   RedirectAttributes redirectAttributes) {
         try {
-            servicioTela.cambiarEstadoTela(id, nuevoEstado);
+            servicioTela.cambiarEstadoCompraTela(id, nuevoEstado);
             redirectAttributes.addFlashAttribute("mensaje", "Estado de envío actualizado con éxito.");
-        } catch (TelaUsuarioNoEncontrada e) {
-            redirectAttributes.addFlashAttribute("mensajeError", "No se encontró la tela del usuario.");
+        } catch (CompraTelaNoEncontrada e) {
+            redirectAttributes.addFlashAttribute("mensajeError", "No se encontró la compra.");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("mensajeError", "No se pudo actualizar el estado de la tela.");
+            redirectAttributes.addFlashAttribute("mensajeError", "No se pudo actualizar el estado.");
         }
-        return new ModelAndView("redirect:/admin/estado-envio-telas");
+
+        return new ModelAndView("redirect:/admin/envios-telas");
     }
 
-    @GetMapping("/estado-envio-telas")
-    public ModelAndView listarTelasUsuarioEstado() {
+    @GetMapping("/envios-telas")
+    public ModelAndView listarTelasCompradasPorEstado() {
         ModelMap model = new ModelMap();
-        List<TelaUsuario> telasUsuario = servicioTela.obtenerTelasUsuario(null); // null para todas o filtrar si querés
-        model.put("telas", telasUsuario);
+
+        // Telas activas (para cambiar estado)
+        List<EstadoTela> estadosFiltrados = List.of(EstadoTela.EN_DEPOSITO, EstadoTela.EN_VIAJE);
+        List<CompraTela> compras = servicioTela.obtenerComprasPorEstados(estadosFiltrados);
+
+        // Telas entregadas (historial)
+        List<CompraTela> comprasEntregadas = servicioTela.obtenerComprasPorEstados(List.of(EstadoTela.ENTREGADO));
+
+        model.put("compras", compras); // Activas
+        model.put("historialTelasEntregadas", comprasEntregadas); // Historial
         model.put("estados", EstadoTela.values());
+
         return new ModelAndView("estado-envio-tela-admin", model);
     }
+
 }

@@ -45,4 +45,9 @@ public interface ServicioTela {
 
     List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle);
 
+    void cambiarEstadoCompraTela(Long idCompra, EstadoTela nuevoEstado) throws CompraTelaNoEncontrada;
+
+    List<CompraTela> obtenerComprasPorEstados(List<EstadoTela> estados);
+
+    List<CompraTela> obtenerComprasDeTelasPorUsuarioYEstados(Long usuarioId, List<EstadoTela> estados);
 }

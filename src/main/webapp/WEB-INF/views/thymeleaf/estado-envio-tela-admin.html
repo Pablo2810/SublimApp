@@ -28,25 +28,25 @@
 <div class="container py-4">
   <h2 class="mb-4">Gestionar Envíos de Telas</h2>
 
-  <div th:if="${telas.isEmpty()}">
+  <div th:if="${compras.isEmpty()}">
     <p class="text-muted">No hay telas compradas por los usuarios.</p>
   </div>
 
-  <div class="row row-cols-1 row-cols-md-2 g-4" th:each="tela : ${telas}">
+  <div class="row row-cols-1 row-cols-md-2 g-4" th:each="compra : ${compras}">
     <div class="col">
       <div class="card shadow-sm">
-        <img th:src="${tela.imagenUrl}" class="card-img-top" style="max-height: 200px; object-fit: cover;" alt="Imagen de tela">
+        <img th:src="${compra.tela.imagenUrl}" class="card-img-top" style="max-height: 200px; object-fit: cover;" alt="Imagen de tela">
         <div class="card-body">
-          <h5 class="card-title" th:text="${tela.tipoTela} + ' - ' + ${tela.color}"></h5>
-          <p class="card-text">Usuario: <span th:text="${tela.usuario.nombre}"></span></p>
-          <p class="card-text">Metros: <span th:text="${tela.metros}"></span></p>
+          <h5 class="card-title" th:text="${compra.tela.tipoTela} + ' - ' + ${compra.tela.color}"></h5>
+          <p class="card-text">Usuario: <span th:text="${compra.usuario.nombre}"></span></p>
+          <p class="card-text">Metros comprados: <span th:text="${compra.metros}"></span></p>
 
-          <form th:action="@{'/admin/actualizar-envio-tela/' + ${tela.id}}" method="post" class="d-flex align-items-center gap-2">
+          <form th:action="@{'/admin/actualizar-envio-tela/' + ${compra.id}}" method="post" class="d-flex align-items-center gap-2">
             <select class="form-select" name="estado">
               <option th:each="estado : ${estados}"
                       th:value="${estado.name()}"
                       th:text="${estado.descripcion}"
-                      th:selected="${estado == tela.estado}">
+                      th:selected="${estado == compra.estado}">
               </option>
             </select>
             <button type="submit" class="btn btn-success">Actualizar</button>
@@ -55,10 +55,34 @@
       </div>
     </div>
   </div>
-
 </div>
+
+<hr class="my-5" />
+<section>
+  <h4>Historial de Telas Entregadas</h4>
+
+  <div th:if="${historialTelasEntregadas != null and !historialTelasEntregadas.isEmpty()}">
+    <div class="row row-cols-1 row-cols-md-3 g-3 mt-3">
+      <div class="col" th:each="compra : ${historialTelasEntregadas}">
+        <div class="card h-100">
+          <img th:src="@{${compra.tela.imagenUrl}}" class="card-img-top" alt="Imagen tela" />
+          <div class="card-body">
+            <h5 class="card-title" th:text="${compra.tela.tipoTela + ' (' + compra.tela.color + ')'}">Tipo</h5>
+            <p><strong>Usuario:</strong> <span th:text="${compra.usuario.nombre}">Usuario</span></p>
+            <p><strong>Metros:</strong> <span th:text="${compra.metros}">0</span></p>
+            <p><strong>Precio:</strong> $<span th:text="${compra.totalPagado}"></span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div th:if="${historialTelasEntregadas == null || historialTelasEntregadas.isEmpty()}" class="text-muted">
+    No hay telas entregadas registradas.
+  </div>
+</section>
+
 
 <footer th:insert="templates/footer :: footer"></footer>
 </body>
 </html>
-

@@ -49,11 +49,11 @@ public class ControladorPerfilUsuario {
 
         List<Pedido> pedidos = servicioPedido.listarPedidosDelUsuario(usuario.getId());
 
-        List<TelaUsuario> telasEntregadas = servicioTela.obtenerTelasUsuarioPorEstado(usuario.getId(), EstadoTela.ENTREGADO);
-
+        List<CompraTela> telasEntregadas = servicioTela.obtenerComprasDeTelasPorUsuarioYEstado(usuario.getId(), EstadoTela.ENTREGADO);
+        model.put("telasEntregadas", telasEntregadas);
         model.put("usuario", usuario);
         model.put("pedidos", pedidos);
-        model.put("telas", telasEntregadas);
+
 
         if (exito != null) model.put("exito", exito);
         if (error != null) model.put("error", error);
@@ -132,13 +132,18 @@ public class ControladorPerfilUsuario {
 
         ModelMap model = new ModelMap();
 
-        List<CompraTela> comprasEnDeposito = servicioTela.obtenerComprasDeTelasPorUsuarioYEstado(usuario.getId(), EstadoTela.EN_DEPOSITO);
+        // Acá armás la lista de estados que querés mostrar
+        List<EstadoTela> estados = List.of(EstadoTela.EN_DEPOSITO, EstadoTela.EN_VIAJE);
+
+        // Ahora llamás al servicio que obtenga las compras filtradas por esos estados
+        List<CompraTela> compras = servicioTela.obtenerComprasDeTelasPorUsuarioYEstados(usuario.getId(), estados);
 
         model.put("usuario", usuario);
-        model.put("compras", comprasEnDeposito);
+        model.put("compras", compras);  // Acá van las compras, no los estados
 
         return new ModelAndView("estado-envio-tela", model);
     }
+
 
     @PostMapping("/cancelar-compra-tela/{idCompra}")
     public String cancelarCompraTela(@PathVariable Long idCompra, HttpSession session, RedirectAttributes redirectAttributes) {

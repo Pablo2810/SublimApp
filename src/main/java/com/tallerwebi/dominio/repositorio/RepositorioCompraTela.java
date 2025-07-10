@@ -17,4 +17,8 @@ public interface RepositorioCompraTela {
 
 
     List<CompraTela> buscarComprasPorUsuarioYEstado(Long usuarioId, EstadoTela estado);
+
+    List<CompraTela> buscarComprasPorEstados(List<EstadoTela> estados);
+
+    List<CompraTela> buscarComprasPorUsuarioYEstados(Long usuarioId, List<EstadoTela> estados);
 }

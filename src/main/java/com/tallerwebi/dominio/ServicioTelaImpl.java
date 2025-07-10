@@ -249,4 +249,23 @@ public class ServicioTelaImpl implements ServicioTela {
 
     }
 
+    @Override
+    public void cambiarEstadoCompraTela(Long idCompra, EstadoTela nuevoEstado) throws CompraTelaNoEncontrada {
+        CompraTela compra = repositorioCompraTela.obtenerCompraPorId(idCompra);
+        if (compra == null) throw new CompraTelaNoEncontrada();
+
+        compra.setEstado(nuevoEstado);
+        repositorioCompraTela.guardarTela(compra); // ya usás `persist`, no hay problema
+    }
+
+    @Override
+    public List<CompraTela> obtenerComprasPorEstados(List<EstadoTela> estados) {
+        return repositorioCompraTela.buscarComprasPorEstados(estados);
+    }
+
+    @Override
+    public List<CompraTela> obtenerComprasDeTelasPorUsuarioYEstados(Long usuarioId, List<EstadoTela> estados) {
+        return repositorioCompraTela.buscarComprasPorUsuarioYEstados(usuarioId, estados);
+    }
+
 }

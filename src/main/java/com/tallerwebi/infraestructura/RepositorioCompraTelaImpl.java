@@ -66,5 +66,25 @@ public class RepositorioCompraTelaImpl implements RepositorioCompraTela {
         return query.getResultList();
     }
 
+    @Override
+    public List<CompraTela> buscarComprasPorEstados(List<EstadoTela> estados) {
+        Session session = sessionFactory.getCurrentSession();
+        String hql = "FROM CompraTela c WHERE c.estado IN :estados ORDER BY c.fechaCompra DESC";
+        Query<CompraTela> query = session.createQuery(hql, CompraTela.class);
+        query.setParameter("estados", estados);
+        return query.list();
+    }
+
+    @Override
+    public List<CompraTela> buscarComprasPorUsuarioYEstados(Long usuarioId, List<EstadoTela> estados) {
+        Session session = sessionFactory.getCurrentSession();
+        String hql = "FROM CompraTela c WHERE c.usuario.id = :usuarioId AND c.estado IN :estados ORDER BY c.fechaCompra DESC";
+        Query<CompraTela> query = session.createQuery(hql, CompraTela.class);
+        query.setParameter("usuarioId", usuarioId);
+        query.setParameter("estados", estados);
+        return query.list();
+    }
+
+
 }
 
