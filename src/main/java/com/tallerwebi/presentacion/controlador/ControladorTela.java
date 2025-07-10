@@ -296,14 +296,18 @@ public class ControladorTela {
         redirectAttributes.addFlashAttribute("cotizacionDolar", cotizacionDolar);
         redirectAttributes.addFlashAttribute("totalEquivalente", totalEquivalente);
 
-        // Extraer dirección legible del JSON
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode nodoDireccion = mapper.readTree(jsonDireccion);
-            String direccionCompleta = nodoDireccion.get("display_name").asText();
-            redirectAttributes.addFlashAttribute("direccionCompleta", direccionCompleta);
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("direccionCompleta", "Dirección desconocida");
+        // Determinar dirección de envío o lugar de retiro
+        if (envioSeleccionado == TipoEnvio.LOCAL) {
+            redirectAttributes.addFlashAttribute("direccionCompleta", "Sucursal central - Av. Siempre Viva 742, Buenos Aires");
+        } else {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode nodoDireccion = mapper.readTree(jsonDireccion);
+                String direccionCompleta = nodoDireccion.get("display_name").asText();
+                redirectAttributes.addFlashAttribute("direccionCompleta", direccionCompleta);
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("direccionCompleta", "Dirección desconocida");
+            }
         }
 
         redirectAttributes.addFlashAttribute("mensaje", "Compra realizada con éxito");
