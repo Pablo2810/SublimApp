@@ -3,6 +3,7 @@ package com.tallerwebi.presentacion;
 import com.tallerwebi.dominio.entidad.TipoEnvio;
 import com.tallerwebi.dominio.entidad.TipoTela;
 import com.tallerwebi.dominio.entidad.Usuario;
+import com.tallerwebi.dominio.repositorio.RepositorioCompraTela;
 import com.tallerwebi.dominio.servicio.ServicioCotizacionDolar;
 import com.tallerwebi.dominio.servicio.ServicioEnvio;
 import com.tallerwebi.dominio.servicio.ServicioPago;
@@ -29,6 +30,7 @@ public class ControladorTelaTest {
     private ServicioEnvio servicioEnvioMock;
     private ServicioCotizacionDolar servicioCotizacionDolarMock;
     private ServicioPago servicioPagoMock;
+    private RepositorioCompraTela repositorioCompraTelaMock;
 
     private Model modelMock;
     private HttpSession sessionMock;
@@ -41,7 +43,7 @@ public class ControladorTelaTest {
         servicioCotizacionDolarMock = mock(ServicioCotizacionDolar.class);
         servicioPagoMock = mock(ServicioPago.class);
 
-        controlador = new ControladorTela(servicioMock, servicioEnvioMock, servicioCotizacionDolarMock, servicioPagoMock);
+        controlador = new ControladorTela(servicioMock, servicioEnvioMock, servicioCotizacionDolarMock, servicioPagoMock, repositorioCompraTelaMock);
 
         modelMock = mock(Model.class);
         sessionMock = mock(HttpSession.class);

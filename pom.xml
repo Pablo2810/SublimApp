@@ -148,8 +148,6 @@
             <version>6.4.0</version> <!-- Última disponible en WebJars -->
         </dependency>
 
-
-
         <!-- compile only, deployed container will provide this -->
         <!--
         <dependency>

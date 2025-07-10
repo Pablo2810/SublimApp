@@ -35,25 +35,33 @@
 <div class="container mt-4">
     <h2 class="mb-4">Estado de Envío de Telas</h2>
 
-    <div th:if="${telas.isEmpty()}">
-        <p class="text-muted">Aún no compraste ninguna tela.</p>
+    <div th:if="${compras.isEmpty()}">
+    <p class="text-muted">Aún no compraste ninguna tela.</p>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-2 g-4" th:each="tela : ${telas}">
+    <div class="row row-cols-1 row-cols-md-2 g-4" th:each="compra : ${compras}">
         <div class="col">
             <div class="card shadow-sm">
-                <img th:src="${tela.imagenUrl}" class="card-img-top" alt="Imagen de tela"
+                <img th:src="${compra.tela.imagenUrl}" class="card-img-top" alt="Imagen de tela"
                      style="max-height: 200px; object-fit: cover;">
                 <div class="card-body">
-                    <h5 class="card-title" th:text="${tela.tipoTela + ' - ' + tela.color}">Tipo - Color</h5>
+                    <h5 class="card-title" th:text="${compra.tela.tipoTela + ' - ' + compra.tela.color}">Tipo - Color</h5>
                     <p class="card-text">
                         <strong>Metros:</strong>
-                        <span th:text="${tela.metros}">0</span>
+                        <span th:text="${compra.metros}">0</span>
                     </p>
-                    <p class="card-text">
-                        <strong>Estado de envío:</strong>
-                        <span class="badge" th:classappend="${tela.estado.claseCss}" th:text="${tela.estado.descripcion}">Estado</span>
-                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="badge" th:classappend="${compra.estado.claseCss}" th:text="${compra.estado.descripcion}">Estado</span>
+
+                        <form th:if="${compra.estado == T(com.tallerwebi.dominio.entidad.EstadoTela).EN_DEPOSITO}"
+                              th:action="@{/cancelar-compra-tela/{idCompra}(idCompra=${compra.id})}"
+                              method="post"
+                              onsubmit="return confirm('¿Estás seguro que deseas cancelar esta compra?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Cancelar compra</button>
+                        </form>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -73,4 +81,5 @@
 
 </body>
 </html>
+
 
