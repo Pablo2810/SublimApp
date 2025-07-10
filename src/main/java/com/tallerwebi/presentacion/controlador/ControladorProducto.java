@@ -1,5 +1,7 @@
 package com.tallerwebi.presentacion.controlador;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.excepcion.ArchivoNoValido;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
@@ -16,6 +18,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -29,7 +35,7 @@ public class ControladorProducto {
     private final ServicioArchivo servicioArchivo;
     private final ServicioProducto servicioProducto;
     private final ServicioPedido servicioPedido;
-    private final ServicioCotizacion servicioCotizacion;
+    private final ServicioCotizacionDolar servicioCotizacionDolar;
 
     @Autowired
     public ControladorProducto(ServicioProducto servicioProducto,
@@ -38,14 +44,14 @@ public class ControladorProducto {
                                ServicioTela servicioTela,
                                ServicioArchivo servicioArchivo,
                                ServicioPedido servicioPedido,
-                               ServicioCotizacion servicioCotizacion) {
+                               ServicioCotizacionDolar servicioCotizacionDolar) {
         this.servicioPrenda = servicioPrenda;
         this.servicioTalle = servicioTalle;
         this.servicioTela = servicioTela;
         this.servicioArchivo = servicioArchivo;
         this.servicioProducto = servicioProducto;
         this.servicioPedido = servicioPedido;
-        this.servicioCotizacion = servicioCotizacion;
+        this.servicioCotizacionDolar = servicioCotizacionDolar;
     }
 
     @RequestMapping(path = "/nuevo-pedido", method = RequestMethod.GET)
@@ -134,14 +140,15 @@ public class ControladorProducto {
                 return new ModelAndView("redirect:/nuevo-pedido");
             }
 
-            ResultadoCotizaciones cotizaciones = servicioCotizacion.obtenerCotizaciones();
-            double precioDolares = pedido.getMontoTotal() * cotizaciones.getConversionRates().get("USD");
-            double precioEuros = pedido.getMontoTotal() * cotizaciones.getConversionRates().get("EUR");
+            try {
+                double cotizacionDolar = servicioCotizacionDolar.obtenerCotizacionDolar();
+                model.put("cotizacionDolar", cotizacionDolar);
+            } catch (Exception e) {
+                model.addAttribute("mensajeError", "Error al consultar cotización del dólar.");
+                return new ModelAndView("redirect:/nuevo-pedido");
+            }
 
             model.put("pedido", pedido);
-            model.put("precioDolares", precioDolares);
-            model.put("precioEuros", precioEuros);
-
             return new ModelAndView("detalle-pedido", model);
 
         } catch (Exception e) {

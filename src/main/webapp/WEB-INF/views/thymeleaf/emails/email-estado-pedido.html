@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container w-50">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Sublimapp</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Estado de tu pedido</h6>
+            <p class="card-text">Hola <span th:text="${nombreUsuario}"></span>, te notificamos que tu pedido esta en
+                estado</p>
+            <h3 class="display-4 text-center" th:text="${estadoPedido}"></h3>
+            <p class="mt-3">Podes ver el detalle de tu pedido <a th:href="${linkDetalle}" class="link-info">ACA</a></p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

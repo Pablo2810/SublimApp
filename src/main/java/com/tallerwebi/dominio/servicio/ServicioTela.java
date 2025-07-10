@@ -42,4 +42,7 @@ public interface ServicioTela {
     void cancelarCompraTela(Long idCompraTela, Usuario usuario) throws CompraTelaNoEncontrada, CancelacionNoPermitida;
 
     List<CompraTela> obtenerComprasDeTelasPorUsuarioYEstado(Long usuarioId, EstadoTela estado);
+
+    List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle);
+
 }

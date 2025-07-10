@@ -4,6 +4,7 @@ import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.repositorio.RepositorioTela;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -78,6 +79,16 @@ public class RepositorioTelaImpl implements RepositorioTela {
                 .createQuery(hql, TelaUsuario.class)
                 .setParameter("usuarioId", usuarioId)
                 .getResultList();
+    }
+
+    @Override
+    public List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle) {
+        return sessionFactory.getCurrentSession()
+                .createCriteria(Tela.class)
+                .createAlias("prendas", "p")
+                .add(Restrictions.eq("p.id", prendaId))
+                .add(Restrictions.ge("metros", metrosTalle))
+                .list();
     }
 
 }

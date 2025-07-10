@@ -241,6 +241,12 @@ public class ServicioTelaImpl implements ServicioTela {
     @Override
     public List<CompraTela> obtenerComprasDeTelasPorUsuarioYEstado(Long usuarioId, EstadoTela estado) {
         return repositorioCompraTela.buscarComprasPorUsuarioYEstado(usuarioId, estado);
+
+    }
+    @Override
+    public List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle) {
+        return repositorioTela.buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(prendaId, metrosTalle);
+
     }
 
 }

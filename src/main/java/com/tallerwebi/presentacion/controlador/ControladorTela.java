@@ -2,6 +2,7 @@ package com.tallerwebi.presentacion.controlador;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.dominio.entidad.TipoEnvio;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
@@ -10,6 +11,7 @@ import com.tallerwebi.dominio.repositorio.RepositorioCompraTela;
 import com.tallerwebi.dominio.servicio.ServicioEnvio;
 import com.tallerwebi.dominio.servicio.ServicioPago;
 import com.tallerwebi.dominio.servicio.ServicioTela;
+import com.tallerwebi.presentacion.dto.DatosTela;
 import com.tallerwebi.presentacion.dto.MisTelas;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import java.util.Map;
 import com.tallerwebi.dominio.servicio.ServicioCotizacionDolar;
 
@@ -328,4 +332,17 @@ public class ControladorTela {
     public String mostrarBoleta() {
         return "boleta-tela";
     }
+
+    @RequestMapping(value = "/telas-por-prenda/{prendaId}", method = RequestMethod.GET)
+    @ResponseBody
+    public List<DatosTela> obtenerTelasPorPrenda(
+            @PathVariable("prendaId") Long prendaId,
+            @RequestParam("metrosTalle") Double metrosTalle) {
+        //List<Tela> telas = servicioTela.buscarTelasDePrendaPorIdPrenda(prendaId);
+        List<Tela> telas = servicioTela.buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(prendaId, metrosTalle);
+        return telas.stream()
+                .map(t -> new DatosTela(t.getId(), t.getTipoTela(), t.getMetros(), t.getColor()))
+                .collect(Collectors.toList()); // cambié t.getTipoTela().name() a t.getTipoTela()
+    }
+
 }
