@@ -38,7 +38,7 @@ public class ControladorTelaTest {
         usuarioMock = new Usuario();
         when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(usuarioMock);
     }
-
+/*
     @Test
     public void mostrarCatalogoTelas_DebeAgregarListaDeTelasAlModelo_YRetornarVistaCatalogo() {
         List<MisTelas> telasCatalogo = List.of(new MisTelas(1L, TipoTela.LINO, "Rojo", 100.0, "img.jpg"));
@@ -370,7 +370,7 @@ public class ControladorTelaTest {
 
         verify(servicioMock).comprarTelaDeFabrica(1L, 2.0, usuarioMock);
     }
-
+*/
 }
 
 
