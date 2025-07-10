@@ -111,12 +111,14 @@
             prendaSelect.addEventListener('change', function () {
                 const prendaId = this.value;
 
-                // Limpiar talles anteriores
+                // Limpiar selects anteriores
                 talleSelect.innerHTML = '<option value="" disabled selected>Seleccione un talle</option>';
                 telaSelect.innerHTML = '<option value="" disabled selected>Seleccione una tela</option>';
+                talleSelect.value = ""; // Esto resetea visualmente el select
+                telaSelect.value = "";
 
                 if (prendaId) {
-                    fetch('/spring/talles-por-prenda/' + prendaId)
+                    fetch('/talles-por-prenda/' + prendaId)
                         .then(response => {
                             if (!response.ok) {
                                 throw new Error("Error al cargar los talles");
@@ -141,24 +143,31 @@
                 const talleId = this.value;
 
                 // Limpiar telas anteriores
-                telaSelect.innerHTML = '<option value="" selected>Seleccione una tela</option>';
+                telaSelect.innerHTML = '<option value="" disabled selected>Seleccione una tela</option>';
+                telaSelect.value = "";
 
                 if (talleId) {
                     try {
-                        const responseTalle = await fetch('/spring/talle-por-id/' + talleId);
+                        const responseTalle = await fetch('/talle-por-id/' + talleId);
                         if (!responseTalle.ok) throw new Error("Error al cargar el talle");
 
                         const talle = await responseTalle.json();
                         const metrosTalle = talle.metrosTotales;
 
-                        const url = `/spring/telas-por-prenda/${prendaSelect.value}?metrosTalle=${metrosTalle}`;
-                        const responseTelas = await fetch(url);
-                        const telas = await responseTelas.json();
+                        // Evitar que se mande undefined o null
+                        let url = `/telas-por-prenda/${prendaSelect.value}`;
+                        if (metrosTalle !== null && metrosTalle !== undefined) {
+                            url += `?metrosTalle=${metrosTalle}`;
+                        }
 
+                        const responseTelas = await fetch(url);
+                        if (!responseTelas.ok) throw new Error("Error al cargar telas");
+
+                        const telas = await responseTelas.json();
                         telas.forEach(tela => {
                             const option = document.createElement('option');
                             option.value = tela.id;
-                            option.textContent = tela.tipoTela + ' - ' + tela.color;
+                            option.textContent = `${tela.tipoTela} - ${tela.color}`;
                             telaSelect.appendChild(option);
                         });
                     } catch (error) {
@@ -167,7 +176,6 @@
                 }
             });
         });
-
     </script>
     </body>
     </html>

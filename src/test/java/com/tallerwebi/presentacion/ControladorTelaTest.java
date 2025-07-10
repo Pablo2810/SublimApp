@@ -395,7 +395,6 @@ public class ControladorTelaTest {
 
         verify(servicioMock).comprarTelaDeFabrica(1L, 2.0, usuarioMock);
     }
-
     @Test
     public void confirmarPagoEnPesosSinUsuarioLogueado_DebeRedirigirALoginConMensaje() throws Exception{
         RedirectAttributes redirectAttrs = mock(RedirectAttributes.class);

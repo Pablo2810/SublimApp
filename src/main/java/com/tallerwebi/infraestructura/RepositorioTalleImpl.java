@@ -52,6 +52,14 @@ public class RepositorioTalleImpl implements RepositorioTalle {
                 .list();
     }
 
+    @Override
+    public List<Talle> buscarTallesPorPais(String pais) {
+        final Session session= sessionFactory.getCurrentSession();
+        return session.createCriteria(Talle.class)
+                .add(Restrictions.eq("pais", pais))
+                .list();
+    }
+
     /*
     @Override
     public Talle buscarTallePorId(Long id) {
