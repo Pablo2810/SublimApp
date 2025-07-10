@@ -92,21 +92,24 @@
             </a>
         </div>
 
-        <div th:if="${telas != null and !telas.isEmpty()}">
+        <div th:if="${telasEntregadas != null and !telasEntregadas.isEmpty()}">
             <div class="row row-cols-1 row-cols-md-3 g-3">
-                <div class="col" th:each="telaUsuario : ${telas}">
+                <div class="col" th:each="compra : ${telasEntregadas}">
                     <div class="card h-100">
-                        <img th:src="@{${telaUsuario.imagenUrl}}" class="card-img-top" alt="Imagen tela" />
+                        <img th:src="@{${compra.tela.imagenUrl}}" class="card-img-top" alt="Imagen tela" />
                         <div class="card-body">
-                            <h5 class="card-title" th:text="${telaUsuario.tipoTela + ' (' + telaUsuario.color + ')'}">Tipo</h5>
-                            <p><strong>Metros:</strong> <span th:text="${telaUsuario.metros}">0</span></p>
-                            <p><strong>Precio:</strong> $<span th:text="${telaUsuario.precio}">0</span></p>
+                            <h5 class="card-title" th:text="${compra.tela.tipoTela + ' (' + compra.tela.color + ')'}">Tipo</h5>
+                            <p><strong>Metros:</strong> <span th:text="${compra.metros}">0</span></p>
+                            <p><strong>Precio:</strong> $<span th:text="${compra.precioUnitario}">0</span></p>
+                            <p><strong>Envío:</strong> <span th:text="${compra.descripcionEnvio}">envío</span></p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div th:if="${telas == null || telas.isEmpty()}" class="text-muted">No tenés telas compradas.</div>
+        <div th:if="${telasEntregadas == null || telasEntregadas.isEmpty()}" class="text-muted">
+            No tenés telas entregadas todavía.
+        </div>
     </section>
 </main>
 

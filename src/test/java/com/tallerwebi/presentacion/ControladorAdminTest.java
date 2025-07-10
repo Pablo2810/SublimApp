@@ -196,17 +196,18 @@ public class ControladorAdminTest {
         ModelAndView resultado = controladorAdmin.actualizarEstadoEnvioTela(5L, EstadoTela.EN_VIAJE, redirectAttributes);
 
         verify(redirectAttributes).addFlashAttribute(eq("mensaje"), contains("actualizado con éxito"));
-        assertEquals("redirect:/admin/estado-envio-telas", resultado.getViewName());
+        assertEquals("redirect:/admin/envios-telas", resultado.getViewName());
     }
 
     @Test
-    void listarTelasUsuarioEstadoDevuelveVistaCorrecta() {
-        when(servicioTela.obtenerTelasUsuario(null)).thenReturn(List.of(new TelaUsuario()));
+    void listarTelasCompradasPorEstadoDevuelveVistaCorrecta() {
+        CompraTela compraMock = new CompraTela();
+        when(servicioTela.obtenerComprasDeTelasPorUsuarioYEstado(null, null)).thenReturn(List.of(compraMock));
 
-        ModelAndView resultado = controladorAdmin.listarTelasUsuarioEstado();
+        ModelAndView resultado = controladorAdmin.listarTelasCompradasPorEstado();
 
         assertEquals("estado-envio-tela-admin", resultado.getViewName());
-        assertNotNull(resultado.getModel().get("telas"));
+        assertNotNull(resultado.getModel().get("compras"));
         assertNotNull(resultado.getModel().get("estados"));
     }
 
