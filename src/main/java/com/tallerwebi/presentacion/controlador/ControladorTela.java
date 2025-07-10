@@ -7,6 +7,7 @@ import com.tallerwebi.dominio.entidad.TipoEnvio;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
 import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
+import com.tallerwebi.dominio.repositorio.RepositorioCompraTela;
 import com.tallerwebi.dominio.servicio.ServicioEnvio;
 import com.tallerwebi.dominio.servicio.ServicioPago;
 import com.tallerwebi.dominio.servicio.ServicioTela;
@@ -38,16 +39,18 @@ public class ControladorTela {
     private final ServicioEnvio servicioEnvio;
     private final ServicioCotizacionDolar servicioCotizacionDolar;
     private final ServicioPago servicioPago;
+    private final RepositorioCompraTela repositorioCompraTela;
 
     @Autowired
     public ControladorTela(ServicioTela servicioTela,
                            ServicioEnvio servicioEnvio,
                            ServicioCotizacionDolar servicioCotizacionDolar,
-                           ServicioPago servicioPago) {
+                           ServicioPago servicioPago, RepositorioCompraTela repositorioCompraTela) {
         this.servicioTela = servicioTela;
         this.servicioEnvio = servicioEnvio;
         this.servicioCotizacionDolar = servicioCotizacionDolar;
         this.servicioPago = servicioPago;
+        this.repositorioCompraTela = repositorioCompraTela;
     }
 
     private void cargarDatosTela(Model model, String color, String tipoTela, Double precio, Double metros, String imagenUrl) {
@@ -253,12 +256,14 @@ public class ControladorTela {
 
         valorCuotaMostrar = servicioPago.calcularValorCuota(totalMostrar, cuotas);
 
+        Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuario == null) {
+            redirectAttributes.addFlashAttribute("mensajeError", "Debés iniciar sesión para realizar la compra.");
+            return "redirect:/login";
+        }
+
         try {
-            Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
-            if (usuario == null) {
-                redirectAttributes.addFlashAttribute("mensajeError", "Debés iniciar sesión para realizar la compra.");
-                return "redirect:/login";
-            }
+            // Descontar stock y asignar telaUsuario
             servicioTela.comprarTelaDeFabrica(idTela, metros, usuario);
         } catch (TelaNoEncontrada e) {
             model.addAttribute("mensajeError", "Tela no encontrada.");
@@ -269,6 +274,8 @@ public class ControladorTela {
             cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
             return "metodo-pago-tela";
         }
+
+        servicioTela.registrarCompraTela(idTela, usuario, metros, metodoPago, cuotas, pagoEnDolares, cotizacionDolar, envioSeleccionado);
 
         String fechaFormateada = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
 
@@ -289,21 +296,24 @@ public class ControladorTela {
         redirectAttributes.addFlashAttribute("cotizacionDolar", cotizacionDolar);
         redirectAttributes.addFlashAttribute("totalEquivalente", totalEquivalente);
 
-        // Extraer dirección legible del JSON
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode nodoDireccion = mapper.readTree(jsonDireccion);
-            String direccionCompleta = nodoDireccion.get("display_name").asText();
-            redirectAttributes.addFlashAttribute("direccionCompleta", direccionCompleta);
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("direccionCompleta", "Dirección desconocida");
+        // Determinar dirección de envío o lugar de retiro
+        if (envioSeleccionado == TipoEnvio.LOCAL) {
+            redirectAttributes.addFlashAttribute("direccionCompleta", "Sucursal central - Av. Siempre Viva 742, Buenos Aires");
+        } else {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode nodoDireccion = mapper.readTree(jsonDireccion);
+                String direccionCompleta = nodoDireccion.get("display_name").asText();
+                redirectAttributes.addFlashAttribute("direccionCompleta", direccionCompleta);
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("direccionCompleta", "Dirección desconocida");
+            }
         }
 
         redirectAttributes.addFlashAttribute("mensaje", "Compra realizada con éxito");
 
         return "redirect:/boleta-tela";
     }
-
 
     @PostMapping("/calcular-envio")
     @ResponseBody

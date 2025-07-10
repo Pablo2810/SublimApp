@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
-    <!-- Boostrap core css -->
+    <!-- Bootstrap core css -->
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
     <!-- custom style -->
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
@@ -25,37 +25,38 @@
 <div class="container py-4">
 
     <div class="d-flex flex-column align-items-center gap-3">
-        <div class="row dashboard-admin">
+        <div class="row dashboard-admin g-4">  <!-- agrego gap entre columnas y filas -->
+
             <div class="col-4">
                 <div class="card" style="width: 18rem;">
-                    <img th:src="@{/img/TELA_1.jpg}" class="card-img p-1">
+                    <img th:src="@{/img/TELA_1.jpg}" class="card-img-top p-1" alt="Tela 1">
                     <div class="card-body">
                         <a th:href="@{/admin/listar-telas}" class="btn btn-primary w-100">ABM de telas</a>
                     </div>
                 </div>
             </div>
+
             <div class="col-4">
                 <div class="card" style="width: 18rem;">
-                    <img th:src="@{/img/promociones.jpg}" class="card-img p-1">
+                    <img th:src="@{/img/promociones.jpg}" class="card-img-top p-1" alt="Promociones">
                     <div class="card-body">
                         <a href="#" class="btn btn-primary w-100">ABM de promociones</a>
                     </div>
                 </div>
             </div>
+
             <div class="col-4">
                 <div class="card" style="width: 18rem;">
-                    <img th:src="@{/img/galeria_2.jpg}" class="card-img p-1">
+                    <img th:src="@{/img/galeria_2.jpg}" class="card-img-top p-1" alt="Galería">
                     <div class="card-body">
                         <a th:href="@{/admin/listar-talles}" class="btn btn-primary w-100">ABM de talles</a>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
             <div class="col-4">
                 <div class="card" style="width: 18rem;">
-                    <img th:src="@{/img/pedidos.jpg}" class="card-img p-1">
+                    <img th:src="@{/img/pedidos.jpg}" class="card-img-top p-1" alt="Pedidos">
                     <div class="card-body">
                         <a th:href="@{/admin/pedidos-solicitados}" class="btn btn-primary w-100">Pedidos de usuarios</a>
                     </div>
@@ -65,12 +66,13 @@
             <!-- NUEVA TARJETA: Estado de envío de telas -->
             <div class="col-4">
                 <div class="card" style="width: 18rem;">
-                    <img th:src="@{/img/envios.jpg}" class="card-img p-1">
+                    <img th:src="@{/img/TELA_1.jpg}" class="card-img-top p-1" alt="Estado de envío de telas">
                     <div class="card-body">
                         <a th:href="@{/admin/envios-telas}" class="btn btn-primary w-100">Estado de envío de telas</a>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -79,3 +81,4 @@
 <footer th:insert="templates/footer :: footer"></footer>
 </body>
 </html>
+

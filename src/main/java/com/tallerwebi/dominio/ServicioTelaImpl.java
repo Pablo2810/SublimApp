@@ -1,9 +1,8 @@
 package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidad.*;
-import com.tallerwebi.dominio.excepcion.StockInsuficiente;
-import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
-import com.tallerwebi.dominio.excepcion.TelaUsuarioNoEncontrada;
+import com.tallerwebi.dominio.excepcion.*;
+import com.tallerwebi.dominio.repositorio.RepositorioCompraTela;
 import com.tallerwebi.dominio.repositorio.RepositorioTela;
 import com.tallerwebi.dominio.servicio.ServicioStorageImagen;
 import com.tallerwebi.dominio.servicio.ServicioTela;
@@ -27,11 +26,13 @@ public class ServicioTelaImpl implements ServicioTela {
     @Autowired
     private ServicioStorageImagen servicioStorageImagen;
 
+    @Autowired
+    private RepositorioCompraTela repositorioCompraTela;
+
     public ServicioTelaImpl(RepositorioTela repositorioTela, ServicioStorageImagen servicioStorageImagen) {
         this.repositorioTela = repositorioTela;
         this.servicioStorageImagen = servicioStorageImagen;
     }
-
 
     @Override
     public List<Tela> obtenerTelas() {
@@ -93,29 +94,22 @@ public class ServicioTelaImpl implements ServicioTela {
     @Override
     public void comprarTelaDeFabrica(Long idTela, Double metrosComprados, Usuario usuario)
             throws TelaNoEncontrada, StockInsuficiente {
+
         Tela tela = repositorioTela.obtenerTela(idTela);
-        if (tela == null) {
-            throw new TelaNoEncontrada();
-        }
+        if (tela == null) throw new TelaNoEncontrada();
 
-        if (tela.getMetros() < metrosComprados) {
-            throw new StockInsuficiente();
-        }
+        if (tela.getMetros() < metrosComprados) throw new StockInsuficiente();
 
-        // Descontar metros de stock de fábrica
         tela.setMetros(tela.getMetros() - metrosComprados);
         repositorioTela.crearOActualizarTela(tela);
 
-        // Buscar si el usuario ya tiene una tela igual (por tipo + color)
         TelaUsuario telaExistente = repositorioTela.buscarTelaUsuarioPorTipoYColor(
                 usuario, tela.getTipoTela(), tela.getColor());
 
         if (telaExistente != null) {
-            // Ya tiene una tela igual, sumamos metros
             telaExistente.setMetros(telaExistente.getMetros() + metrosComprados);
             repositorioTela.crearOActualizarTela(telaExistente);
         } else {
-            // No tiene una igual, creamos una nueva con estado "EN_DEPOSITO"
             TelaUsuario telaComprada = new TelaUsuario();
             telaComprada.setTipoTela(tela.getTipoTela());
             telaComprada.setColor(tela.getColor());
@@ -123,10 +117,37 @@ public class ServicioTelaImpl implements ServicioTela {
             telaComprada.setPrecio(tela.getPrecio());
             telaComprada.setMetros(metrosComprados);
             telaComprada.setUsuario(usuario);
-            telaComprada.setEstado(EstadoTela.EN_DEPOSITO); // ← NUEVO
-
+            telaComprada.setEstado(EstadoTela.EN_DEPOSITO);
             repositorioTela.crearOActualizarTela(telaComprada);
         }
+    }
+
+    @Override
+    public void registrarCompraTela(Long idTela, Usuario usuario, Double metros, String metodoPago,
+                                    Integer cuotas, boolean pagoEnDolares, double cotizacionDolar,
+                                    TipoEnvio envioSeleccionado) {
+
+        Tela tela = repositorioTela.obtenerTela(idTela);
+        if (tela == null) throw new RuntimeException("Tela no encontrada al registrar compra");
+
+        CompraTela compra = new CompraTela();
+        compra.setUsuario(usuario);
+        compra.setTela(tela);
+        compra.setMetros(metros);
+        compra.setPrecioUnitario(tela.getPrecio());
+
+        double totalPagado = tela.getPrecio() * metros + (envioSeleccionado == TipoEnvio.LOCAL ? 0 : envioSeleccionado.getCosto());
+        compra.setTotalPagado(totalPagado);
+
+        compra.setMetodoPago(metodoPago);
+        compra.setCuotas(cuotas);
+        compra.setPagoEnDolares(pagoEnDolares);
+        compra.setCotizacionDolar(pagoEnDolares ? cotizacionDolar : 0.0);
+        compra.setDescripcionEnvio(envioSeleccionado.getDescripcion());
+        compra.setCostoEnvio(envioSeleccionado.getCosto());
+        compra.setTiempoEntrega(envioSeleccionado.getTiempoEntrega());
+
+        repositorioCompraTela.guardarTela(compra);
     }
 
     @Override
@@ -184,9 +205,67 @@ public class ServicioTelaImpl implements ServicioTela {
                 .collect(Collectors.toList());
     }
 
+    public void cancelarCompraTela(Long idCompraTela, Usuario usuario) throws CompraTelaNoEncontrada, CancelacionNoPermitida {
+        System.out.println("Cancelar compra: id=" + idCompraTela);
+        CompraTela compra = repositorioCompraTela.obtenerCompraPorId(idCompraTela);
+
+        if (compra == null) {
+            System.out.println("Compra no encontrada");
+            throw new CompraTelaNoEncontrada();
+        }
+
+        if (!compra.getUsuario().getId().equals(usuario.getId())) {
+            System.out.println("Usuario no autorizado");
+            throw new CancelacionNoPermitida("No puedes cancelar compras de otros usuarios");
+        }
+
+        if (compra.getEstado() != EstadoTela.EN_DEPOSITO) {
+            System.out.println("Compra no está en depósito, estado: " + compra.getEstado());
+            throw new CancelacionNoPermitida("La compra no está en depósito y no puede ser cancelada.");
+        }
+
+        // Devolver stock
+        Tela tela = compra.getTela();
+        double metrosAntes = tela.getMetros();
+        tela.setMetros(metrosAntes + compra.getMetros());
+        System.out.println("Devolviendo stock a tela. Metros antes: " + metrosAntes + ", metros a devolver: " + compra.getMetros());
+        repositorioTela.crearOActualizarTela(tela);
+
+        // Eliminar compra
+        System.out.println("Eliminando compra");
+        repositorioCompraTela.eliminarCompra(compra);
+
+        System.out.println("Compra cancelada con éxito");
+    }
+
+    @Override
+    public List<CompraTela> obtenerComprasDeTelasPorUsuarioYEstado(Long usuarioId, EstadoTela estado) {
+        return repositorioCompraTela.buscarComprasPorUsuarioYEstado(usuarioId, estado);
+
+    }
     @Override
     public List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle) {
         return repositorioTela.buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(prendaId, metrosTalle);
+
+    }
+
+    @Override
+    public void cambiarEstadoCompraTela(Long idCompra, EstadoTela nuevoEstado) throws CompraTelaNoEncontrada {
+        CompraTela compra = repositorioCompraTela.obtenerCompraPorId(idCompra);
+        if (compra == null) throw new CompraTelaNoEncontrada();
+
+        compra.setEstado(nuevoEstado);
+        repositorioCompraTela.guardarTela(compra); // ya usás `persist`, no hay problema
+    }
+
+    @Override
+    public List<CompraTela> obtenerComprasPorEstados(List<EstadoTela> estados) {
+        return repositorioCompraTela.buscarComprasPorEstados(estados);
+    }
+
+    @Override
+    public List<CompraTela> obtenerComprasDeTelasPorUsuarioYEstados(Long usuarioId, List<EstadoTela> estados) {
+        return repositorioCompraTela.buscarComprasPorUsuarioYEstados(usuarioId, estados);
     }
 
 }

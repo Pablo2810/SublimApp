@@ -1,9 +1,8 @@
 package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidad.*;
-import com.tallerwebi.dominio.excepcion.StockInsuficiente;
-import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
-import com.tallerwebi.dominio.excepcion.TelaUsuarioNoEncontrada;
+import com.tallerwebi.dominio.excepcion.*;
+import com.tallerwebi.dominio.repositorio.RepositorioCompraTela;
 import com.tallerwebi.dominio.repositorio.RepositorioTela;
 import com.tallerwebi.dominio.servicio.ServicioStorageImagen;
 import com.tallerwebi.presentacion.dto.DatosTela;
@@ -15,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +27,9 @@ public class ServicioTelaTest {
     private RepositorioTela repositorioTela;
 
     @Mock
+    private RepositorioCompraTela repositorioCompraTela;
+
+    @Mock
     private ServicioStorageImagen servicioStorageImagen;
 
     @InjectMocks
@@ -36,7 +39,9 @@ public class ServicioTelaTest {
     void setUp() {
         repositorioTela = mock(RepositorioTela.class);
         servicioStorageImagen = mock(ServicioStorageImagen.class);
+        repositorioCompraTela = mock(RepositorioCompraTela.class);
         servicioTela = new ServicioTelaImpl(repositorioTela, servicioStorageImagen);
+        ReflectionTestUtils.setField(servicioTela, "repositorioCompraTela", repositorioCompraTela);
     }
 
     @Test
@@ -323,4 +328,199 @@ public class ServicioTelaTest {
         assertTrue(resultado.contains(t3));
         assertFalse(resultado.contains(t4));
     }
+
+    @Test
+    void registrarCompraTela_registraCompraCorrectamente() {
+        Long idTela = 1L;
+        Usuario usuario = new Usuario();
+        Double metros = 3.0;
+        String metodoPago = "credito";
+        Integer cuotas = 3;
+        boolean pagoEnDolares = true;
+        double cotizacionDolar = 1000.0;
+        TipoEnvio envio = TipoEnvio.CABA;
+
+        Tela tela = new Tela();
+        tela.setId(idTela);
+        tela.setPrecio(200.0);
+
+        when(repositorioTela.obtenerTela(idTela)).thenReturn(tela);
+
+        servicioTela.registrarCompraTela(idTela, usuario, metros, metodoPago, cuotas, pagoEnDolares, cotizacionDolar, envio);
+
+        ArgumentCaptor<CompraTela> captor = ArgumentCaptor.forClass(CompraTela.class);
+        verify(repositorioCompraTela).guardarTela(captor.capture());
+
+        CompraTela compraGuardada = captor.getValue();
+        assertEquals(usuario, compraGuardada.getUsuario());
+        assertEquals(tela, compraGuardada.getTela());
+        assertEquals(metros, compraGuardada.getMetros());
+        assertEquals(200.0, compraGuardada.getPrecioUnitario());
+        assertEquals(200.0 * metros + envio.getCosto(), compraGuardada.getTotalPagado());
+        assertEquals(metodoPago, compraGuardada.getMetodoPago());
+        assertEquals(cuotas, compraGuardada.getCuotas());
+        assertTrue(compraGuardada.isPagoEnDolares());
+        assertEquals(cotizacionDolar, compraGuardada.getCotizacionDolar());
+        assertEquals(envio.getDescripcion(), compraGuardada.getDescripcionEnvio());
+        assertEquals(envio.getCosto(), compraGuardada.getCostoEnvio());
+        assertEquals(envio.getTiempoEntrega(), compraGuardada.getTiempoEntrega());
+    }
+
+    @Test
+    void registrarCompraTela_telaNoEncontrada_lanzaExcepcion() {
+        Long idTela = 99L;
+        when(repositorioTela.obtenerTela(idTela)).thenReturn(null);
+
+        assertThrows(RuntimeException.class, () ->
+                servicioTela.registrarCompraTela(
+                        idTela,
+                        new Usuario(),
+                        5.0,
+                        "credito",
+                        3,
+                        false,
+                        0.0,
+                        TipoEnvio.INTERIOR
+                )
+        );
+
+        verify(repositorioCompraTela, never()).guardarTela(any());
+    }
+
+    @Test
+    void cancelarCompra_compraNoEncontrada_lanzaExcepcion() {
+        when(repositorioCompraTela.obtenerCompraPorId(1L)).thenReturn(null);
+
+        assertThrows(CompraTelaNoEncontrada.class, () -> {
+            servicioTela.cancelarCompraTela(1L, new Usuario());
+        });
+    }
+
+    @Test
+    void cancelarCompra_usuarioDistinto_lanzaExcepcion() {
+        Usuario otroUsuario = new Usuario();
+        otroUsuario.setId(2L);
+
+        Usuario usuarioActual = new Usuario();
+        usuarioActual.setId(1L);
+
+        CompraTela compra = new CompraTela();
+        compra.setUsuario(otroUsuario);
+        compra.setEstado(EstadoTela.EN_DEPOSITO);
+
+        when(repositorioCompraTela.obtenerCompraPorId(1L)).thenReturn(compra);
+
+        assertThrows(CancelacionNoPermitida.class, () -> {
+            servicioTela.cancelarCompraTela(1L, usuarioActual);
+        });
+    }
+
+    @Test
+    void cancelarCompra_estadoIncorrecto_lanzaExcepcion() {
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+
+        CompraTela compra = new CompraTela();
+        compra.setUsuario(usuario);
+        compra.setEstado(EstadoTela.EN_VIAJE); // Estado no válido para cancelación
+
+        when(repositorioCompraTela.obtenerCompraPorId(1L)).thenReturn(compra);
+
+        assertThrows(CancelacionNoPermitida.class, () -> {
+            servicioTela.cancelarCompraTela(1L, usuario);
+        });
+    }
+
+    @Test
+    void cancelarCompra_valida_restauraStockYEliminaCompra() throws Exception {
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+
+        Tela tela = new Tela();
+        tela.setMetros(10.0);
+
+        CompraTela compra = new CompraTela();
+        compra.setId(1L);
+        compra.setUsuario(usuario);
+        compra.setEstado(EstadoTela.EN_DEPOSITO);
+        compra.setMetros(5.0);
+        compra.setTela(tela);
+
+        when(repositorioCompraTela.obtenerCompraPorId(1L)).thenReturn(compra);
+
+        servicioTela.cancelarCompraTela(1L, usuario);
+
+        assertEquals(15.0, tela.getMetros());
+        verify(repositorioTela).crearOActualizarTela(tela);
+        verify(repositorioCompraTela).eliminarCompra(compra);
+    }
+
+    @Test
+    void crearOActualizar_conArchivoVacio_noActualizaImagen() {
+        DatosTela datos = new DatosTela();
+        datos.setId(null);
+        datos.setColor("Negro");
+        datos.setTipoTela(TipoTela.LINO);
+        datos.setPrecio(120.0);
+        datos.setMetros(15.0);
+
+        MockMultipartFile archivoVacio = new MockMultipartFile("file", new byte[0]);
+
+        servicioTela.crearOActualizar(datos, archivoVacio);
+
+        ArgumentCaptor<Tela> captor = ArgumentCaptor.forClass(Tela.class);
+        verify(repositorioTela).crearOActualizarTela(captor.capture());
+
+        Tela telaGuardada = captor.getValue();
+        assertEquals("Negro", telaGuardada.getColor());
+        assertEquals(TipoTela.LINO, telaGuardada.getTipoTela());
+        assertEquals(120.0, telaGuardada.getPrecio());
+        assertEquals(15.0, telaGuardada.getMetros());
+        assertNull(telaGuardada.getImagenUrl(), "No debe setear url de imagen si archivo vacío");
+    }
+
+    @Test
+    void crearOActualizar_conIdInexistente_lanzaRuntimeException() {
+        DatosTela datos = new DatosTela();
+        datos.setId(999L); // ID inexistente
+
+        when(repositorioTela.obtenerTela(999L)).thenThrow(new RuntimeException());
+
+        MockMultipartFile archivoVacio = new MockMultipartFile("file", new byte[0]);
+
+        assertThrows(RuntimeException.class, () -> {
+            servicioTela.crearOActualizar(datos, archivoVacio);
+        });
+    }
+
+    @Test
+    void borrarTela_excepcionEnObtenerTela_lanzaRuntimeException() {
+        when(repositorioTela.obtenerTela(10L)).thenThrow(new RuntimeException());
+
+        assertThrows(RuntimeException.class, () -> servicioTela.borrarTela(10L));
+    }
+
+    @Test
+    void cambiarEstadoTela_telaNoEncontrada_lanzaTelaUsuarioNoEncontrada() {
+        when(repositorioTela.obtenerTela(123L)).thenReturn(new Tela()); // no es TelaUsuario
+
+        assertThrows(TelaUsuarioNoEncontrada.class, () -> {
+            servicioTela.cambiarEstadoTela(123L, EstadoTela.EN_VIAJE);
+        });
+    }
+
+    @Test
+    void obtenerComprasDeTelasPorUsuarioYEstado_delegacionAlRepositorio() {
+        Long usuarioId = 5L;
+        EstadoTela estado = EstadoTela.EN_DEPOSITO;
+        List<CompraTela> compras = new ArrayList<>();
+
+        when(repositorioCompraTela.buscarComprasPorUsuarioYEstado(usuarioId, estado)).thenReturn(compras);
+
+        List<CompraTela> resultado = servicioTela.obtenerComprasDeTelasPorUsuarioYEstado(usuarioId, estado);
+
+        assertSame(compras, resultado);
+        verify(repositorioCompraTela).buscarComprasPorUsuarioYEstado(usuarioId, estado);
+    }
+
 }

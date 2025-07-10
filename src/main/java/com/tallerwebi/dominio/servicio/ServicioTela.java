@@ -1,13 +1,8 @@
 package com.tallerwebi.dominio.servicio;
 
-import com.tallerwebi.dominio.entidad.EstadoTela;
-import com.tallerwebi.dominio.entidad.Tela;
-import com.tallerwebi.dominio.entidad.TelaUsuario;
-import com.tallerwebi.dominio.excepcion.StockInsuficiente;
-import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
-import com.tallerwebi.dominio.excepcion.TelaUsuarioNoEncontrada;
+import com.tallerwebi.dominio.entidad.*;
+import com.tallerwebi.dominio.excepcion.*;
 import com.tallerwebi.presentacion.dto.DatosTela;
-import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.presentacion.dto.MisTelas;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +24,10 @@ public interface ServicioTela {
 
     void comprarTelaDeFabrica(Long idTela, Double metrosComprados, Usuario usuario) throws TelaNoEncontrada, StockInsuficiente;
 
+    void registrarCompraTela(Long idTela, Usuario usuario, Double metros, String metodoPago,
+                             Integer cuotas, boolean pagoEnDolares, double cotizacionDolar,
+                             TipoEnvio envioSeleccionado);
+
     void consumirTelaParaProducto(Tela telaSeleccionada, Double metrosNecesarios, Usuario usuario)
             throws StockInsuficiente, TelaNoEncontrada;
 
@@ -40,5 +39,15 @@ public interface ServicioTela {
 
     List <MisTelas> obtenerTelasParaCarrusel();
 
+    void cancelarCompraTela(Long idCompraTela, Usuario usuario) throws CompraTelaNoEncontrada, CancelacionNoPermitida;
+
+    List<CompraTela> obtenerComprasDeTelasPorUsuarioYEstado(Long usuarioId, EstadoTela estado);
+
     List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle);
+
+    void cambiarEstadoCompraTela(Long idCompra, EstadoTela nuevoEstado) throws CompraTelaNoEncontrada;
+
+    List<CompraTela> obtenerComprasPorEstados(List<EstadoTela> estados);
+
+    List<CompraTela> obtenerComprasDeTelasPorUsuarioYEstados(Long usuarioId, List<EstadoTela> estados);
 }
