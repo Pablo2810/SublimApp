@@ -1,5 +1,7 @@
 package com.tallerwebi.presentacion.controlador;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.excepcion.ArchivoNoValido;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
@@ -7,6 +9,7 @@ import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
 import com.tallerwebi.dominio.servicio.*;
 import com.tallerwebi.presentacion.dto.DatosPrenda;
 import com.tallerwebi.presentacion.dto.DatosProducto;
+import com.tallerwebi.presentacion.dto.ResultadoCotizaciones;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -15,6 +18,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -28,6 +35,7 @@ public class ControladorProducto {
     private final ServicioArchivo servicioArchivo;
     private final ServicioProducto servicioProducto;
     private final ServicioPedido servicioPedido;
+    private final ServicioCotizacionDolar servicioCotizacionDolar;
 
     @Autowired
     public ControladorProducto(ServicioProducto servicioProducto,
@@ -35,13 +43,15 @@ public class ControladorProducto {
                                ServicioPrenda servicioPrenda,
                                ServicioTela servicioTela,
                                ServicioArchivo servicioArchivo,
-                               ServicioPedido servicioPedido) {
+                               ServicioPedido servicioPedido,
+                               ServicioCotizacionDolar servicioCotizacionDolar) {
         this.servicioPrenda = servicioPrenda;
         this.servicioTalle = servicioTalle;
         this.servicioTela = servicioTela;
         this.servicioArchivo = servicioArchivo;
         this.servicioProducto = servicioProducto;
         this.servicioPedido = servicioPedido;
+        this.servicioCotizacionDolar = servicioCotizacionDolar;
     }
 
     @RequestMapping(path = "/nuevo-pedido", method = RequestMethod.GET)
@@ -127,6 +137,14 @@ public class ControladorProducto {
                 return new ModelAndView("redirect:/nuevo-pedido");
             } catch (TelaNoEncontrada e) {
                 redirectAttributes.addFlashAttribute("mensajeError", "Tela no encontrada");
+                return new ModelAndView("redirect:/nuevo-pedido");
+            }
+
+            try {
+                double cotizacionDolar = servicioCotizacionDolar.obtenerCotizacionDolar();
+                model.put("cotizacionDolar", cotizacionDolar);
+            } catch (Exception e) {
+                model.addAttribute("mensajeError", "Error al consultar cotización del dólar.");
                 return new ModelAndView("redirect:/nuevo-pedido");
             }
 

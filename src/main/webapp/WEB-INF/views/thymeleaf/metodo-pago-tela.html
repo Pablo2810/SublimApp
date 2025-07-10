@@ -6,13 +6,24 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/main.css}" />
     <link rel="stylesheet" th:href="@{/css/modoOscuro.css}"/>
+    <style>
+        #sugerenciasDireccion {
+          position: absolute;
+          z-index: 1050;
+          width: 100%;
+          max-height: 180px;
+          overflow-y: auto;
+          cursor: pointer;
+        }
+    </style>
 </head>
 <body class="p-0 m-0">
 <div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
 
 <h2 class="mb-4">Seleccionar Método de Pago</h2>
 
-<form th:action="@{/confirmar-pago}" method="post" class="card p-4 shadow-sm">
+<form th:action="@{/confirmar-pago}" method="post" class="card p-4 shadow-sm position-relative" accept-charset="UTF-8">
+
     <!-- Datos ocultos de la tela -->
     <input type="hidden" name="idTela" th:value="${idTela}" />
     <input type="hidden" name="color" th:value="${color}" />
@@ -20,6 +31,8 @@
     <input type="hidden" name="metros" th:value="${metros}" />
     <input type="hidden" name="tipoTela" th:value="${tipoTela}" />
     <input type="hidden" name="imagenUrl" th:value="${imagenUrl}" />
+    <input type="hidden" id="tipoEnvio" name="tipoEnvio" value="LOCAL" />
+    <input type="hidden" id="jsonDireccion" name="jsonDireccion" value="" />
 
     <!-- Selección de moneda -->
     <div class="mb-3">
@@ -46,15 +59,24 @@
         </div>
     </div>
 
-    <!-- Tipo de envío -->
+    <!-- Envio -->
     <div class="mb-3">
-        <select class="form-select" id="tipoEnvio" name="tipoEnvio" required>
-            <option value="" disabled selected>Seleccioná una opción</option>
-            <option value="LOCAL">Retiro en local (gratis)</option>
-            <option value="CABA">Envío a CABA ($1000, 2 a 4 días hábiles)</option>
-            <option value="INTERIOR">Envío al interior ($2000, 4 a 7 días hábiles)</option>
-        </select>
-        <div id="detalleEnvio" class="mt-2 text-muted"></div>
+        <label class="form-label">¿Querés retiro en local o envío a domicilio?</label><br>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="opcionEnvio" id="opcionLocal" value="LOCAL" checked>
+            <label class="form-check-label" for="opcionLocal">Retiro en local (Gratis)</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="opcionEnvio" id="opcionEnvioDomicilio" value="ENVIO">
+            <label class="form-check-label" for="opcionEnvioDomicilio">Envío a domicilio</label>
+        </div>
+    </div>
+
+    <div class="mb-3 position-relative" id="contenedorDireccion" style="display:none;">
+        <label for="direccionEnvio" class="form-label text-dark">Dirección completa de envío</label>
+        <input id="direccionEnvio" name="direccionEnvio" type="text" class="form-control" placeholder="Ej: Av. Córdoba 1234, CABA" autocomplete="off">
+        <ul id="sugerenciasDireccion" class="list-group"></ul>
+        <div class="form-text">Especificá calle, número, ciudad y país.</div>
     </div>
 
     <!-- Datos de la tarjeta -->
@@ -106,11 +128,11 @@
 <div th:replace="templates/toasts :: toasts"></div>
 <footer th:insert="templates/footer :: footer"></footer>
 
-<!-- Scripts -->
-<script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+<script th:inline="javascript">
+    window.datosPago = { cotizacionDolar: [[${cotizacionDolar}]] };
+</script>
+<script th:src="@{/js/metodo-pago-tela.js}"></script>
 <script th:src="@{/js/main.js}"></script>
 </body>
 </html>
-
-
-

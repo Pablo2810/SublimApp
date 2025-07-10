@@ -184,4 +184,9 @@ public class ServicioTelaImpl implements ServicioTela {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle) {
+        return repositorioTela.buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(prendaId, metrosTalle);
+    }
+
 }

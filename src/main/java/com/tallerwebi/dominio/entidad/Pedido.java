@@ -24,6 +24,9 @@ public class Pedido {
 
     private Double montoFinal;
 
+    @Enumerated(EnumType.STRING)
+    private Moneda monedaDePago;
+
     private LocalDate fechaEntrega;
 
     @ManyToOne
@@ -88,6 +91,14 @@ public class Pedido {
 
     public void setMontoFinal(Double montoFinal) {
         this.montoFinal = montoFinal;
+    }
+
+    public Moneda getMonedaDePago() {
+        return monedaDePago;
+    }
+
+    public void setMonedaDePago(Moneda monedaDePago) {
+        this.monedaDePago = monedaDePago;
     }
 
     public LocalDate getFechaEntrega() {

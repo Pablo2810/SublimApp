@@ -4,7 +4,8 @@ public enum Estado {
     PENDIENTE("Pago pendiente", "text-danger"),
     EN_ESPERA("En espera", "text-primary"),
     SUBLIMANDO("Sublimado", "text-warning"),
-    A_RETIRAR("Listo para retirar", "text-success");
+    A_RETIRAR("Listo para retirar", "text-success"),
+    CANCELADO("Cancelado", "text-danger");
 
     private final String descripcion;
     private final String claseCss;

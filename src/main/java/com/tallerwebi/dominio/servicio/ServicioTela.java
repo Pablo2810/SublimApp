@@ -40,4 +40,5 @@ public interface ServicioTela {
 
     List <MisTelas> obtenerTelasParaCarrusel();
 
+    List<Tela> buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(Long prendaId, Double metrosTalle);
 }
