@@ -28,6 +28,9 @@ public class DatosTalle {
     }
 
     public DatosTalle(Long id, String descripcion, Double metrosTotales) {
+        this.id = id;
+        this.descripcion = descripcion;
+        this.metrosTotales = metrosTotales;
     }
 
     public Long getId() {
