@@ -116,7 +116,7 @@
                 telaSelect.innerHTML = '<option value="" disabled selected>Seleccione una tela</option>';
 
                 if (prendaId) {
-                    fetch('/spring/talles-por-prenda/' + prendaId)
+                    fetch('/talles-por-prenda/' + prendaId)
                         .then(response => {
                             if (!response.ok) {
                                 throw new Error("Error al cargar los talles");
@@ -145,13 +145,13 @@
 
                 if (talleId) {
                     try {
-                        const responseTalle = await fetch('/spring/talle-por-id/' + talleId);
+                        const responseTalle = await fetch('/talle-por-id/' + talleId);
                         if (!responseTalle.ok) throw new Error("Error al cargar el talle");
 
                         const talle = await responseTalle.json();
                         const metrosTalle = talle.metrosTotales;
 
-                        const url = `/spring/telas-por-prenda/${prendaSelect.value}?metrosTalle=${metrosTalle}`;
+                        const url = `/telas-por-prenda/${prendaSelect.value}?metrosTalle=${metrosTalle}`;
                         const responseTelas = await fetch(url);
                         const telas = await responseTelas.json();
 

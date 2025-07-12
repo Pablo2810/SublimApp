@@ -146,12 +146,12 @@ public class ServicioPedidoImpl implements ServicioPedido {
 
             if (puedeCambiarElEstado(pedido.getEstado(), nuevoEstado)) {
                 repositorioPedido.cambiarEstadoPedido(pedido, nuevoEstado);
-//                servicioEmail.enviarCorreoEstadoPedido(pedido.getUsuarioPedido().getEmail(), pedido,
-//                        ServletUriComponentsBuilder
-//                                .fromCurrentContextPath()
-//                                .path("/historial-pedidos")
-//                                .build()
-//                                .toUriString());
+                servicioEmail.enviarCorreoEstadoPedido(pedido.getUsuarioPedido().getEmail(), pedido,
+                        ServletUriComponentsBuilder
+                                .fromCurrentContextPath()
+                                .path("/historial-pedidos")
+                                .build()
+                                .toUriString());
                 return true;
             }
         } catch (Exception e) {
