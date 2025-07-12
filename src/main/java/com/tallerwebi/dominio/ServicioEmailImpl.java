@@ -7,20 +7,25 @@ import jakarta.mail.*;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import java.util.Properties;
 
 @Service
 public class ServicioEmailImpl implements ServicioEmail {
 
-//    @Autowired
-//    private JavaMailSender mailSender;
-//    @Autowired
-//    private TemplateEngine motorPlantilla;
+    @Autowired
+    private TemplateEngine motorPlantilla;
 
+    @Value("${emailRemitente}")
+    private String emailRemitente;
+    @Value("${passwordRemitente}")
+    private String passwordRemitente;
 
     @Override
     public void enviarCorreoEstadoPedido(String destinatario, Pedido pedido, String linkRedireccion) throws MessagingException {
@@ -34,12 +39,12 @@ public class ServicioEmailImpl implements ServicioEmail {
         Session session = Session.getInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("sublimapp.g11@gmail.com", "ocwi gitn vsoh tovm");
+                return new PasswordAuthentication(emailRemitente, passwordRemitente);
             }
         });
 
         Message mensaje = new MimeMessage(session);
-        mensaje.setFrom(new InternetAddress("sublimapp.g11@gmail.com"));
+        mensaje.setFrom(new InternetAddress(emailRemitente));
         mensaje.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatario));
         mensaje.setSubject("Cambio de estado del pedido");
 
@@ -48,22 +53,12 @@ public class ServicioEmailImpl implements ServicioEmail {
         context.setVariable("estadoPedido", pedido.getEstado().getDescripcion());
         context.setVariable("linkDetalle", linkRedireccion);
 
-        TemplateEngine motorPlantilla = new TemplateEngine();
 
         String htmlProcesado = motorPlantilla.process("emails/email-estado-pedido.html", context);
 
         mensaje.setContent(htmlProcesado, "text/html");
 
         Transport.send(mensaje);
-//        javax.mail.internet.MimeMessage mimeMessage = mailSender.createMimeMessage();
-//        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-//
-//
-//        helper.setTo(destinatario);
-//        helper.setSubject("Cambio de estado del pedido");
-//        helper.setText(htmlProcesado, true);
-//
-//        mailSender.send(mimeMessage);
     }
 
 }

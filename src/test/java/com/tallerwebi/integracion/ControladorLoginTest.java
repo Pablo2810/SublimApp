@@ -1,10 +1,8 @@
 package com.tallerwebi.integracion;
 
-import com.tallerwebi.config.EmailConfig;
 import com.tallerwebi.config.RestTemplateConfig;
 import com.tallerwebi.integracion.config.HibernateTestConfig;
 import com.tallerwebi.integracion.config.SpringWebTestConfig;
-import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.integracion.config.TestBeansConfig;
 import com.tallerwebi.presentacion.dto.DatosLogin;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,12 +18,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Objects;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,8 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		SpringWebTestConfig.class,
 		HibernateTestConfig.class,
 		TestBeansConfig.class,
-		RestTemplateConfig.class,
-		EmailConfig.class
+		RestTemplateConfig.class
 })
 public class ControladorLoginTest {
 
