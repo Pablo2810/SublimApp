@@ -2,6 +2,7 @@ package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.entidad.Pedido;
 import com.tallerwebi.dominio.entidad.Producto;
+import com.tallerwebi.dominio.entidad.Talle;
 import com.tallerwebi.dominio.repositorio.RepositorioProducto;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -88,5 +89,10 @@ public class RepositorioProductoImpl implements RepositorioProducto {
     public Producto guardarProducto(Producto producto) {
         Long idGuardado = (Long) sessionFactory.getCurrentSession().save(producto);
         return sessionFactory.getCurrentSession().get(Producto.class, idGuardado);
+    }
+
+    @Override
+    public Producto buscar(Long id) {
+        return sessionFactory.getCurrentSession().get(Producto.class, id);
     }
 }

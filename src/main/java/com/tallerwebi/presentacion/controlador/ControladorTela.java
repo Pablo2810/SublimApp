@@ -345,7 +345,7 @@ public class ControladorTela {
         //List<Tela> telas = servicioTela.buscarTelasDePrendaPorIdPrenda(prendaId);
         List<Tela> telas = servicioTela.buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(prendaId, metrosTalle);
         return telas.stream()
-                .map(t -> new DatosTela(t.getId(), t.getTipoTela(), t.getMetros(), t.getColor()))
+                .map(t -> new DatosTela(t.getId(), t.getTipoTela(), t.getMetros(), t.getColor(), t.getImagenUrl()))
                 .collect(Collectors.toList()); // cambié t.getTipoTela().name() a t.getTipoTela()
     }
 

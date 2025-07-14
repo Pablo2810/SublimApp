@@ -268,4 +268,9 @@ public class ServicioTelaImpl implements ServicioTela {
         return repositorioCompraTela.buscarComprasPorUsuarioYEstados(usuarioId, estados);
     }
 
+    @Override
+    public void actualizar(Tela tela) {
+        repositorioTela.actualizar(tela);
+    }
+
 }

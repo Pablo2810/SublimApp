@@ -17,19 +17,25 @@
             body {
                 font-family: "Lexend Deca", sans-serif;
             }
+            .tela-error {
+                border: 2px solid red !important;
+                box-shadow: 0 0 10px red;
+            }
         </style>
     </head>
     <body class="p-0 m-0">
     <div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
-    <main class="d-flex align-items-center main pe-5">
-        <div class="w-50 shadow-lg"
+    <main class="p-5 position-relative">
+        <div class="shadow-lg">
+            <img th:src="@{/img/fondo_registro.jpg}" class="img-fluid">
+        </div>
+        <div class="w-75 shadow-lg position-absolute top-50 start-50 translate-middle bg-white rounded-4"
              style="height: fit-content;">
             <form th:action="@{/registrar-producto}"
                   th:object="${producto}"
                   method="post"
                   enctype="multipart/form-data"
-                  class="formulario-pedido p-5 bg-white rounded-5"
-                  style="border-bottom-right-radius: 0px!important; border-top-right-radius: 0px!important;">
+                  class="formulario-pedido p-5">
                 <h3 class="mb-4 text-dark text-center"> Realiza un Nuevo Pedido </h3>
                 <p th:if="${error != null}" class="my-3 fs-5 text-danger text-center" th:text="${error}"></p>
                 <div class="mb-3 w-100 d-flex flex-row justify-content-between">
@@ -57,16 +63,19 @@
                     </div>
                 </div>
                 <div class="mb-3 w-100 d-flex flex-row justify-content-between">
-                    <div class="w-50 p-2 input-group">
-                        <label class="text-dark input-group-text">Tela</label>
-                        <select th:field="*{telaId}"
-                                id="telaSelect"
-                                name="telaId"
-                                class="form-select">
-                            <option value="" disabled selected>Seleccione una tela</option>
-                        </select>
+                    <div class="p-2 input-group flex-column w-100">
+                        <input type="hidden" name="telaId" id="telaId">
+                        <h4 id="tituloTelas" class="text-center mb-3" style="display: none;">Seleccioná una tela</h4>
+                        <div id="telaContainer" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 w-100"></div>
                     </div>
-                    <div class="w-50 p-2 input-group">
+                </div>
+                <div class="w-100 p-2 mb-4 d-flex">
+                    <input th:field="*{archivo}"
+                           name="file"
+                           class="form-control w-50"
+                           id="file"
+                           type="file">
+                    <div class="ms-3 w-50 input-group">
                         <label class="text-dark input-group-text">Cantidad</label>
                         <input th:field="*{cantidad}"
                                name="cantidad"
@@ -77,24 +86,12 @@
                                required>
                     </div>
                 </div>
-                <div class="w-100 p-2 mb-4">
-                    <input th:field="*{archivo}"
-                           name="file"
-                           class="form-control"
-                           id="file"
-                           type="file">
-                </div>
                 <div class="d-flex justify-content-center">
                     <button type="submit" class="btn btn-primary w-50">Enviar</button>
                 </div>
             </form>
         </div>
-        <div class="w-50 rounded-5 shadow-lg"
-             style="height: 529.200px; border-bottom-left-radius: 0px!important; border-top-left-radius: 0px!important;">
-            <img th:src="@{/img/fondo_registro.jpg}"
-                 class="img-fluid rounded-5"
-                 style="height: 100%; border-bottom-left-radius: 0px!important; border-top-left-radius: 0px!important;">
-        </div>
+
     </main>
 
     <div th:replace="templates/toasts :: toasts"></div>
@@ -106,21 +103,53 @@
         document.addEventListener("DOMContentLoaded", function () {
             const prendaSelect = document.getElementById('prendaSelect');
             const talleSelect = document.getElementById('talleSelect');
-            const telaSelect = document.getElementById('telaSelect');
+            const cantidadInput = document.getElementById('cantidad');
+            const telaContainer = document.getElementById('telaContainer');
+            const telaIdInput = document.getElementById('telaId');
+            const botonEnviar = document.querySelector('button[type="submit"]');
+
+            let talleSeleccionado = null;
+            let telaSeleccionada = null;
+            let cardSeleccionada = null;
+
+            function validarStock() {
+                const cantidad = parseInt(cantidadInput.value);
+
+                if (!telaSeleccionada || !talleSeleccionado || isNaN(cantidad) || cantidad < 1) {
+                    if (cardSeleccionada) cardSeleccionada.classList.remove('tela-error');
+                    botonEnviar.disabled = false;
+                    return;
+                }
+
+                const metrosNecesarios = cantidad * parseFloat(talleSeleccionado.metrosTotales);
+
+                if (metrosNecesarios > telaSeleccionada.metros) {
+                    cardSeleccionada?.classList.add('tela-error');
+                    cardSeleccionada.parentElement.querySelector('.text-danger')?.style.setProperty('display', 'block');
+                    botonEnviar.disabled = true;
+                } else {
+                    cardSeleccionada?.classList.remove('tela-error');
+                    cardSeleccionada.parentElement.querySelector('.text-danger')?.style.setProperty('display', 'none');
+                    botonEnviar.disabled = false;
+                }
+
+            }
+
+            cantidadInput.addEventListener('input', validarStock);
 
             prendaSelect.addEventListener('change', function () {
                 const prendaId = this.value;
-
-                // Limpiar talles anteriores
                 talleSelect.innerHTML = '<option value="" disabled selected>Seleccione un talle</option>';
-                telaSelect.innerHTML = '<option value="" disabled selected>Seleccione una tela</option>';
+                telaContainer.innerHTML = '';
+                telaIdInput.value = '';
+                talleSeleccionado = null;
+                telaSeleccionada = null;
+                cardSeleccionada = null;
 
                 if (prendaId) {
                     fetch('/talles-por-prenda/' + prendaId)
                         .then(response => {
-                            if (!response.ok) {
-                                throw new Error("Error al cargar los talles");
-                            }
+                            if (!response.ok) throw new Error("Error al cargar los talles");
                             return response.json();
                         })
                         .then(data => {
@@ -131,35 +160,71 @@
                                 talleSelect.appendChild(option);
                             });
                         })
-                        .catch(error => {
-                            console.error('Error al obtener talles:', error);
-                        });
+                        .catch(error => console.error('Error al obtener talles:', error));
                 }
             });
 
             talleSelect.addEventListener('change', async function () {
                 const talleId = this.value;
 
-                // Limpiar telas anteriores
-                telaSelect.innerHTML = '<option value="" selected>Seleccione una tela</option>';
+                telaIdInput.value = '';
+                telaContainer.innerHTML = '';
+                telaSeleccionada = null;
+                cardSeleccionada = null;
 
                 if (talleId) {
                     try {
                         const responseTalle = await fetch('/talle-por-id/' + talleId);
                         if (!responseTalle.ok) throw new Error("Error al cargar el talle");
-
-                        const talle = await responseTalle.json();
-                        const metrosTalle = talle.metrosTotales;
+                        talleSeleccionado = await responseTalle.json();
+                        const metrosTalle = talleSeleccionado.metrosTotales;
 
                         const url = `/telas-por-prenda/${prendaSelect.value}?metrosTalle=${metrosTalle}`;
                         const responseTelas = await fetch(url);
                         const telas = await responseTelas.json();
 
+                        telaContainer.innerHTML = '';
+                        document.getElementById('tituloTelas').style.display = 'block'; // mostrar el título
+
                         telas.forEach(tela => {
-                            const option = document.createElement('option');
-                            option.value = tela.id;
-                            option.textContent = tela.tipoTela + ' - ' + tela.color;
-                            telaSelect.appendChild(option);
+                            const col = document.createElement('div');
+                            col.className = 'col';
+
+                            const cardWrapper = document.createElement('div');
+                            cardWrapper.className = 'position-relative';
+
+                            const card = document.createElement('div');
+                            card.className = 'card h-100 tela-card';
+                            card.style.cursor = 'pointer';
+                            card.setAttribute('data-id', tela.id);
+
+                            card.innerHTML = `
+                            <img src="${tela.imagenUrl}" class="card-img-top" alt="${tela.tipoTela}" style="height: 100px; object-fit: cover;">
+                            <div class="card-body p-2">
+                                <h6 class="card-title text-center">${tela.tipoTela} - ${tela.color}</h6>
+                            </div>`;
+
+                            const errorMsg = document.createElement('div');
+                            errorMsg.className = 'text-danger mt-1 text-center fw-normal';
+                            errorMsg.style.display = 'none';
+                            errorMsg.textContent = 'Tela insuficiente de stock';
+
+                            card.addEventListener('click', () => {
+                                document.querySelectorAll('.tela-card').forEach(c => c.classList.remove('border-primary', 'tela-error'));
+                                document.querySelectorAll('.text-danger').forEach(e => e.style.display = 'none');
+
+                                card.classList.add('border-primary');
+                                telaIdInput.value = tela.id;
+                                telaSeleccionada = tela;
+                                cardSeleccionada = card;
+                                cardWrapper.errorMsg = errorMsg; // guardar referencia
+                                validarStock();
+                            });
+
+                            cardWrapper.appendChild(card);
+                            cardWrapper.appendChild(errorMsg);
+                            col.appendChild(cardWrapper);
+                            telaContainer.appendChild(col);
                         });
                     } catch (error) {
                         console.error('Error:', error);
@@ -167,8 +232,8 @@
                 }
             });
         });
-
     </script>
+
     </body>
     </html>
 

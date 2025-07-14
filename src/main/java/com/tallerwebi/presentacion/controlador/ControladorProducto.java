@@ -159,8 +159,16 @@ public class ControladorProducto {
 
     @RequestMapping(path = "/eliminar-producto/{id}", method = RequestMethod.GET)
     public ModelAndView eliminarProductoDePedido (@PathVariable Long id) {
+        this.reponerStockTela(id);
         servicioProducto.eliminarProducto(id);
         return new ModelAndView("detalle-pedido");
     }
 
+    private void reponerStockTela(Long idProducto){
+        Producto productoEncontrado = servicioProducto.buscarPorId(idProducto);
+        Double metrosTela = productoEncontrado.getTela().getMetros();
+        Double metrosCantidadTalle = productoEncontrado.getTalle().getMetrosTotales() * productoEncontrado.getCantidad();
+        productoEncontrado.getTela().setMetros(metrosTela + metrosCantidadTalle);
+        servicioTela.actualizar(productoEncontrado.getTela());
+    }
 }
