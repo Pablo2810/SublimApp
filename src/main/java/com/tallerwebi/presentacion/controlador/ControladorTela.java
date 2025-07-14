@@ -342,16 +342,16 @@ public class ControladorTela {
     public List<DatosTela> obtenerTelasPorPrenda(
             @PathVariable("prendaId") Long prendaId,
             @RequestParam("metrosTalle") Double metrosTalle) {
+
         List<Tela> telas = servicioTela.buscarTelasDePrendaConMetrosSuficientesPorIdPrenda(prendaId, metrosTalle);
+
         return telas.stream()
                 .map(t -> new DatosTela(
                         t.getId(),
                         t.getTipoTela(),
                         t.getMetros(),
                         t.getColor(),
-                        t.getPrecio(),
-                        t.getImagenUrl(),
-                        t.getDescripcion()))
+                        t.getImagenUrl()))
                 .collect(Collectors.toList());
     }
 

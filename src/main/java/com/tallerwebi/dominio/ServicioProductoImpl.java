@@ -35,6 +35,11 @@ public class ServicioProductoImpl implements ServicioProducto {
         repositorioProducto.eliminarProducto(idProducto);
     }
 
+    @Override
+    public Producto buscarPorId(Long id) {
+        return repositorioProducto.buscar(id);
+    }
+
     /*@Override
     public DatosProducto generarDatosProducto(Archivo archivo, Prenda prenda, Integer cantidad, Double precio, Talle talle, Tela tela) {
         DatosProducto dtoProducto = new DatosProducto();

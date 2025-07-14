@@ -91,5 +91,10 @@ public class RepositorioTelaImpl implements RepositorioTela {
                 .list();
     }
 
+    @Override
+    public void actualizar(Tela tela) {
+        sessionFactory.getCurrentSession().update(tela);
+    }
+
 }
 

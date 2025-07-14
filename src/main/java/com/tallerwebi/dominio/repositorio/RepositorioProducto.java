@@ -18,4 +18,6 @@ public interface RepositorioProducto {
     Boolean actualizarProducto(Producto producto);
 
     Producto guardarProducto(Producto producto);
+
+    Producto buscar(Long id);
 }
