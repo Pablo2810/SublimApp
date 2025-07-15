@@ -41,6 +41,16 @@
         <p th:text="${error}"></p>
     </div>
 
+    <!-- Mensaje de éxito -->
+    <div th:if="${mensajeExito}" class="alert alert-success text-center">
+        <p th:text="${mensajeExito}"></p>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div th:if="${mensajeError}" class="alert alert-danger text-center">
+        <p th:text="${mensajeError}"></p>
+    </div>
+
     <table class="table table-dark table-hover text-center w-75 container mb-4">
         <thead>
         <tr>
@@ -80,7 +90,7 @@
     <section class="d-flex container w-75 justify-content-around align-items-center mb-5 my-3">
 
         <div class="w-25">
-            <a th:href="@{/nuevo-pedido}" class="btn btn-light w-100">Realizar otro producto</a>
+            <a th:href="@{/nuevo-pedido}" class="btn btn-light w-100">Sumar otro producto al carrito</a>
         </div>
 
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPago"

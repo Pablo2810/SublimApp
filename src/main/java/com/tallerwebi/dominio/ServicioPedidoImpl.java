@@ -2,12 +2,13 @@ package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.repositorio.RepositorioPedido;
+import com.tallerwebi.dominio.repositorio.RepositorioProducto;
+import com.tallerwebi.dominio.repositorio.RepositorioTela;
 import com.tallerwebi.dominio.servicio.ServicioEmail;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -20,38 +21,17 @@ public class ServicioPedidoImpl implements ServicioPedido {
 
     RepositorioPedido repositorioPedido;
     ServicioEmail servicioEmail;
+    RepositorioProducto repositorioProducto;
+    RepositorioTela repositorioTela;
 
     @Autowired
-    public ServicioPedidoImpl(RepositorioPedido repositorioPedido, ServicioEmail servicioEmail) {
+    public ServicioPedidoImpl(RepositorioPedido repositorioPedido, ServicioEmail servicioEmail,
+                              RepositorioProducto repositorioProducto, RepositorioTela repositorioTela) {
         this.repositorioPedido = repositorioPedido;
         this.servicioEmail = servicioEmail;
+        this.repositorioProducto = repositorioProducto;
+        this.repositorioTela = repositorioTela;
     }
-
-    // comento estos dos metodos que no se usan
-//    @Override
-//    public Pedido registrarPedido(String codigoPedido, Usuario usuario, HashSet<Producto> productos) {
-//        LocalDate fecha = LocalDate.now();
-//        long demora = 3L; // calcular por simulación
-//
-//        Pedido nuevoPedido = new Pedido();
-//        nuevoPedido.setFechaCreacion(fecha);
-//        nuevoPedido.setFechaEntrega(fecha.plusDays(demora));
-//        nuevoPedido.setEstado(Estado.EN_ESPERA);
-//        nuevoPedido.setProductos(productos);
-//        nuevoPedido.setUsuarioPedido(usuario);
-//        nuevoPedido.setMontoTotal(calcularCostoTotal(nuevoPedido));
-//
-//        repositorioPedido.guardarPedido(nuevoPedido);
-//
-//        return nuevoPedido;
-//    }
-//
-//    @Override
-//    public Pedido registrarPedidoConDescuento(String codigoPedido, Usuario usuario, HashSet<Producto> productos, Promocion promocion) {
-//        Pedido pedido = registrarPedido(codigoPedido, usuario, productos);
-//        aplicarPromocion(pedido, promocion);
-//        return pedido;
-//    }
 
     @Override
     public Double calcularCostoTotal(Pedido pedido, double cotizacion) {
@@ -122,13 +102,22 @@ public class ServicioPedidoImpl implements ServicioPedido {
     }
 
     @Override
-    public void asociarProductoPedido(Pedido pedido){
+    public void asociarProductoPedido(Pedido pedido) {
+        if (pedido == null || pedido.getProductos() == null) {
+            throw new IllegalArgumentException("Pedido no válido o sin productos.");
+        }
+
         double total = 0.0;
-        for (Producto producto: pedido.getProductos()) {
+
+        for (Producto producto : pedido.getProductos()) {
+            if (producto.getPrecio() == null) {
+                throw new IllegalArgumentException("El producto tiene precio nulo.");
+            }
+
             total += producto.getPrecio() * producto.getCantidad();
         }
-        pedido.setMontoTotal(total);
 
+        pedido.setMontoTotal(total);
         repositorioPedido.actualizar(pedido);
     }
 
@@ -183,11 +172,12 @@ public class ServicioPedidoImpl implements ServicioPedido {
         }
     }
 
-    @Transactional
+    @Override
     public void eliminarProductoDelPedido(Pedido pedido, Long productoId) {
-        if (pedido == null || pedido.getProductos() == null) return;
+        if (pedido == null || pedido.getProductos() == null) {
+            throw new IllegalArgumentException("Pedido no válido o sin productos.");
+        }
 
-        // Buscar producto en el pedido
         Producto productoAEliminar = pedido.getProductos()
                 .stream()
                 .filter(p -> p.getId().equals(productoId))
@@ -195,9 +185,25 @@ public class ServicioPedidoImpl implements ServicioPedido {
                 .orElse(null);
 
         if (productoAEliminar != null) {
-            pedido.getProductos().remove(productoAEliminar);
-            // Guardar cambios en la base
-            repositorioPedido.actualizar(pedido);
+            try {
+                // Reponer stock
+                Double metrosTela = productoAEliminar.getTela().getMetros();
+                Double metrosCantidad = productoAEliminar.getTalle().getMetrosTotales() * productoAEliminar.getCantidad();
+                productoAEliminar.getTela().setMetros(metrosTela + metrosCantidad);
+                repositorioTela.actualizar(productoAEliminar.getTela());
+
+                // Eliminar producto primero
+                repositorioProducto.eliminarProducto(productoId);
+
+                // Quitar producto de la colección y actualizar pedido
+                pedido.getProductos().remove(productoAEliminar);
+                repositorioPedido.actualizar(pedido);
+
+            } catch (Exception e) {
+                throw new RuntimeException("Error al eliminar el producto del pedido", e);
+            }
+        } else {
+            throw new IllegalArgumentException("Producto no encontrado en el pedido");
         }
     }
 

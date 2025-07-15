@@ -18,6 +18,7 @@ public class Pedido {
 
     private LocalDate fechaCreacion;
 
+    @Enumerated(EnumType.STRING)
     private Estado estado;
 
     private Double montoTotal;

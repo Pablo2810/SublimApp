@@ -106,13 +106,19 @@ public class Producto {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Producto producto = (Producto) o;
+        if (this.id == null || producto.id == null) {
+            // Si alguno no tiene id, no son iguales (es instancia nueva)
+            return false;
+        }
         return Objects.equals(id, producto.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return (id != null) ? Objects.hash(id) : System.identityHashCode(this);
     }
+
 }

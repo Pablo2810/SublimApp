@@ -40,20 +40,4 @@ public class ServicioProductoImpl implements ServicioProducto {
         return repositorioProducto.buscar(id);
     }
 
-    /*@Override
-    public DatosProducto generarDatosProducto(Archivo archivo, Prenda prenda, Integer cantidad, Double precio, Talle talle, Tela tela) {
-        DatosProducto dtoProducto = new DatosProducto();
-        dtoProducto.setCantidad(cantidad);
-        dtoProducto.setPrecio(precio);
-        dtoProducto.setTalle(talle);
-        dtoProducto.setTela(tela);
-        dtoProducto.setArchivo(archivo);
-        dtoProducto.setPrenda(prenda);
-
-        return dtoProducto;
-    }
-
-    public void ingresarProducto(DatosProducto producto, Pedido pedido) {
-
-    }*/
 }
