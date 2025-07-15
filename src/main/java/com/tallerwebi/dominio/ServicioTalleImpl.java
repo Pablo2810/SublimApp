@@ -1,14 +1,12 @@
 package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidad.Talle;
-import com.tallerwebi.dominio.entidad.Tela;
 import com.tallerwebi.presentacion.dto.DatosMedida;
 import com.tallerwebi.presentacion.dto.DatosTalle;
 import org.springframework.stereotype.Service;
 import com.tallerwebi.dominio.repositorio.RepositorioTalle;
 import com.tallerwebi.dominio.servicio.ServicioTalle;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Comparator;
@@ -74,9 +72,12 @@ public class ServicioTalleImpl implements ServicioTalle {
         List<Talle> talles = repositorioTalle.buscarTallesPorPais(medidas.getPais());
         talles.sort(Comparator.comparing(Talle::getMetrosTotales)); // O por descripción si preferís
 
+        double cintura = redondear(medidas.getCintura());
+        double pecho = redondear(medidas.getPecho());
+
         for (int i = 0; i < talles.size(); i++) {
             Talle talle = talles.get(i);
-            if (this.entraEnElRango(talle, medidas)) {
+            if (this.entraEnElRango(talle, cintura, pecho)) {
                 if (medidas.getPreferencia().equalsIgnoreCase("ajustado")) {
                     return talle;
                 } else if (medidas.getPreferencia().equalsIgnoreCase("holgado")) {
@@ -96,15 +97,23 @@ public class ServicioTalleImpl implements ServicioTalle {
         return repositorioTalle.buscarTallesPorPais(pais);
     }
 
-    private Boolean entraEnElRango(Talle talle, DatosMedida m) {
-        return (m.getCintura() >= talle.getCinturaMIN() && m.getCintura() <= talle.getCinturaMAX()) &&
-               (m.getPecho() >= talle.getPechoMIN() && m.getPecho() <= talle.getPechoMAX());
+    @Override
+    public Boolean entraEnElRango(Talle talle, double cintura, double pecho) {
+        double margen = 0.5;
+        return (cintura >= (talle.getCinturaMIN() - margen) && cintura <= (talle.getCinturaMAX() + margen)) &&
+                (pecho >= (talle.getPechoMIN() - margen) && pecho <= (talle.getPechoMAX() + margen));
     }
 
-    /*
     @Override
-    public Talle buscarTallePorId(Long talleId) {
-        return repositorioTalle.buscarTallePorId(talleId);
+    public double redondear(double valor) {
+        return Math.round(valor * 10.0) / 10.0;
     }
-    */
+
+    @Override
+    public DatosMedida convertirPulgadasACentimetrosYRedondear(DatosMedida medidas) {
+        medidas.setCintura(redondear(medidas.getCintura() * 2.54));
+        medidas.setPecho(redondear(medidas.getPecho() * 2.54));
+        return medidas;
+    }
+
 }
