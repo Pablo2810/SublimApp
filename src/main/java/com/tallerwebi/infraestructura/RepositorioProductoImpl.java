@@ -10,12 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
 public class RepositorioProductoImpl implements RepositorioProducto {
 
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     @Autowired
     public RepositorioProductoImpl(SessionFactory sessionFactory) {
@@ -24,27 +25,31 @@ public class RepositorioProductoImpl implements RepositorioProducto {
 
     @Override
     public List<Producto> listarProductosDeUnPedido(Long idPedido) {
-        return null;
+        return null; // A implementar si se necesita
     }
 
     @Override
     public List<Pedido> listarProductosBase() {
-        return null;
+        return null; // A implementar si se necesita
     }
 
     @Override
-    public Boolean eliminarProducto(Long idProducto) {
-        Producto producto = sessionFactory.getCurrentSession().get(Producto.class, idProducto);
-        if (producto != null) {
-            sessionFactory.getCurrentSession().delete(producto);
-            return true;
+    @Transactional
+    public void eliminarProducto(Long idProducto) {
+        Producto producto = this.buscar(idProducto);
+
+        for (Pedido pedido : producto.getPedidos()) {
+            pedido.getProductos().remove(producto);
         }
-        return false;
+
+        producto.getPedidos().clear();
+
+        sessionFactory.getCurrentSession().delete(producto);
     }
 
     @Override
     public Boolean actualizarProducto(Producto producto) {
-        return null;
+        return null; // A implementar si se necesita
     }
 
     @Override
@@ -58,3 +63,4 @@ public class RepositorioProductoImpl implements RepositorioProducto {
         return sessionFactory.getCurrentSession().get(Producto.class, id);
     }
 }
+

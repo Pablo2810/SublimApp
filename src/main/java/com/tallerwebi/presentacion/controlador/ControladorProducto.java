@@ -80,33 +80,18 @@ public class ControladorProducto {
             return new ModelAndView("redirect:/login");
         }
 
-        Prenda prenda = null;
-        Talle talle = null;
-        Tela tela = null;
-        Archivo archivo = null;
-
         try {
-            prenda = servicioPrenda.buscarPrendaPorId(datosProducto.getPrendaId());
-            talle = servicioTalle.obtenerTalle(datosProducto.getTalleId());
-            tela = servicioTela.obtenerTela(datosProducto.getTelaId());
+            Prenda prenda = servicioPrenda.buscarPrendaPorId(datosProducto.getPrendaId());
+            Talle talle = servicioTalle.obtenerTalle(datosProducto.getTalleId());
+            Tela tela = servicioTela.obtenerTela(datosProducto.getTelaId());
 
             if (Stream.of(prenda, talle, tela).anyMatch(Objects::isNull)) {
                 redirectAttributes.addFlashAttribute("mensajeError", "Materiales inválidos");
                 return new ModelAndView("redirect:/nuevo-pedido");
             }
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("mensajeError", "Error al traer los materiales del pedido");
-            return new ModelAndView("redirect:/nuevo-pedido");
-        }
 
-        try {
-            archivo = servicioArchivo.registrarArchivo(datosProducto.getArchivo());
-        } catch (ArchivoNoValido e) {
-            redirectAttributes.addFlashAttribute("mensajeError", "Ingrese un archivo válido");
-            return new ModelAndView("redirect:/nuevo-pedido");
-        }
+            Archivo archivo = servicioArchivo.registrarArchivo(datosProducto.getArchivo());
 
-        try {
             Producto producto = servicioProducto.registrarProducto(datosProducto.getCantidad(), archivo, prenda, talle, tela);
             if (producto == null) {
                 redirectAttributes.addFlashAttribute("mensajeError", "No se pudo registrar el producto");
@@ -117,39 +102,28 @@ public class ControladorProducto {
             pedido.getProductos().add(producto);
             servicioPedido.asociarProductoPedido(pedido);
 
-            try {
-                if (talle == null || producto == null || talle.getMetrosTotales() == null) {
-                    redirectAttributes.addFlashAttribute("mensajeError", "Datos inválidos");
-                    return new ModelAndView("redirect:/nuevo-pedido");
-                }
-                Double metrosNecesarios = talle.getMetrosTotales() * producto.getCantidad();
-                servicioTela.consumirTelaParaProducto(tela, metrosNecesarios, usuario);
-            } catch (StockInsuficiente e) {
-                redirectAttributes.addFlashAttribute("mensajeError", "No hay stock suficiente de la tela seleccionada");
-                return new ModelAndView("redirect:/nuevo-pedido");
-            } catch (TelaNoEncontrada e) {
-                redirectAttributes.addFlashAttribute("mensajeError", "Tela no encontrada");
-                return new ModelAndView("redirect:/nuevo-pedido");
-            }
+            Double metrosNecesarios = talle.getMetrosTotales() * producto.getCantidad();
+            servicioTela.consumirTelaParaProducto(tela, metrosNecesarios, usuario);
 
-            try {
-                double cotizacionDolar = servicioCotizacionDolar.obtenerCotizacionDolar();
-                model.put("cotizacionDolar", cotizacionDolar);
-            } catch (Exception e) {
-                model.addAttribute("mensajeError", "Error al consultar cotización del dólar.");
-                return new ModelAndView("redirect:/nuevo-pedido");
-            }
-
+            double cotizacionDolar = servicioCotizacionDolar.obtenerCotizacionDolar();
+            model.put("cotizacionDolar", cotizacionDolar);
             model.put("pedido", pedido);
             return new ModelAndView("detalle-pedido", model);
 
+        } catch (ArchivoNoValido e) {
+            redirectAttributes.addFlashAttribute("mensajeError", "Ingrese un archivo válido");
+        } catch (StockInsuficiente e) {
+            redirectAttributes.addFlashAttribute("mensajeError", "No hay stock suficiente de la tela seleccionada");
+        } catch (TelaNoEncontrada e) {
+            redirectAttributes.addFlashAttribute("mensajeError", "Tela no encontrada");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("mensajeError", "Ocurrió un error al registrar el pedido");
-            return new ModelAndView("redirect:/nuevo-pedido");
         }
+
+        return new ModelAndView("redirect:/nuevo-pedido");
     }
 
-    private void reponerStockTela(Long idProducto){
+    private void reponerStockTela(Long idProducto) {
         Producto productoEncontrado = servicioProducto.buscarPorId(idProducto);
         Double metrosTela = productoEncontrado.getTela().getMetros();
         Double metrosCantidadTalle = productoEncontrado.getTalle().getMetrosTotales() * productoEncontrado.getCantidad();
@@ -157,3 +131,4 @@ public class ControladorProducto {
         servicioTela.actualizar(productoEncontrado.getTela());
     }
 }
+

@@ -17,24 +17,25 @@ import java.util.UUID;
 @Controller
 public class ControladorPedido {
 
-
     private final ServicioPedido servicioPedido;
     private final ServicioProducto servicioProducto;
     private final ServicioUsuario servicioUsuario;
     private final ServicioMaquina servicioMaquina;
+    private final ServicioTela servicioTela;
 
     @Autowired
     public ControladorPedido(ServicioPedido servicioPedido,
                              ServicioUsuario servicioUsuario,
                              ServicioProducto servicioProducto,
-                             ServicioMaquina servicioMaquina) {
+                             ServicioMaquina servicioMaquina,
+                             ServicioTela servicioTela) {
         this.servicioPedido = servicioPedido;
         this.servicioUsuario = servicioUsuario;
         this.servicioProducto = servicioProducto;
         this.servicioMaquina = servicioMaquina;
+        this.servicioTela = servicioTela;
     }
 
-    // Muestra el pedido pendiente (carrito)
     @RequestMapping(value = "/detalle-pedido", method = RequestMethod.GET)
     public ModelAndView mostrarCarrito(ModelMap model, HttpServletRequest request) {
         if (!model.containsAttribute("pedido")) {
@@ -46,7 +47,6 @@ public class ControladorPedido {
         return new ModelAndView("detalle-pedido", model);
     }
 
-    // Muestra historial de pedidos ya pagados o no pendientes
     @RequestMapping(value = "/historial-pedidos", method = RequestMethod.GET)
     public ModelAndView historialPedidos(HttpServletRequest request) {
         ModelMap model = new ModelMap();
@@ -55,8 +55,7 @@ public class ControladorPedido {
         if (usuario != null) {
             try {
                 List<Pedido> pedidos = servicioPedido.listarPedidosDelUsuarioNoPendiente(usuario.getId());
-
-                model.put("mensajeSinPedidos", "Todavia no tienes pedidos");
+                model.put("mensajeSinPedidos", "Todavía no tienes pedidos");
                 model.put("pedidos", pedidos);
             } catch (Exception e) {
                 return new ModelAndView("redirect:/home");
@@ -67,7 +66,6 @@ public class ControladorPedido {
 
         return new ModelAndView("historial-pedidos", model);
     }
-
 
     @RequestMapping(value = "/cancelar-pedido/{id}", method = RequestMethod.POST)
     public ModelAndView cancelarPedido(@PathVariable("id") Long id,
@@ -82,25 +80,20 @@ public class ControladorPedido {
         return new ModelAndView("redirect:/historial-pedidos");
     }
 
-    // Procesa el pago del pedido pendiente
     @RequestMapping(value = "/pagar-pedido", method = RequestMethod.POST)
     public ModelAndView pagarPedidoPendiente(@RequestParam Long pedidoId,
                                              @RequestParam("moneda") Moneda moneda,
                                              @RequestParam("cotizacion") double cotizacion,
                                              HttpServletRequest request) {
         try {
-            // Cambiar estado a EN_ESPERA
             boolean cambioExitoso = servicioPedido.cambiarEstadoPedido(pedidoId, Estado.EN_ESPERA);
             if (!cambioExitoso) {
                 throw new RuntimeException("No se pudo cambiar el estado del pedido");
             }
-            // Calcular demora y completar pedido
             int diasEspera = servicioMaquina.calcularTiempoEspera();
             servicioPedido.generarPedidoCompleto(pedidoId, moneda, cotizacion, UUID.randomUUID().toString(), LocalDate.now(), diasEspera);
-            // Redirigir a historial
             return new ModelAndView("redirect:/historial-pedidos");
         } catch (Exception e) {
-            // En caso de error mostrar detalle pedido con mensaje
             ModelMap model = new ModelMap();
             Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
             Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario);
@@ -115,20 +108,34 @@ public class ControladorPedido {
                                          HttpServletRequest request,
                                          RedirectAttributes redirectAttributes) {
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuarioLogueado");
-        Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario);
 
         try {
-            if (pedido != null && pedido.getEstado() == Estado.PENDIENTE) {
-                servicioPedido.eliminarProductoDelPedido(pedido, productoId);
-                servicioPedido.asociarProductoPedido(pedido);
-                redirectAttributes.addFlashAttribute("mensajeExito", "Producto eliminado correctamente.");
-            } else {
-                redirectAttributes.addFlashAttribute("mensajeError", "No se puede eliminar el producto en este estado.");
+            reponerStockTela(productoId);
+            servicioProducto.eliminarProducto(productoId);
+
+            Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario);
+            if (pedido != null && pedido.getProductos().isEmpty()) {
+                servicioPedido.eliminarPedido(pedido);
+                ModelMap model = new ModelMap();
+                model.put("mensaje", "No tienes pedidos pendientes");
+                model.put("pedido", null);
+                return new ModelAndView("detalle-pedido", model);
             }
+
+            redirectAttributes.addFlashAttribute("mensajeExito", "Producto eliminado correctamente.");
         } catch (Exception e) {
-            e.printStackTrace();
             redirectAttributes.addFlashAttribute("mensajeError", "Error al eliminar el producto: " + e.getMessage());
         }
+
         return new ModelAndView("redirect:/detalle-pedido");
     }
+
+    private void reponerStockTela(Long idProducto) {
+        Producto productoEncontrado = servicioProducto.buscarPorId(idProducto);
+        Double metrosTela = productoEncontrado.getTela().getMetros();
+        Double metrosCantidadTalle = productoEncontrado.getTalle().getMetrosTotales() * productoEncontrado.getCantidad();
+        productoEncontrado.getTela().setMetros(metrosTela + metrosCantidadTalle);
+        servicioTela.actualizar(productoEncontrado.getTela());
+    }
 }
+
