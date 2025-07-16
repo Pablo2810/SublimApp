@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
@@ -40,22 +41,17 @@ public class RepositorioProductoImpl implements RepositorioProducto {
     }
 
     @Override
-    public Boolean eliminarProducto(Long idProducto) {
-        /*Transaction tx = sessionFactory.getCurrentSession().beginTransaction();
+    @Transactional
+    public void eliminarProducto(Long idProducto) {
+        Producto producto = this.buscar(idProducto);
 
-        String hql = "DELETE FROM Producto WHERE id = :idProducto AND :idPedido IN (pedidos)";
-        Query query = this.sessionFactory.getCurrentSession().createQuery(hql);
-        query.setParameter("idProducto", idProducto);
-
-        int cantidadDeActualizaciones = query.executeUpdate();
-
-        if(cantidadDeActualizaciones > 0){
-            tx.rollback();
-            return false;
+        for (Pedido pedido : producto.getPedidos()) {
+            pedido.getProductos().remove(producto);
         }
-        tx.commit();
-        return true;*/
-        return null;
+
+        producto.getPedidos().clear();
+
+        sessionFactory.getCurrentSession().delete(producto);
     }
 
     @Override

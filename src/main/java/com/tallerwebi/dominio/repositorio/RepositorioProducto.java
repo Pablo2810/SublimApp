@@ -13,7 +13,7 @@ public interface RepositorioProducto {
 
     List<Pedido> listarProductosBase();
 
-    Boolean eliminarProducto(Long idProducto);
+    void eliminarProducto(Long idProducto);
 
     Boolean actualizarProducto(Producto producto);
 

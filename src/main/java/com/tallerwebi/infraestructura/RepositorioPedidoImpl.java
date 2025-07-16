@@ -131,6 +131,11 @@ public class RepositorioPedidoImpl implements RepositorioPedido {
     }
 
     @Override
+    public void eliminar(Pedido pedidoEncontrado) {
+        sessionFactory.getCurrentSession().delete(pedidoEncontrado);
+    }
+
+    @Override
     public Boolean eliminarPedido(Long idPedido) {
         return null;
     }

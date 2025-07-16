@@ -25,4 +25,6 @@ public interface RepositorioPedido {
     void cambiarEstadoPedido(Pedido pedido, Estado nuevoEstado);
 
     List<Pedido> listarPedidosDelUsuarioNoPendiente(Long idUsuario);
+
+    void eliminar(Pedido pedidoEncontrado);
 }

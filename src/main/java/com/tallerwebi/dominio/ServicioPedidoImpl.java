@@ -201,4 +201,14 @@ public class ServicioPedidoImpl implements ServicioPedido {
         }
     }
 
+    @Override
+    public Pedido buscarPendiente(Usuario usuario) {
+        return repositorioPedido.buscarPedidoPendientePorUsuario(usuario);
+    }
+
+    @Override
+    public void eliminarPedido(Pedido pedidoEncontrado) {
+        repositorioPedido.eliminar(pedidoEncontrado);
+    }
+
 }
