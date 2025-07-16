@@ -19,5 +19,5 @@ public interface RepositorioProducto {
 
     Producto guardarProducto(Producto producto);
 
-    Producto obtenerProducto(Long id);
+    Producto buscar(Long id);
 }

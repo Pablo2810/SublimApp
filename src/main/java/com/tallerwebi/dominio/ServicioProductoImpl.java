@@ -38,10 +38,14 @@ public class ServicioProductoImpl implements ServicioProducto {
 
     @Override
     public void actualizarImagenProducto(Long id, Producto producto) {
-        Producto productoEncontrado = repositorioProducto.obtenerProducto(id);
+        Producto productoEncontrado = repositorioProducto.buscar(id);
         productoEncontrado.setImagenUrl(producto.getImagenUrl());
         productoEncontrado.setImagenPrendaConDisenioUrl(producto.getImagenPrendaConDisenioUrl());
         repositorioProducto.actualizarProducto(productoEncontrado);
+    }
+
+    public Producto buscarPorId(Long id) {
+        return repositorioProducto.buscar(id);
     }
 
 }

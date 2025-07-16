@@ -50,8 +50,9 @@ function actualizarResumenPago() {
   }
 
   if (metodo === "credito" && cuotas > 1) {
-    const valorCuota = total / cuotas;
-    detalleCuotas.textContent = `En ${cuotas} cuotas de $${valorCuota.toFixed(2)}.`;
+    const simbolo = enDolares ? "USD" : "$";
+    const valorCuota = (enDolares ? (total / obtenerCotizacionDolar()) : total) / cuotas;
+    detalleCuotas.textContent = `En ${cuotas} cuotas de ${simbolo} ${valorCuota.toFixed(2)}.`;
   } else {
     detalleCuotas.textContent = "";
   }

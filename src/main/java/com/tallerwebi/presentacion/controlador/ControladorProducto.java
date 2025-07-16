@@ -1,7 +1,5 @@
 package com.tallerwebi.presentacion.controlador;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.excepcion.ArchivoNoValido;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
@@ -9,18 +7,15 @@ import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
 import com.tallerwebi.dominio.servicio.*;
 import com.tallerwebi.presentacion.dto.*;
 import io.imagekit.sdk.models.results.Result;
+import com.tallerwebi.presentacion.dto.DatosPrenda;
+import com.tallerwebi.presentacion.dto.DatosProducto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -121,6 +116,11 @@ public class ControladorProducto {
 
         try {
             Producto producto = servicioProducto.registrarProducto(datosProducto.getCantidad(), archivo, prenda, talle, tela);
+            if (producto.getId() == null) {
+                redirectAttributes.addFlashAttribute("mensajeError", "No se pudo registrar el producto");
+                return new ModelAndView("redirect:/nuevo-pedido");
+            }
+
             String nombreImagen = usuario.getId().toString() + producto.getId().toString();
             Result imagenSubida = servicioStorageImagen.subirImagen(datosProducto.getArchivo(), "disenios_subidos", nombreImagen);
             producto.setImagenUrl(imagenSubida.getUrl());
@@ -130,11 +130,6 @@ public class ControladorProducto {
                 producto.setImagenPrendaConDisenioUrl(urlPrendaConDisenio);
             }
             servicioProducto.actualizarImagenProducto(producto.getId(), producto);
-
-            if (producto == null) {
-                redirectAttributes.addFlashAttribute("mensajeError", "No se pudo registrar el producto");
-                return new ModelAndView("redirect:/nuevo-pedido");
-            }
 
             Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario);
             pedido.getProductos().add(producto);
@@ -172,10 +167,12 @@ public class ControladorProducto {
         }
     }
 
-    @RequestMapping(path = "/eliminar-producto/{id}", method = RequestMethod.GET)
-    public ModelAndView eliminarProductoDePedido (@PathVariable Long id) {
-        servicioProducto.eliminarProducto(id);
-        return new ModelAndView("detalle-pedido");
+    private void reponerStockTela(Long idProducto){
+        Producto productoEncontrado = servicioProducto.buscarPorId(idProducto);
+        Double metrosTela = productoEncontrado.getTela().getMetros();
+        Double metrosCantidadTalle = productoEncontrado.getTalle().getMetrosTotales() * productoEncontrado.getCantidad();
+        productoEncontrado.getTela().setMetros(metrosTela + metrosCantidadTalle);
+        servicioTela.actualizar(productoEncontrado.getTela());
     }
 
     @ResponseBody

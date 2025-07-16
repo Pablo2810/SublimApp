@@ -14,7 +14,7 @@
   <link rel="stylesheet" th:href="@{/webjars/font-awesome/6.4.0/css/all.min.css}" />
   <!-- custom style -->
   <link rel="stylesheet" th:href="@{/css/main.css}"/>
-    <link rel="stylesheet" th:href="@{/css/modoOscuro.css}">
+
 
     <style>
     body {
@@ -23,14 +23,15 @@
   </style>
 </head>
 <body class="p-0 m-0">
-  <div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
-  <main style="height: fit-content;">
+<th:block th:replace="templates/nav :: nav"></th:block>
+<main style="height: fit-content;">
     <section class="main w-100 d-flex p-5" style="height: 600px;">
       <div class="p-0 w-50">
         <h2 class="m-0 mb-4 text-white fw-bold fs-1">¡Bienvenido! Realiza pedidos de tus camisetas favoritas, personalizadas o deportivas</h2>
         <p class="m-0 mb-4 text-white fs-4 pe-3">
-          Aqui podras realizar los pedidos de tus camisetas preferidas,
-          realiza tu pedido, observa el estado en el que se encuentra y
+          Aqui podras realizar los pedidos de tus camisetas preferidas o
+          las telas que quieras comprar al mejor precio del mercado.
+          Realiza tu pedido, observa el estado en el que se encuentra y
           realiza el pago correspondiente todo desde el mismo sitio web.
         </p>
         <a th:href="@{/nuevo-pedido}" class="btn w-50 btn-lg btn-outline-light text-decoration-none">Realizar pedido</a>
@@ -66,11 +67,13 @@
       </div>
       <div class="container text-dark text-center px-5">
         <h1 class="mb-3">¿Quiénes Somos?</h1>
-        <p class="m-0 px-5 fw-light fs-4">
+        <p class="m-0 px-5 fw-light fs-4 text-light">
           En nuestro taller combinamos pasión por el deporte y creatividad para ofrecer camisetas personalizadas
           que se ajustan a tu estilo y necesidades. Nos especializamos en indumentaria deportiva de calidad,
           cuidando cada detalle desde la elección de las telas hasta el diseño final. Creemos que cada equipo,
-          grupo o persona merece una prenda que lo represente con identidad y confort.
+          grupo o persona merece una prenda que lo represente con identidad y confort. Ademas ofrecemos servicio
+          mayorista para poder comprar las telas que desees al precio por mayor para poder confeccionar tus propias
+          equipaciones.
         </p>
       </div>
       <div class="galeria pb-5 text-center mt-5">

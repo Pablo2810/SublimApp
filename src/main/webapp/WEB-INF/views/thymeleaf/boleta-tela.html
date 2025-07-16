@@ -5,7 +5,43 @@
   <title>Boleta de Compra</title>
   <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
   <link rel="stylesheet" th:href="@{/css/main.css}" />
-  <link rel="stylesheet" th:href="@{/css/modoOscuro.css}" />
+  <style>
+    html {
+     background-color: #06142e;
+   }
+
+   body {
+     font-family: "Lexend Deca", sans-serif;
+     background-color: #06142e;
+     color: white;
+   }
+
+   h2 {
+     text-align: center;
+     margin: 2rem 0 1.5rem;
+     font-weight: 600;
+     color: white;
+   }
+
+   #boleta {
+     max-width: 850px;
+     margin: 0 auto;
+     background-color: #ffffff;
+     color: #212529;
+     border-radius: 1rem;
+     padding: 2rem;
+     box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.2);
+   }
+
+   .boleta-actions {
+     max-width: 850px;
+     margin: 2rem auto 3rem;
+     display: flex;
+     gap: 1rem;
+     flex-wrap: wrap;
+     justify-content: center;
+   }
+  </style>
 </head>
 <body class="p-0 m-0">
 <div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center"
