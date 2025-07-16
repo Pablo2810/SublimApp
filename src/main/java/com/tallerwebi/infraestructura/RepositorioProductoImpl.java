@@ -58,30 +58,13 @@ public class RepositorioProductoImpl implements RepositorioProducto {
     }
 
     @Override
-    public Boolean actualizarProducto(Producto producto) {
-        /*
-        Transaction tx = sessionFactory.getCurrentSession().beginTransaction();
+    public void actualizarProducto(Producto producto) {
+        sessionFactory.getCurrentSession().saveOrUpdate(producto);
+    }
 
-        String hql = "UPDATE Producto SET archivo = :archivo, prenda = :prenda, cantidad = :cantidad," +
-                "pedidos = :pedidos, precio = :precio, tela = :tela," +
-                "talle = :talle WHERE id = :id ";
-        Query query = this.sessionFactory.getCurrentSession().createQuery(hql);
-        query.setParameter("id", producto.getId());
-        query.setParameter("archivo", producto.getArchivo());
-        query.setParameter("prenda", producto.getPrenda());
-        query.setParameter("cantidad", producto.getCantidad());
-        query.setParameter("pedidos", producto.getPedidos());
-        query.setParameter("precio", producto.getPrecio());
-        query.setParameter("tela", producto.getTela());
-        int cantidadDeActualizaciones = query.executeUpdate();
-
-        if(cantidadDeActualizaciones > 1){
-            tx.rollback();
-            return false;
-        }
-        tx.commit();
-        return true;*/
-        return null;
+    @Override
+    public Producto obtenerProducto(Long id) {
+        return sessionFactory.getCurrentSession().get(Producto.class, id);
     }
 
     @Override

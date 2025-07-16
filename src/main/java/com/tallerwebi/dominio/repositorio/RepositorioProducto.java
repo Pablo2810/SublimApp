@@ -15,7 +15,9 @@ public interface RepositorioProducto {
 
     Boolean eliminarProducto(Long idProducto);
 
-    Boolean actualizarProducto(Producto producto);
+    void actualizarProducto(Producto producto);
 
     Producto guardarProducto(Producto producto);
+
+    Producto obtenerProducto(Long id);
 }

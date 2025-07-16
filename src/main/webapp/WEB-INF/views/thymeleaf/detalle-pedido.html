@@ -57,7 +57,10 @@
         </thead>
         <tbody>
         <tr th:each="producto : ${pedido.productos}">
-            <td>Imagen</td> <!-- Podés reemplazar con imagen real si existe -->
+            <td>
+                <img th:if="${producto.imagenPrendaConDisenioUrl == null}" th:src="${producto.imagenUrl}" style="width: 250px">
+                <img th:if="${producto.imagenPrendaConDisenioUrl != null}" th:src="${producto.imagenPrendaConDisenioUrl}" style="width: 250px">
+            </td>
             <td th:text="${producto.prenda.descripcion}">Prenda</td>
             <td th:text="${producto.talle.descripcion}">Talle</td>
             <td th:text="${producto.tela.tipoTela} + ' - ' + ${producto.tela.color}">Tela</td>

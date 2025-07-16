@@ -35,6 +35,9 @@ public class Producto {
     @JoinColumn(name = "talle")
     private Talle talle;
 
+    private String imagenUrl;
+    private String imagenPrendaConDisenioUrl;
+
     public Long getId() {
         return id;
     }
@@ -97,6 +100,26 @@ public class Producto {
 
     public void setTela(Tela tela) {
         this.tela = tela;
+    }
+
+    public void setPedidos(Set<Pedido> pedidos) {
+        this.pedidos = pedidos;
+    }
+
+    public String getImagenUrl() {
+        return imagenUrl;
+    }
+
+    public void setImagenUrl(String imagenUrl) {
+        this.imagenUrl = imagenUrl;
+    }
+
+    public String getImagenPrendaConDisenioUrl() {
+        return imagenPrendaConDisenioUrl;
+    }
+
+    public void setImagenPrendaConDisenioUrl(String imagenPrendaConDisenioUrl) {
+        this.imagenPrendaConDisenioUrl = imagenPrendaConDisenioUrl;
     }
 
     public void agregarPedido(Pedido pedido) {

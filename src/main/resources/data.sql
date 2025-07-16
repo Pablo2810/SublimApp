@@ -42,7 +42,7 @@ INSERT INTO Tela(color, imagenUrl, metros, precio, tipoTela) VALUES ('blanco', '
 
 
 -- Prendas
-INSERT INTO Prenda(id, descripcion, precioBase) VALUES (1, 'Camiseta', 7000.0);
+INSERT INTO Prenda(id, descripcion, precioBase, imagenUrl) VALUES (1, 'Camiseta', 7000.0, "https://ik.imagekit.io/dwcllhcyp/prendas/remera_blanca.png");
 INSERT INTO Prenda(id, descripcion, precioBase) VALUES (2, 'Short', 5500.0);
 INSERT INTO Prenda(id, descripcion, precioBase) VALUES (3, 'Buzo', 9000.0);
 INSERT INTO Prenda(id, descripcion, precioBase) VALUES (4, 'Campera', 12000.0);

@@ -7,9 +7,8 @@ import com.tallerwebi.dominio.excepcion.ArchivoNoValido;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
 import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
 import com.tallerwebi.dominio.servicio.*;
-import com.tallerwebi.presentacion.dto.DatosPrenda;
-import com.tallerwebi.presentacion.dto.DatosProducto;
-import com.tallerwebi.presentacion.dto.ResultadoCotizaciones;
+import com.tallerwebi.presentacion.dto.*;
+import io.imagekit.sdk.models.results.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -36,6 +35,8 @@ public class ControladorProducto {
     private final ServicioProducto servicioProducto;
     private final ServicioPedido servicioPedido;
     private final ServicioCotizacionDolar servicioCotizacionDolar;
+    private final ServicioGeneradorImagenIA servicioGeneradorImagenIA;
+    private final ServicioStorageImagen servicioStorageImagen;
 
     @Autowired
     public ControladorProducto(ServicioProducto servicioProducto,
@@ -44,7 +45,9 @@ public class ControladorProducto {
                                ServicioTela servicioTela,
                                ServicioArchivo servicioArchivo,
                                ServicioPedido servicioPedido,
-                               ServicioCotizacionDolar servicioCotizacionDolar) {
+                               ServicioCotizacionDolar servicioCotizacionDolar,
+                               ServicioGeneradorImagenIA servicioGeneradorImagenIA,
+                               ServicioStorageImagen servicioStorageImagen) {
         this.servicioPrenda = servicioPrenda;
         this.servicioTalle = servicioTalle;
         this.servicioTela = servicioTela;
@@ -52,6 +55,8 @@ public class ControladorProducto {
         this.servicioProducto = servicioProducto;
         this.servicioPedido = servicioPedido;
         this.servicioCotizacionDolar = servicioCotizacionDolar;
+        this.servicioGeneradorImagenIA = servicioGeneradorImagenIA;
+        this.servicioStorageImagen = servicioStorageImagen;
     }
 
     @RequestMapping(path = "/nuevo-pedido", method = RequestMethod.GET)
@@ -116,6 +121,16 @@ public class ControladorProducto {
 
         try {
             Producto producto = servicioProducto.registrarProducto(datosProducto.getCantidad(), archivo, prenda, talle, tela);
+            String nombreImagen = usuario.getId().toString() + producto.getId().toString();
+            Result imagenSubida = servicioStorageImagen.subirImagen(datosProducto.getArchivo(), "disenios_subidos", nombreImagen);
+            producto.setImagenUrl(imagenSubida.getUrl());
+
+            if (prenda.getImagenUrl() != null) {
+                String urlPrendaConDisenio = servicioStorageImagen.modificarImagen(prenda.getImagenUrl(), imagenSubida);
+                producto.setImagenPrendaConDisenioUrl(urlPrendaConDisenio);
+            }
+            servicioProducto.actualizarImagenProducto(producto.getId(), producto);
+
             if (producto == null) {
                 redirectAttributes.addFlashAttribute("mensajeError", "No se pudo registrar el producto");
                 return new ModelAndView("redirect:/nuevo-pedido");
@@ -161,6 +176,19 @@ public class ControladorProducto {
     public ModelAndView eliminarProductoDePedido (@PathVariable Long id) {
         servicioProducto.eliminarProducto(id);
         return new ModelAndView("detalle-pedido");
+    }
+
+    @ResponseBody
+    @GetMapping(path = "/generar-imagen")
+    public ResultadoGenerarImagenIA generarImagen(@RequestParam("prompt") String prompt,
+                              @RequestParam("preferenciaModelo") String modelo) {
+        return servicioGeneradorImagenIA.generarImagenIA(prompt, modelo);
+    }
+
+    @ResponseBody
+    @GetMapping(path = "/obtener-imagen-generada/{idProceso}")
+    public ResultadoObtenerImagenIA obtenerImagenGenerada(@PathVariable("idProceso") String idProceso) {
+        return servicioGeneradorImagenIA.consultarImagenIA(idProceso);
     }
 
 }

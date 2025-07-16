@@ -83,6 +83,18 @@
                            class="form-control"
                            id="file"
                            type="file">
+                    <div class="d-flex">
+                        <textarea id="prompt" rows="4" class="form-control" placeholder="Un gato manejando un formula 1"></textarea>
+
+                        <div class="d-flex align-items-start">
+                            <select class="form-select w-auto" id="preferenciaModelo">
+                                <option selected value="realism">Realista</option>
+                                <option value="fluid">Creativo</option>
+                            </select>
+                            <button id="btn-generar-imagen" class="btn btn-outline-success">Generar</button>
+                        </div>
+                    </div>
+                    <p class="text-danger d-none" id="error-generar-imagen">Ocurrio un error al generar la imagen</p>
                 </div>
                 <div class="d-flex justify-content-center">
                     <button type="submit" class="btn btn-primary w-50">Enviar</button>
@@ -107,6 +119,7 @@
             const prendaSelect = document.getElementById('prendaSelect');
             const talleSelect = document.getElementById('talleSelect');
             const telaSelect = document.getElementById('telaSelect');
+            const btnGenerarImagen = document.querySelector("#btn-generar-imagen");
 
             prendaSelect.addEventListener('change', function () {
                 const prendaId = this.value;
@@ -116,7 +129,7 @@
                 telaSelect.innerHTML = '<option value="" disabled selected>Seleccione una tela</option>';
 
                 if (prendaId) {
-                    fetch('/talles-por-prenda/' + prendaId)
+                    fetch('/spring/talles-por-prenda/' + prendaId)
                         .then(response => {
                             if (!response.ok) {
                                 throw new Error("Error al cargar los talles");
@@ -145,13 +158,13 @@
 
                 if (talleId) {
                     try {
-                        const responseTalle = await fetch('/talle-por-id/' + talleId);
+                        const responseTalle = await fetch('/spring/talle-por-id/' + talleId);
                         if (!responseTalle.ok) throw new Error("Error al cargar el talle");
 
                         const talle = await responseTalle.json();
                         const metrosTalle = talle.metrosTotales;
 
-                        const url = `/telas-por-prenda/${prendaSelect.value}?metrosTalle=${metrosTalle}`;
+                        const url = `/spring/telas-por-prenda/${prendaSelect.value}?metrosTalle=${metrosTalle}`;
                         const responseTelas = await fetch(url);
                         const telas = await responseTelas.json();
 
@@ -165,6 +178,44 @@
                         console.error('Error:', error);
                     }
                 }
+            });
+
+            btnGenerarImagen.addEventListener("click", (e) => {
+                e.preventDefault();
+                const prompt = document.querySelector("#prompt").value;
+                const preferenciamodelo = document.querySelector("#preferenciaModelo").value;
+                const parametros = new URLSearchParams({
+                    prompt,
+                    preferenciaModelo: preferenciamodelo
+                });
+
+                // fetch(`/spring/generar-imagen?${parametros.toString()}`)
+                //     .then(response => response.json())
+                //     .then(resultado => {
+                //         if (resultado.task_id) {
+                //             const idProceso = resultado.task_id;
+                //         }
+                //     })
+                //     .catch(() => {
+                //         clearInterval(intervaloId);
+                //         document.querySelector("#error-generar-imagen").classList.replace("d-none", "visible")
+                //     })
+                let intervaloId = null;
+                intervaloId = setInterval(() => {
+                    fetch(`/spring/obtener-imagen-generada/046b6c7f-0b8a-43b9-b35d-6489e6daee91`)
+                        .then(response => response.json())
+                        .then(resultado => {
+                            if (resultado.data.status === "COMPLETED") {
+
+                                clearInterval(intervaloId);
+                            }
+                        })
+                        .catch(() => {
+                            clearInterval(intervaloId);
+                            document.querySelector("#error-generar-imagen").classList.replace("d-none", "visible")
+                        })
+                }, 1000);
+
             });
         });
 
