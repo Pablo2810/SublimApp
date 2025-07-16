@@ -50,11 +50,6 @@
                             <b class="text-end" th:if="${pedido.monedaDePago == null}" th:text="'$' + ${pedido.montoTotal}"></b>
                             <b class="text-end" th:if="${pedido.monedaDePago != null}" th:text="${pedido.monedaDePago.simbolo} + ' ' + ${#numbers.formatDecimal(pedido.montoTotal, 1, 2, 'COMMA')}"></b>
                         </div>
-                        <div class="row">
-                            <label class="form-label text-dark text-end">Monto con descuentos</label>
-                            <b class="text-end" th:if="${pedido.monedaDePago == null}" th:text="'$' + ${pedido.montoFinal}"></b>
-                            <b class="text-end" th:if="${pedido.monedaDePago != null}" th:text="${pedido.monedaDePago.simbolo} + ' ' + ${#numbers.formatDecimal(pedido.montoFinal, 1, 2, 'COMMA')}"></b>
-                        </div>
                     </div>
                 </div>
                 <div class="row text-dark">
