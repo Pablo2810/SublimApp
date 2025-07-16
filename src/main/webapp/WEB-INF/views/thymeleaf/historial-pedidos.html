@@ -12,8 +12,7 @@
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
 </head>
 <body class="p-0 m-0">
-<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center"
-     th:insert="templates/nav :: nav"></div>
+<th:block th:replace="templates/nav :: nav"></th:block>
 <main>
     <section class="container my-4">
         <h2 class="text-center mb-4">Historial de Pedidos</h2>

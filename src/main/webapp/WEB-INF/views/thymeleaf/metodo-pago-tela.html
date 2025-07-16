@@ -85,8 +85,7 @@
     </style>
 </head>
 <body class="p-0 m-0">
-<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
-
+<th:block th:replace="templates/nav :: nav"></th:block>
 <h2 class="mb-4">Seleccionar Método de Pago</h2>
 
 <form th:action="@{/confirmar-pago}" method="post" class="card shadow-sm position-relative" accept-charset="UTF-8">

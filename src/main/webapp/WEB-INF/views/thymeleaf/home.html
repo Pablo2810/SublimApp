@@ -23,8 +23,8 @@
   </style>
 </head>
 <body class="p-0 m-0">
-  <div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
-  <main style="height: fit-content;">
+<th:block th:replace="templates/nav :: nav"></th:block>
+<main style="height: fit-content;">
     <section class="main w-100 d-flex p-5" style="height: 600px;">
       <div class="p-0 w-50">
         <h2 class="m-0 mb-4 text-white fw-bold fs-1">¡Bienvenido! Realiza pedidos de tus camisetas favoritas, personalizadas o deportivas</h2>

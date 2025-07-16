@@ -19,8 +19,7 @@
     </style>
 </head>
 <body class="p-0 m-0">
-    <header th:insert="templates/header :: header"></header>
-    <nav class="sticky-top" th:insert="templates/nav :: nav"></nav>
+<th:block th:replace="templates/nav :: nav"></th:block>
     <main>
         <section class="container p-4 my-4 shadow-lg">
             <div class="border border-primary border-2 p-4 rounded-4 border-opacity-50">
