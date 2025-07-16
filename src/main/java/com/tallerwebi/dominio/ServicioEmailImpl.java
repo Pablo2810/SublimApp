@@ -53,7 +53,6 @@ public class ServicioEmailImpl implements ServicioEmail {
         context.setVariable("estadoPedido", pedido.getEstado().getDescripcion());
         context.setVariable("linkDetalle", linkRedireccion);
 
-
         String htmlProcesado = motorPlantilla.process("emails/email-estado-pedido.html", context);
 
         mensaje.setContent(htmlProcesado, "text/html");

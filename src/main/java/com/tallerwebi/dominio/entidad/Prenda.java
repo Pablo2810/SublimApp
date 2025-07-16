@@ -25,6 +25,8 @@ public class Prenda {
 
     private Double precioBase;
 
+    private String imagenUrl;
+
     public Double getPrecioBase() {
         return precioBase;
     }
@@ -86,5 +88,13 @@ public class Prenda {
 
     public void setProductos(List<Producto> productos) {
         this.productos = productos;
+    }
+
+    public String getImagenUrl() {
+        return imagenUrl;
+    }
+
+    public void setImagenUrl(String imagenUrl) {
+        this.imagenUrl = imagenUrl;
     }
 }

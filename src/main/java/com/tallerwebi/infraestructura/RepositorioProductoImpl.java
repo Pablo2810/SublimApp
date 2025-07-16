@@ -48,8 +48,8 @@ public class RepositorioProductoImpl implements RepositorioProducto {
     }
 
     @Override
-    public Boolean actualizarProducto(Producto producto) {
-        return null; // A implementar si se necesita
+    public void actualizarProducto(Producto producto) {
+        sessionFactory.getCurrentSession().saveOrUpdate(producto);
     }
 
     @Override

@@ -56,6 +56,7 @@
             <!-- Subida de archivo + cantidad -->
             <div class="w-100 p-2 mb-4 d-flex">
                 <input th:field="*{archivo}" name="file" class="form-control w-50" id="file" type="file">
+
                 <div class="ms-3 w-50 input-group">
                     <label class="text-dark input-group-text">Cantidad</label>
                     <input th:field="*{cantidad}" name="cantidad" class="form-control" id="cantidad" type="number" min="1" required>
@@ -85,6 +86,7 @@
         const telaContainer = document.getElementById('telaContainer');
         const telaIdInput = document.getElementById('telaId');
         const botonEnviar = document.querySelector('button[type="submit"]');
+        const btnGenerarImagen = document.querySelector("#btn-generar-imagen");
 
         let talleSeleccionado = null;
         let telaSeleccionada = null;
@@ -124,7 +126,7 @@
             cardSeleccionada = null;
 
             if (prendaId) {
-                fetch('/talles-por-prenda/' + prendaId)
+                fetch('/spring/talles-por-prenda/' + prendaId)
                     .then(res => res.json())
                     .then(data => {
                         data.forEach(talle => {
@@ -146,11 +148,11 @@
 
             if (talleId) {
                 try {
-                    const responseTalle = await fetch('/talle-por-id/' + talleId);
+                    const responseTalle = await fetch('/spring/talle-por-id/' + talleId);
                     talleSeleccionado = await responseTalle.json();
                     const metrosTalle = talleSeleccionado.metrosTotales;
 
-                    const url = `/telas-por-prenda/${prendaSelect.value}?metrosTalle=${metrosTalle}`;
+                    const url = `/spring/telas-por-prenda/${prendaSelect.value}?metrosTalle=${metrosTalle}`;
                     const responseTelas = await fetch(url);
                     const telas = await responseTelas.json();
 
@@ -202,6 +204,45 @@
                 }
             }
         });
+
+        btnGenerarImagen.addEventListener("click", (e) => {
+            e.preventDefault();
+            const prompt = document.querySelector("#prompt").value;
+            const preferenciamodelo = document.querySelector("#preferenciaModelo").value;
+            const parametros = new URLSearchParams({
+                prompt,
+                preferenciaModelo: preferenciamodelo
+            });
+
+            // fetch(`/spring/generar-imagen?${parametros.toString()}`)
+            //     .then(response => response.json())
+            //     .then(resultado => {
+            //         if (resultado.task_id) {
+            //             const idProceso = resultado.task_id;
+            //         }
+            //     })
+            //     .catch(() => {
+            //         clearInterval(intervaloId);
+            //         document.querySelector("#error-generar-imagen").classList.replace("d-none", "visible")
+            //     })
+            let intervaloId = null;
+            intervaloId = setInterval(() => {
+                fetch(`/spring/obtener-imagen-generada/046b6c7f-0b8a-43b9-b35d-6489e6daee91`)
+                    .then(response => response.json())
+                    .then(resultado => {
+                        if (resultado.data.status === "COMPLETED") {
+
+                            clearInterval(intervaloId);
+                        }
+                    })
+                    .catch(() => {
+                        clearInterval(intervaloId);
+                        document.querySelector("#error-generar-imagen").classList.replace("d-none", "visible")
+                    })
+            }, 1000);
+
+        });
+
     });
 </script>
 </body>

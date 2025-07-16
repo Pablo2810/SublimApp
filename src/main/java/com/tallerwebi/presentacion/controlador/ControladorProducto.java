@@ -5,6 +5,8 @@ import com.tallerwebi.dominio.excepcion.ArchivoNoValido;
 import com.tallerwebi.dominio.excepcion.StockInsuficiente;
 import com.tallerwebi.dominio.excepcion.TelaNoEncontrada;
 import com.tallerwebi.dominio.servicio.*;
+import com.tallerwebi.presentacion.dto.*;
+import io.imagekit.sdk.models.results.Result;
 import com.tallerwebi.presentacion.dto.DatosPrenda;
 import com.tallerwebi.presentacion.dto.DatosProducto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ public class ControladorProducto {
     private final ServicioProducto servicioProducto;
     private final ServicioPedido servicioPedido;
     private final ServicioCotizacionDolar servicioCotizacionDolar;
+    private final ServicioGeneradorImagenIA servicioGeneradorImagenIA;
+    private final ServicioStorageImagen servicioStorageImagen;
 
     @Autowired
     public ControladorProducto(ServicioProducto servicioProducto,
@@ -36,7 +40,9 @@ public class ControladorProducto {
                                ServicioTela servicioTela,
                                ServicioArchivo servicioArchivo,
                                ServicioPedido servicioPedido,
-                               ServicioCotizacionDolar servicioCotizacionDolar) {
+                               ServicioCotizacionDolar servicioCotizacionDolar,
+                               ServicioGeneradorImagenIA servicioGeneradorImagenIA,
+                               ServicioStorageImagen servicioStorageImagen) {
         this.servicioPrenda = servicioPrenda;
         this.servicioTalle = servicioTalle;
         this.servicioTela = servicioTela;
@@ -44,6 +50,8 @@ public class ControladorProducto {
         this.servicioProducto = servicioProducto;
         this.servicioPedido = servicioPedido;
         this.servicioCotizacionDolar = servicioCotizacionDolar;
+        this.servicioGeneradorImagenIA = servicioGeneradorImagenIA;
+        this.servicioStorageImagen = servicioStorageImagen;
     }
 
     @RequestMapping(path = "/nuevo-pedido", method = RequestMethod.GET)
@@ -102,11 +110,39 @@ public class ControladorProducto {
             pedido.getProductos().add(producto);
             servicioPedido.asociarProductoPedido(pedido);
 
-            Double metrosNecesarios = talle.getMetrosTotales() * producto.getCantidad();
-            servicioTela.consumirTelaParaProducto(tela, metrosNecesarios, usuario);
+            String nombreImagen = usuario.getId().toString() + producto.getId().toString();
+            Result imagenSubida = servicioStorageImagen.subirImagen(datosProducto.getArchivo(), "disenios_subidos", nombreImagen);
+            producto.setImagenUrl(imagenSubida.getUrl());
 
-            double cotizacionDolar = servicioCotizacionDolar.obtenerCotizacionDolar();
-            model.put("cotizacionDolar", cotizacionDolar);
+            if (prenda.getImagenUrl() != null) {
+                String urlPrendaConDisenio = servicioStorageImagen.modificarImagen(prenda.getImagenUrl(), imagenSubida);
+                producto.setImagenPrendaConDisenioUrl(urlPrendaConDisenio);
+            }
+            servicioProducto.actualizarImagenProducto(producto.getId(), producto);
+
+            try {
+                if (talle == null || producto == null || talle.getMetrosTotales() == null) {
+                    redirectAttributes.addFlashAttribute("mensajeError", "Datos inválidos");
+                    return new ModelAndView("redirect:/nuevo-pedido");
+                }
+                Double metrosNecesarios = talle.getMetrosTotales() * producto.getCantidad();
+                servicioTela.consumirTelaParaProducto(tela, metrosNecesarios, usuario);
+            } catch (StockInsuficiente e) {
+                redirectAttributes.addFlashAttribute("mensajeError", "No hay stock suficiente de la tela seleccionada");
+                return new ModelAndView("redirect:/nuevo-pedido");
+            } catch (TelaNoEncontrada e) {
+                redirectAttributes.addFlashAttribute("mensajeError", "Tela no encontrada");
+                return new ModelAndView("redirect:/nuevo-pedido");
+            }
+
+            try {
+                double cotizacionDolar = servicioCotizacionDolar.obtenerCotizacionDolar();
+                model.put("cotizacionDolar", cotizacionDolar);
+            } catch (Exception e) {
+                model.addAttribute("mensajeError", "Error al consultar cotización del dólar.");
+                return new ModelAndView("redirect:/nuevo-pedido");
+            }
+
             model.put("pedido", pedido);
             return new ModelAndView("detalle-pedido", model);
 
@@ -130,5 +166,20 @@ public class ControladorProducto {
         productoEncontrado.getTela().setMetros(metrosTela + metrosCantidadTalle);
         servicioTela.actualizar(productoEncontrado.getTela());
     }
+
+    @ResponseBody
+    @GetMapping(path = "/generar-imagen")
+    public ResultadoGenerarImagenIA generarImagen(@RequestParam("prompt") String prompt,
+                                                  @RequestParam("preferenciaModelo") String modelo) {
+        return servicioGeneradorImagenIA.generarImagenIA(prompt, modelo);
+    }
+
+    @ResponseBody
+    @GetMapping(path = "/obtener-imagen-generada/{idProceso}")
+    public ResultadoObtenerImagenIA obtenerImagenGenerada(@PathVariable("idProceso") String idProceso) {
+        return servicioGeneradorImagenIA.consultarImagenIA(idProceso);
+    }
+
 }
+
 
