@@ -7,110 +7,205 @@
   <link rel="stylesheet" th:href="@{/css/main.css}" />
   <style>
     html {
-     background-color: #06142e;
-   }
-
-   body {
-     font-family: "Lexend Deca", sans-serif;
-     background-color: #06142e;
-     color: white;
-   }
-
-   h2 {
-     text-align: center;
-     margin: 2rem 0 1.5rem;
-     font-weight: 600;
-     color: white;
-   }
-
-   #boleta {
-     max-width: 850px;
-     margin: 0 auto;
-     background-color: #ffffff;
-     color: #212529;
-     border-radius: 1rem;
-     padding: 2rem;
-     box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.2);
-   }
-
-   .boleta-actions {
-     max-width: 850px;
-     margin: 2rem auto 3rem;
-     display: flex;
-     gap: 1rem;
-     flex-wrap: wrap;
-     justify-content: center;
-   }
+      background-color: #06142e;
+    }
+    body {
+      font-family: "Lexend Deca", sans-serif;
+      background-color: #06142e;
+      color: #eee;
+      padding: 1rem;
+    }
+    h2 {
+      text-align: center;
+      margin: 2rem 0 1.5rem;
+      font-weight: 700;
+      color: #f8f9fa;
+      letter-spacing: 1.2px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+    #boleta {
+      max-width: 850px;
+      margin: 0 auto;
+      background-color: #f9f9f9;
+      color: #212529;
+      border-radius: 1rem;
+      padding: 2.5rem 3rem;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      font-size: 1.05rem;
+    }
+    #boleta p {
+      margin-bottom: 0.7rem;
+    }
+    #boleta strong {
+      color: #2c3e50;
+      font-weight: 600;
+    }
+    .boleta-section {
+      margin-bottom: 1.8rem;
+      padding-bottom: 1.3rem;
+      border-bottom: 1px solid #ccc;
+    }
+    .boleta-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .text-center img.img-thumbnail {
+      max-height: 220px;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      object-fit: contain;
+    }
+    #total-final {
+      margin-top: 2rem;
+      padding: 2rem;
+      background-color: #e6f4ea;
+      border: 2px solid #28a745;
+      border-radius: 1rem;
+      text-align: center;
+      color: #155724;
+      box-shadow: 0 8px 15px rgba(40,167,69,0.4);
+    }
+    #total-final h4 {
+      margin-bottom: 1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    #total-final h2 {
+      font-size: 3rem;
+      font-weight: 900;
+      margin-bottom: 0.3rem;
+      letter-spacing: 1.2px;
+    }
+    #total-final small {
+      font-style: italic;
+      color: #3c763d;
+    }
+    .boleta-actions {
+      max-width: 850px;
+      margin: 2rem auto 3rem;
+      display: flex;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .boleta-actions .btn {
+      min-width: 160px;
+      padding: 0.65rem 1.3rem;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    }
+    .boleta-actions .btn-outline-primary:hover {
+      background-color: #0d6efd;
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(13,110,253,0.6);
+    }
+    .boleta-actions .btn-outline-success:hover {
+      background-color: #198754;
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(25,135,84,0.6);
+    }
+    .boleta-actions .btn-secondary:hover {
+      background-color: #6c757d;
+      color: #fff;
+      box-shadow: 0 6px 14px rgba(108,117,125,0.6);
+    }
+    .alert-info {
+      max-width: 850px;
+      margin: 1.8rem auto;
+      border-radius: 0.7rem;
+      font-size: 0.9rem;
+    }
+    .icono {
+      margin-right: 0.4rem;
+      color: #28a745;
+      vertical-align: middle;
+    }
+    @media (max-width: 600px) {
+      #boleta {
+        padding: 1.5rem 1.8rem;
+        font-size: 0.95rem;
+      }
+      #total-final h2 {
+        font-size: 2.4rem;
+      }
+      .boleta-actions {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+      .boleta-actions .btn {
+        min-width: 100%;
+      }
+    }
   </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
 </head>
 <body class="p-0 m-0">
-<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center"
-     th:insert="templates/nav :: nav"></div>
+<th:block th:replace="templates/nav :: nav"></th:block>
 
 <h2 class="mb-4">Boleta de Compra</h2>
 
 <div id="boleta" class="card p-4">
-
-  <div class="text-center mb-4">
-    <img th:src="@{${imagenUrl}}" alt="Imagen de la tela" class="img-thumbnail" style="max-height: 200px;" />
+  <div class="text-center mb-4" th:if="${imagenUrl != null and imagenUrl != ''}">
+    <img th:src="@{${imagenUrl}}" th:alt="'Imagen de tela: ' + ${tipoTela} + ', color ' + ${color}" class="img-thumbnail" />
   </div>
 
-  <p><strong>Tipo de tela:</strong> <span th:text="${tipoTela}"></span></p>
-  <p><strong>Color de la tela:</strong> <span th:text="${color}"></span></p>
-
-  <p><strong>Precio por metro:</strong>
-    <span th:text="${pagoEnDolares} ? 'U$D ' + ${T(java.lang.String).format('%.2f', precio / cotizacionDolar)} : '$' + ${T(java.lang.String).format('%.2f', precio)}"></span>
-  </p>
-
-  <p><strong>Cantidad de metros:</strong> <span th:text="${metros}"></span></p>
-
-  <p><strong>Método de pago:</strong>
-    <span th:text="${metodoPago == 'credito' ? 'Tarjeta de Crédito' : 'Tarjeta de Débito'}"></span>
-  </p>
-
-  <p><strong>Total a pagar:</strong>
-    <span th:text="${pagoEnDolares} ? 'U$D ' + ${T(java.lang.String).format('%.2f', total)} : '$' + ${T(java.lang.String).format('%.2f', total)}"></span>
-  </p>
-
-  <div th:if="${cuotas != null and cuotas > 1}">
-    <p>
-      <strong>Pago en:</strong> <span th:text="${cuotas}"></span> cuotas de
-      <span th:text="${pagoEnDolares} ? 'U$D ' + ${T(java.lang.String).format('%.2f', valorCuota)} : '$' + ${T(java.lang.String).format('%.2f', valorCuota)}"></span> cada una
+  <div class="boleta-section">
+    <p><strong><i class="bi bi-palette icono"></i>Tipo de tela:</strong> <span th:text="${tipoTela}">Tipo de Tela</span></p>
+    <p><strong><i class="bi bi-droplet icono"></i>Color de la tela:</strong> <span th:text="${color}">Color</span></p>
+    <p><strong><i class="bi bi-cash-stack icono"></i>Precio por metro:</strong>
+      <span id="precioMostrar">$0.00</span>
+    </p>
+    <p><strong><i class="bi bi-rulers icono"></i>Cantidad de metros:</strong>
+      <span th:if="${metros != null}" th:text="${#numbers.formatDecimal(metros, 1, 'POINT', 2, 'POINT')}">0.00</span>
+      <span th:unless="${metros != null}">0.00</span>
     </p>
   </div>
 
-  <div th:if="${pagoEnDolares}">
-    <hr/>
-    <p><strong>Equivalente en pesos:</strong> $<span th:text="${T(java.lang.String).format('%.2f', totalEquivalente)}"></span></p>
-  </div>
-
-  <div th:if="${envioDescripcion != null}">
-    <hr/>
-    <p><strong>Tipo de envío:</strong> <span th:text="${envioDescripcion}"></span></p>
-    <p><strong>Costo de envío:</strong>
-      <span th:text="${pagoEnDolares}
-        ? 'U$D ' + ${T(java.lang.String).format('%.2f', envioCosto / cotizacionDolar)}
-        : '$' + ${T(java.lang.String).format('%.2f', envioCosto)}"></span>
+  <div class="boleta-section">
+    <p><strong><i class="bi bi-credit-card-2-front icono"></i>Método de pago:</strong>
+      <span th:text="${metodoPago == 'credito' ? 'Tarjeta de Crédito' : 'Tarjeta de Débito'}">Tarjeta</span>
     </p>
-    <p><strong>Tiempo estimado de entrega:</strong> <span th:text="${envioTiempo}"></span></p>
-
-    <div th:if="${direccionCompleta != null}">
-      <p><strong>Dirección de envío:</strong> <span th:text="${direccionCompleta}"></span></p>
+    <p><strong><i class="bi bi-calculator icono"></i>Subtotal:</strong> <span id="subtotal">$0.00</span></p>
+    <div id="recargoCuotasSection" th:if="${cuotas != null and cuotas > 1}">
+    <p><strong><i class="bi bi-arrow-repeat icono"></i>Recargo por cuotas:</strong> <span id="recargo">$0.00</span></p>
+      <p><strong><i class="bi bi-coin icono"></i>Pago en:</strong> <span th:text="${cuotas}">1</span> cuotas de <span id="valorCuota">$0.00</span> cada una</p>
     </div>
   </div>
 
-  <p><strong>Fecha de compra:</strong> <span th:text="${fecha}"></span></p>
+  <div class="boleta-section" th:if="${envioDescripcion != null}">
+    <hr/>
+    <p><strong><i class="bi bi-truck icono"></i>Tipo de envío:</strong> <span th:text="${envioDescripcion}">Envío</span></p>
+    <p><strong><i class="bi bi-currency-dollar icono"></i>Costo de envío:</strong> <span id="envioCostoMostrar">$0.00</span></p>
+    <p><strong><i class="bi bi-clock icono"></i>Tiempo estimado de entrega:</strong> <span th:text="${envioTiempo}">Tiempo</span></p>
+    <div th:if="${direccionCompleta != null}">
+      <p><strong><i class="bi bi-geo-alt icono"></i>Dirección de envío:</strong> <span th:text="${direccionCompleta}">Dirección</span></p>
+    </div>
+  </div>
+
+  <p><strong><i class="bi bi-calendar-event icono"></i>Fecha de compra:</strong> <span th:text="${fecha}">Fecha</span></p>
 
   <div th:if="${pagoEnDolares}" class="alert alert-info mt-3">
-    <p><strong>Tipo de cambio dólar blue:</strong> $<span th:text="${T(java.lang.String).format('%.2f', cotizacionDolar)}"></span></p>
+    <p><strong>Tipo de cambio dólar blue:</strong>
+      <span th:if="${cotizacionDolar != null}" th:text="'$' + ${#numbers.formatDecimal(cotizacionDolar, 1, 'POINT', 2, 'POINT')}">$0.00</span>
+      <span th:unless="${cotizacionDolar != null}">$0.00</span>
+    </p>
     <small>El pago en dólares se calcula según el tipo de cambio blue del día.</small>
+  </div>
+
+  <div id="total-final">
+    <h4>TOTAL FINAL A PAGAR</h4>
+    <h2 id="totalFinal">$0.00</h2>
+    <small class="text-muted" th:if="${cuotas != null and cuotas > 1}">Incluye recargo por cuotas</small>
   </div>
 </div>
 
-<div class="mt-4 d-flex gap-3 flex-wrap">
-  <button class="btn btn-outline-primary" onclick="imprimirBoleta()">Imprimir Boleta</button>
-  <button class="btn btn-outline-success" onclick="descargarBoletaPDF()">Descargar Boleta (PDF)</button>
-  <a href="/catalogo-telas" class="btn btn-secondary">Volver al Catálogo</a>
+<div class="boleta-actions">
+  <button class="btn btn-outline-primary" onclick="imprimirBoleta()"><i class="bi bi-printer"></i> Imprimir Boleta</button>
+  <button class="btn btn-outline-success" onclick="descargarBoletaPDF()"><i class="bi bi-file-earmark-pdf"></i> Descargar PDF</button>
+  <a th:href="@{/catalogo-telas}" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> Volver al Catálogo</a>
 </div>
 
 <div th:replace="templates/toasts :: toasts"></div>
@@ -119,5 +214,90 @@
 <script type="text/javascript" th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
 <script th:src="@{/js/main.js}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+    let precio = Number(/*[[${precio} != null ? ${precio} : 0]]*/ 0);
+    let metros = Number(/*[[${metros} != null ? ${metros} : 0]]*/ 0);
+    let cuotas = Number(/*[[${cuotas} != null ? ${cuotas} : 1]]*/ 1);
+    if (isNaN(cuotas) || cuotas < 1) cuotas = 1;
+    let envioCosto = Number(/*[[${envioCosto} != null ? ${envioCosto} : 0]]*/ 0);
+    let pagoEnDolares = /*[[${pagoEnDolares}]]*/ false;
+    let cotizacionDolar = Number(/*[[${cotizacionDolar} != null ? ${cotizacionDolar} : 1]]*/ 1);
+
+    const recargosPorCuota = {
+      1: 0,
+      2: 0.05,
+      3: 0.1,
+      6: 0.2,
+      12: 0.35
+    };
+
+    const subtotal = precio * metros;
+    let recargo = 0;
+    let total = 0;
+    let valorCuota = 0;
+
+    // Validar cuotas y asignar por defecto 1
+    if (!cuotas || isNaN(cuotas) || cuotas < 1) cuotas = 1;
+
+    const porcentajeRecargo = recargosPorCuota[cuotas] || 0;
+
+    if (cuotas > 1) {
+      recargo = subtotal * porcentajeRecargo;
+    } else {
+      recargo = 0;
+    }
+
+    total = subtotal + recargo + envioCosto;
+    valorCuota = total / cuotas;
+
+    function formatoDinero(valor) {
+      return pagoEnDolares
+        ? `U$D ${valor.toFixed(2)}`
+        : `$ ${valor.toFixed(2)}`;
+    }
+
+    // Mostrar precios
+    const precioMostrar = pagoEnDolares ? precio / cotizacionDolar : precio;
+    document.getElementById('precioMostrar').textContent = formatoDinero(precioMostrar);
+
+    const envioCostoMostrar = pagoEnDolares ? envioCosto / cotizacionDolar : envioCosto;
+    document.getElementById('envioCostoMostrar').textContent = formatoDinero(envioCostoMostrar);
+
+    document.getElementById('subtotal').textContent = formatoDinero(pagoEnDolares ? subtotal / cotizacionDolar : subtotal);
+
+    // Actualizar recargo y valorCuota sólo si existen los elementos (porque el div solo está si cuotas > 1)
+    const recargoElem = document.getElementById('recargo');
+    if (recargoElem) {
+      recargoElem.textContent = formatoDinero(pagoEnDolares ? recargo / cotizacionDolar : recargo);
+    }
+
+    const valorCuotaElem = document.getElementById('valorCuota');
+    if (valorCuotaElem) {
+      valorCuotaElem.textContent = formatoDinero(pagoEnDolares ? valorCuota / cotizacionDolar : valorCuota);
+    }
+
+    document.getElementById('totalFinal').textContent = formatoDinero(pagoEnDolares ? total / cotizacionDolar : total);
+
+    // Ocultar sección de recargo si cuota es 1
+    const recargoSection = document.getElementById('recargoCuotasSection');
+    if (recargoSection && cuotas === 1) {
+      recargoSection.style.display = 'none';
+    }
+
+    // (Opcional) Log de control
+    console.log({ precio, metros, cuotas, subtotal, recargo, envioCosto, total, valorCuota });
+
+    function imprimirBoleta() {
+      window.print();
+    }
+
+    function descargarBoletaPDF() {
+      const element = document.getElementById('boleta');
+      html2pdf().from(element).save('boleta_compra.pdf');
+    }
+  /*]]>*/
+</script>
 </body>
 </html>

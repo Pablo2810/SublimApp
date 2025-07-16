@@ -155,8 +155,8 @@ public class ControladorTela {
                                 @RequestParam String cvv,
                                 @RequestParam(required = false) Integer cuotas,
                                 @RequestParam String color,
-                                @RequestParam Double precio,
-                                @RequestParam Double metros,
+                                @RequestParam(required = false) Double precio, // puedes dejarlo, pero lo sobreescribes
+                                @RequestParam(required = false) Double metros,
                                 @RequestParam String tipoTela,
                                 @RequestParam String imagenUrl,
                                 @RequestParam Long idTela,
@@ -165,25 +165,48 @@ public class ControladorTela {
                                 HttpSession session,
                                 Model model,
                                 RedirectAttributes redirectAttributes) {
+
+        // Obtén la tela real desde el servicio/repositorio
+        Tela telaReal = servicioTela.obtenerTela(idTela);
+        if (telaReal == null) {
+            model.addAttribute("mensajeError", "Tela no encontrada.");
+            cargarDatosTela(model, color, tipoTela, 0.0, metros != null ? metros : 0.0, imagenUrl);
+            return "metodo-pago-tela";
+        }
+
+        // Sobrescribe el precio con el real, ignorando lo que venga del cliente
+        precio = telaReal.getPrecio();
+
+        // Validar metros
+        metros = (metros != null) ? metros : 0.0;
+        if (metros <= 0) {
+            model.addAttribute("mensajeError", "Cantidad de metros inválida.");
+            cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
+            return "metodo-pago-tela";
+        }
+
         // Validaciones de tarjeta
-        if (numeroTarjeta == null || !numeroTarjeta.matches("\\d{16}")) {
+        if (!numeroTarjeta.matches("\\d{16}")) {
             model.addAttribute("mensajeError", "Número de tarjeta inválido.");
             cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
             return "metodo-pago-tela";
         }
-        if (cvv == null || !cvv.matches("\\d{3}")) {
+
+        if (!cvv.matches("\\d{3}")) {
             model.addAttribute("mensajeError", "CVV inválido.");
             cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
             return "metodo-pago-tela";
         }
-        if (nombreTitular == null || nombreTitular.trim().isEmpty()) {
+
+        if (nombreTitular.trim().isEmpty()) {
             model.addAttribute("mensajeError", "El nombre del titular es obligatorio.");
             cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
             return "metodo-pago-tela";
         }
+
         try {
-            YearMonth fechaVencimiento = YearMonth.parse(vencimiento);
-            if (fechaVencimiento.isBefore(YearMonth.now())) {
+            YearMonth fechaVenc = YearMonth.parse(vencimiento);
+            if (fechaVenc.isBefore(YearMonth.now())) {
                 model.addAttribute("mensajeError", "La tarjeta está vencida.");
                 cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
                 return "metodo-pago-tela";
@@ -202,41 +225,35 @@ public class ControladorTela {
 
         if (metodoPago.equalsIgnoreCase("debito")) {
             cuotas = 1;
-        } else if (cuotas == null || !(cuotas == 1 || cuotas == 2 || cuotas == 3 || cuotas == 6 || cuotas == 12)) {
+        } else if (cuotas == null || !List.of(1, 2, 3, 6, 12).contains(cuotas)) {
             model.addAttribute("mensajeError", "Debe seleccionar una cantidad de cuotas válida.");
             cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
             return "metodo-pago-tela";
         }
 
-        TipoEnvio envioSeleccionado;
+        // Validar dirección y tipo de envío
+        TipoEnvio envio;
         try {
-            envioSeleccionado = servicioEnvio.determinarTipoEnvio(jsonDireccion);
+            envio = servicioEnvio.determinarTipoEnvio(jsonDireccion);
         } catch (Exception e) {
             model.addAttribute("mensajeError", "No se pudo validar la dirección ingresada.");
             cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
             return "metodo-pago-tela";
         }
 
-        if (envioSeleccionado == null) {
-            model.addAttribute("mensajeError", "Método de envío inválido.");
-            cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
-            return "metodo-pago-tela";
-        }
-
-        // Solo validar dirección si NO es retiro en local (LOCAL)
-        if (envioSeleccionado != TipoEnvio.LOCAL && (jsonDireccion == null || jsonDireccion.trim().isEmpty())) {
+        if (envio == null || (envio != TipoEnvio.LOCAL && jsonDireccion.trim().isEmpty())) {
             model.addAttribute("mensajeError", "Debés ingresar una dirección válida para el envío.");
             cargarDatosTela(model, color, tipoTela, precio, metros, imagenUrl);
             return "metodo-pago-tela";
         }
 
-        double costoEnvio = (envioSeleccionado == TipoEnvio.LOCAL) ? 0 : envioSeleccionado.getCosto();
+        double costoEnvio = (envio == TipoEnvio.LOCAL) ? 0 : envio.getCosto();
         double total = servicioPago.calcularTotal(precio, metros, costoEnvio, cuotas);
 
         double cotizacionDolar = 0;
         double totalMostrar;
         double totalEquivalente;
-        double valorCuotaMostrar;
+        double valorCuota;
 
         if (pagoEnDolares) {
             try {
@@ -254,7 +271,7 @@ public class ControladorTela {
             totalEquivalente = 0;
         }
 
-        valorCuotaMostrar = servicioPago.calcularValorCuota(totalMostrar, cuotas);
+        valorCuota = servicioPago.calcularValorCuota(totalMostrar, cuotas);
 
         Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
         if (usuario == null) {
@@ -263,7 +280,6 @@ public class ControladorTela {
         }
 
         try {
-            // Descontar stock y asignar telaUsuario
             servicioTela.comprarTelaDeFabrica(idTela, metros, usuario);
         } catch (TelaNoEncontrada e) {
             model.addAttribute("mensajeError", "Tela no encontrada.");
@@ -275,11 +291,11 @@ public class ControladorTela {
             return "metodo-pago-tela";
         }
 
-        servicioTela.registrarCompraTela(idTela, usuario, metros, metodoPago, cuotas, pagoEnDolares, cotizacionDolar, envioSeleccionado);
+        servicioTela.registrarCompraTela(idTela, usuario, metros, metodoPago, cuotas, pagoEnDolares, cotizacionDolar, envio);
 
-        String fechaFormateada = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+        String fechaCompra = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
 
-        redirectAttributes.addFlashAttribute("fecha", fechaFormateada);
+        redirectAttributes.addFlashAttribute("fecha", fechaCompra);
         redirectAttributes.addFlashAttribute("color", color);
         redirectAttributes.addFlashAttribute("tipoTela", tipoTela);
         redirectAttributes.addFlashAttribute("precio", precio);
@@ -287,23 +303,25 @@ public class ControladorTela {
         redirectAttributes.addFlashAttribute("imagenUrl", imagenUrl);
         redirectAttributes.addFlashAttribute("metodoPago", metodoPago);
         redirectAttributes.addFlashAttribute("cuotas", cuotas);
-        redirectAttributes.addFlashAttribute("valorCuota", valorCuotaMostrar);
+        redirectAttributes.addFlashAttribute("valorCuota", valorCuota);
         redirectAttributes.addFlashAttribute("total", totalMostrar);
-        redirectAttributes.addFlashAttribute("envioDescripcion", envioSeleccionado.getDescripcion());
+        redirectAttributes.addFlashAttribute("envioDescripcion", envio.getDescripcion());
         redirectAttributes.addFlashAttribute("envioCosto", costoEnvio);
-        redirectAttributes.addFlashAttribute("envioTiempo", envioSeleccionado.getTiempoEntrega());
+        redirectAttributes.addFlashAttribute("envioTiempo", envio.getTiempoEntrega());
         redirectAttributes.addFlashAttribute("pagoEnDolares", pagoEnDolares);
         redirectAttributes.addFlashAttribute("cotizacionDolar", cotizacionDolar);
         redirectAttributes.addFlashAttribute("totalEquivalente", totalEquivalente);
 
-        // Determinar dirección de envío o lugar de retiro
-        if (envioSeleccionado == TipoEnvio.LOCAL) {
+        // Dirección de envío o retiro
+        if (envio == TipoEnvio.LOCAL) {
             redirectAttributes.addFlashAttribute("direccionCompleta", "Sucursal central - Av. Siempre Viva 742, Buenos Aires");
         } else {
             try {
                 ObjectMapper mapper = new ObjectMapper();
-                JsonNode nodoDireccion = mapper.readTree(jsonDireccion);
-                String direccionCompleta = nodoDireccion.get("display_name").asText();
+                JsonNode direccionJson = mapper.readTree(jsonDireccion);
+                String direccionCompleta = direccionJson.has("display_name")
+                        ? direccionJson.get("display_name").asText()
+                        : "Dirección desconocida";
                 redirectAttributes.addFlashAttribute("direccionCompleta", direccionCompleta);
             } catch (Exception e) {
                 redirectAttributes.addFlashAttribute("direccionCompleta", "Dirección desconocida");
@@ -333,9 +351,11 @@ public class ControladorTela {
     }
 
     @GetMapping("/boleta-tela")
-    public String mostrarBoleta() {
+    public String mostrarBoleta(Model model) {
+        // No necesitas agregar nada si usas flash attributes
         return "boleta-tela";
     }
+
 
     @RequestMapping(value = "/telas-por-prenda/{prendaId}", method = RequestMethod.GET)
     @ResponseBody

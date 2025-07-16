@@ -44,17 +44,23 @@ function actualizarResumenPago() {
     tipoCambioDiv.style.display = "block";
     valorDolarSpan.textContent = `$${cotizacion.toFixed(2)}`;
     totalResumen.textContent = `USD ${totalUSD.toFixed(2)}`;
+
+    if (metodo === "credito" && cuotas > 1) {
+      const valorCuota = totalUSD / cuotas;
+      detalleCuotas.textContent = `En ${cuotas} cuotas de USD ${valorCuota.toFixed(2)}.`;
+    } else {
+      detalleCuotas.textContent = "";
+    }
   } else {
     tipoCambioDiv.style.display = "none";
     totalResumen.textContent = `$${total.toFixed(2)}`;
-  }
 
-  if (metodo === "credito" && cuotas > 1) {
-    const simbolo = enDolares ? "USD" : "$";
-    const valorCuota = (enDolares ? (total / obtenerCotizacionDolar()) : total) / cuotas;
-    detalleCuotas.textContent = `En ${cuotas} cuotas de ${simbolo} ${valorCuota.toFixed(2)}.`;
-  } else {
-    detalleCuotas.textContent = "";
+    if (metodo === "credito" && cuotas > 1) {
+      const valorCuota = total / cuotas;
+      detalleCuotas.textContent = `En ${cuotas} cuotas de $${valorCuota.toFixed(2)}.`;
+    } else {
+      detalleCuotas.textContent = "";
+    }
   }
 
   resumen.style.display = "block";
