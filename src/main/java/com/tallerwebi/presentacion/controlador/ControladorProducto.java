@@ -116,10 +116,14 @@ public class ControladorProducto {
 
         try {
             Producto producto = servicioProducto.registrarProducto(datosProducto.getCantidad(), archivo, prenda, talle, tela);
-            if (producto.getId() == null) {
+            if (producto == null) {
                 redirectAttributes.addFlashAttribute("mensajeError", "No se pudo registrar el producto");
                 return new ModelAndView("redirect:/nuevo-pedido");
             }
+
+            Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario);
+            pedido.getProductos().add(producto);
+            servicioPedido.asociarProductoPedido(pedido);
 
             String nombreImagen = usuario.getId().toString() + producto.getId().toString();
             Result imagenSubida = servicioStorageImagen.subirImagen(datosProducto.getArchivo(), "disenios_subidos", nombreImagen);
@@ -130,10 +134,6 @@ public class ControladorProducto {
                 producto.setImagenPrendaConDisenioUrl(urlPrendaConDisenio);
             }
             servicioProducto.actualizarImagenProducto(producto.getId(), producto);
-
-            Pedido pedido = servicioPedido.buscarPedidoEstadoPendiente(usuario);
-            pedido.getProductos().add(producto);
-            servicioPedido.asociarProductoPedido(pedido);
 
             try {
                 if (talle == null || producto == null || talle.getMetrosTotales() == null) {
