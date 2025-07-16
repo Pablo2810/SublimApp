@@ -50,4 +50,6 @@ public interface ServicioTela {
     List<CompraTela> obtenerComprasPorEstados(List<EstadoTela> estados);
 
     List<CompraTela> obtenerComprasDeTelasPorUsuarioYEstados(Long usuarioId, List<EstadoTela> estados);
+
+    void actualizar(Tela tela);
 }

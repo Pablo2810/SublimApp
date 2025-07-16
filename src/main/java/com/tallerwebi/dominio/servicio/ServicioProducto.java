@@ -13,4 +13,6 @@ public interface ServicioProducto {
 
     Producto registrarProducto(Integer cantidad, Archivo archivo, Prenda prenda, Talle talle, Tela tela);
     void eliminarProducto(Long idProducto);
+    void actualizarImagenProducto(Long id, Producto producto);
+    Producto buscarPorId(Long id);
 }

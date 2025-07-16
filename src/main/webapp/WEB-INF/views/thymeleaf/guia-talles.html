@@ -1,47 +1,68 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>Taller Web I</title>
-    <!-- font google -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet">
-    <!-- Boostrap core css -->
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
-    <!-- custom style -->
-    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100..900&display=swap" rel="stylesheet" />
+    <!-- Bootstrap -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
     <style>
         body {
             font-family: "Lexend Deca", sans-serif;
         }
+        .bandera {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #dee2e6;
+            transition: transform 0.2s ease;
+        }
+
+        .bandera:hover {
+            transform: scale(1.1);
+        }
+
+        .bandera-activa {
+            border: 3px solid #0d6efd !important;
+            box-shadow: 0 0 5px #0d6efd;
+        }
     </style>
 </head>
 <body>
-<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
-<main class="main p-5" style="height:fit-content;">
+<th:block th:replace="templates/nav :: nav"></th:block>
+
+<main class="main p-5" style="height: fit-content;">
     <section>
-        <form th:action="@{/guia-talles/recomendado}" method="post" th:object="${medidas}" class="container w-75 d-flex flex-column align-items-center">
+        <div class="container w-75 d-flex flex-column align-items-center mb-4">
             <div class="mb-3">
-                <div class="d-flex flex-wrap gap-3">
-                    <label th:each="pais : ${paises}" class="text-center">
-                        <input type="radio" th:field="*{pais}" th:value="${pais.nombre}" class="d-block mx-auto mb-1">
-                        <img th:src="${pais.banderaUrl}" th:alt="${pais.nombre}" width="60" class="rounded border">
-                    </label>
+                <div class="d-flex flex-wrap gap-3 justify-content-center">
+                    <button th:each="pais : ${paises}" type="button" class="boton-bandera border-0 bg-transparent p-0"
+                            th:data-pais="${pais.nombre}">
+                        <img th:src="${pais.banderaUrl}" th:alt="${pais.nombre}" class="bandera shadow-sm"
+                             th:classappend="${medidas.pais} == ${pais.nombre} ? 'bandera-activa' : ''" />
+                    </button>
                 </div>
             </div>
+        </div>
+
+        <form th:action="@{/guia-talles/recomendado}" method="post" th:object="${medidas}" class="container w-75 d-flex flex-column align-items-center">
+            <input type="hidden" th:field="*{pais}" />
             <div class="d-flex w-100">
                 <div class="mb-3 w-25 p-2">
                     <label>Cintura (en cm o in):</label>
-                    <input type="number" th:field="*{cintura}" class="form-control" required>
+                    <input type="number" th:field="*{cintura}" class="form-control" required />
                 </div>
-
                 <div class="mb-3 w-25 p-2">
                     <label>Pecho (en cm o in):</label>
-                    <input type="number" th:field="*{pecho}" class="form-control" required>
+                    <input type="number" th:field="*{pecho}" class="form-control" required />
                 </div>
-
                 <div class="mb-3 w-25 p-2">
                     <label>Unidad:</label>
                     <select th:field="*{unidad}" class="form-select">
@@ -49,7 +70,6 @@
                         <option value="in">Pulgadas</option>
                     </select>
                 </div>
-
                 <div class="mb-3 w-25 p-2">
                     <label>Preferencia:</label>
                     <select th:field="*{preferencia}" class="form-select">
@@ -62,8 +82,9 @@
             <button type="submit" class="btn btn-primary">Recomendar Talle</button>
         </form>
     </section>
-    <section class="d-flex flex-row justify-content-center align-items-center">
-        <div class="w-75 bg-white p-5 d-flex rounded-5 tabla-talles shadow-lg">
+
+    <section class="d-flex flex-row justify-content-center align-items-center mt-4">
+        <div class="w-75 bg-white p-5 d-flex flex-column rounded-5 tabla-talles shadow-lg">
             <table id="tablaTalles" class="table table-striped table-bordered border-dark">
                 <caption class="text-center fs-5 fw-bold mb-2">Tabla de medidas por talle: <span th:text="${medidas.pais}"></span></caption>
                 <thead class="text-center table-dark">
@@ -76,8 +97,7 @@
                 </thead>
                 <tbody class="text-center">
                 <tr th:each="talle : ${talles}"
-                    th:classappend="${talleRecomendado != null and talle.id != null and talle.id.equals(talleRecomendado.id)} ? 'table-primary fw-bold text-dark border border-dark' : ''"
-                >
+                    th:classappend="${talleRecomendado != null and talle.id != null and talle.id.equals(talleRecomendado.id)} ? 'table-primary fw-bold text-dark border border-dark' : ''">
                     <td th:text="${talle.descripcion}">S</td>
                     <td>
                         <span th:text="${talle.cinturaMIN}"></span> -
@@ -91,13 +111,67 @@
                 </tr>
                 </tbody>
             </table>
+            <!-- Loader debajo de la tabla -->
+            <div id="loader"></div>
         </div>
         <div class="w-25 shadow-lg">
-            <img th:src="@{/img/foto_guia_talles.jpg}" class="img-fluid rounded-5 tabla-img shadow-lg">
+            <img th:src="@{/img/foto_guia_talles.jpg}" class="img-fluid rounded-5 tabla-img shadow-lg" />
         </div>
     </section>
 </main>
+
 <footer th:insert="templates/footer :: footer"></footer>
 
+<script>
+    const loader = document.getElementById('loader');
+    const tbody = document.querySelector("#tablaTalles tbody");
+    const captionSpan = document.querySelector("#tablaTalles caption span");
+    const campoPais = document.querySelector('input[name="pais"]');
+
+    document.querySelectorAll('.boton-bandera').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const paisSeleccionado = btn.dataset.pais;
+
+            // Mostrar loader
+            loader.style.display = 'block';
+
+            // Resaltar bandera activa
+            document.querySelectorAll('.bandera').forEach(img => img.classList.remove('bandera-activa'));
+            btn.querySelector('.bandera').classList.add('bandera-activa');
+
+            // Actualizar campo oculto en el formulario
+            if (campoPais) campoPais.value = paisSeleccionado;
+
+            try {
+                const response = await fetch(`/talles-por-pais?pais=${encodeURIComponent(paisSeleccionado)}`);
+                const talles = await response.json();
+
+                // Limpiar tabla
+                tbody.innerHTML = '';
+
+                // Insertar nuevas filas
+                talles.forEach(talle => {
+                    const fila = document.createElement("tr");
+                    fila.innerHTML = `
+                        <td>${talle.descripcion}</td>
+                        <td>${talle.cinturaMIN} - ${talle.cinturaMAX}</td>
+                        <td>${talle.pechoMIN} - ${talle.pechoMAX}</td>
+                        <td>${talle.metrosTotales}</td>
+                    `;
+                    tbody.appendChild(fila);
+                });
+
+                // Actualizar título país
+                if (captionSpan) captionSpan.textContent = paisSeleccionado;
+
+            } catch (error) {
+                console.error('Error al cargar los talles:', error);
+            } finally {
+                // Ocultar loader siempre
+                loader.style.display = 'none';
+            }
+        });
+    });
+</script>
 </body>
 </html>

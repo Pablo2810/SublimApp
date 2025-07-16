@@ -15,7 +15,7 @@ public class MyServletInitializer
     // controller, view resolver, handler mapping
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[]{SpringWebConfig.class, HibernateConfig.class, DatabaseInitializationConfig.class, ImageKitConfig.class, RestTemplateConfig.class, EmailConfig.class};
+        return new Class[]{SpringWebConfig.class, HibernateConfig.class, DatabaseInitializationConfig.class, ImageKitConfig.class, RestTemplateConfig.class};
     }
 
     @Override

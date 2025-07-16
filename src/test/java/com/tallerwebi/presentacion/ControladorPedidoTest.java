@@ -1,130 +1,177 @@
 package com.tallerwebi.presentacion;
 
-import com.tallerwebi.dominio.entidad.Archivo;
 import com.tallerwebi.dominio.entidad.Estado;
 import com.tallerwebi.dominio.entidad.Pedido;
 import com.tallerwebi.dominio.entidad.Usuario;
-import com.tallerwebi.dominio.servicio.ServicioArchivo;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
-import com.tallerwebi.dominio.servicio.ServicioUsuario;
 import com.tallerwebi.presentacion.controlador.ControladorPedido;
-import com.tallerwebi.presentacion.dto.DatosPedido;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.io.IOException;
-import java.util.List;
-
-import static net.bytebuddy.matcher.ElementMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ControladorPedidoTest {
-    private DatosPedido datosPedidoMock;
+
+    @InjectMocks
     private ControladorPedido controladorPedido;
-    private ServicioPedido servicioPedidoMock;
-    private ServicioArchivo servicioArchivoMock;
-    private Pedido pedidoMock;
-    private Archivo archivoMock;
-    private MockMultipartFile fileMock;
-    private ServicioUsuario servicioUsuarioMock;
-    private Usuario usuarioMock;
 
-    /*@BeforeEach
-    public void init(){
-        usuarioMock = mock(Usuario.class);
-        datosPedidoMock = new DatosPedido(usuarioMock);
-        pedidoMock = mock(Pedido.class);
-        archivoMock = mock(Archivo.class);
-        servicioPedidoMock = mock(ServicioPedido.class);
-        servicioArchivoMock = mock(ServicioArchivo.class);
-        servicioUsuarioMock = mock(ServicioUsuario.class);
-        controladorPedido = new ControladorPedido(servicioPedidoMock, servicioUsuarioMock);
-        fileMock = new MockMultipartFile("file", "camiseta.jpg", "image/jpeg", "datos".getBytes());
-    }*/
+    @Mock
+    private ServicioPedido servicioPedido;
 
-    @Test
-    public void queTeDevuelvaUnaVistaCuandoPedidoComoArchivoSeaValido() throws IOException {
-//        when(servicioUsuarioMock.consultarUsuario(any())).thenReturn(usuarioMock);
-//
-//        when(servicioArchivoMock.registrarArchivo(
-//                                            eq(datosPedidoMock.getNombre()),
-//                                            any(MultipartFile.class)))
-//        .thenReturn(archivoMock);
-//
-//        when(servicioPedidoMock.registrarPedido(any(),
-//                                            eq(usuarioMock),
-//                                            eq(any()))) // agregar hashset de productos en lugar de any
-//        .thenReturn(pedidoMock);
-//
-//        ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock);
-//
-//        assertThat(modelAndView.getViewName(), equalToIgnoringCase("detalle-pedido"));
-//        assertEquals(pedidoMock, modelAndView.getModel().get("pedidoNuevo"));
-        assertTrue(true);
+    @Mock
+    private HttpServletRequest request;
+
+    @Mock
+    private HttpSession session;
+
+    @Mock
+    private RedirectAttributes redirectAttributes;
+
+    @Mock
+    private Usuario usuario;
+
+    @Mock
+    private Pedido pedido;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+
+        when(request.getSession()).thenReturn(session);
+        when(session.getAttribute("usuarioLogueado")).thenReturn(usuario);
     }
 
     @Test
-    public void queDevuelvaUnErrorSiLaCantidadDeCopiasEsInvalida() throws IOException {
-//        datosPedidoMock.setCantidadCopias(0);
-//        ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock);
-//
-//        assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-pedido"));
-//        assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Ingrese la cantidad de copias"));
-        assertTrue(true);
+    void eliminarProducto_exito() {
+        when(servicioPedido.buscarPedidoEstadoPendiente(usuario)).thenReturn(pedido);
+        when(pedido.getEstado()).thenReturn(Estado.PENDIENTE);
+
+        doNothing().when(servicioPedido).eliminarProductoDelPedido(pedido, 1L);
+        doNothing().when(servicioPedido).asociarProductoPedido(pedido);
+
+        ModelAndView mv = controladorPedido.eliminarProducto(1L, request, redirectAttributes);
+
+        verify(servicioPedido).eliminarProductoDelPedido(pedido, 1L);
+        verify(servicioPedido).asociarProductoPedido(pedido);
+        verify(redirectAttributes).addFlashAttribute("mensajeExito", "Producto eliminado correctamente.");
+        assertEquals("redirect:/detalle-pedido", mv.getViewName());
     }
 
     @Test
-    public void queDevuelvaUnErrorSiElFileNoEsValido() throws IOException {
-//        MockMultipartFile fileNulo = null;
-//        ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock);
-//
-//        assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-pedido"));
-//        assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Debe subir un archivo"));
+    void eliminarProducto_sinPedido_oEstadoNoPendiente() {
+        when(servicioPedido.buscarPedidoEstadoPendiente(usuario)).thenReturn(null);
+
+        ModelAndView mv = controladorPedido.eliminarProducto(1L, request, redirectAttributes);
+
+        verify(redirectAttributes).addFlashAttribute("mensajeError", "No se puede eliminar el producto en este estado.");
+        assertEquals("redirect:/detalle-pedido", mv.getViewName());
     }
 
     @Test
-    public void queDevuelvaUnErrorSiElFormatoNoEsJPEG() throws IOException {
-//        MockMultipartFile fileFormato = new MockMultipartFile("file", "camiseta.jpg", "image/png", "datos".getBytes());
-//        ModelAndView modelAndView = controladorPedido.procesarPedido(datosPedidoMock);
-//
-//        assertThat(modelAndView.getViewName(), equalToIgnoringCase("nuevo-pedido"));
-//        assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Ingrese un archivo válido (.JPG o .JPEG)"));
+    void eliminarProducto_excepcionAlEliminar() {
+        when(servicioPedido.buscarPedidoEstadoPendiente(usuario)).thenReturn(pedido);
+        when(pedido.getEstado()).thenReturn(Estado.PENDIENTE);
+
+        doThrow(new RuntimeException("Error al eliminar")).when(servicioPedido).eliminarProductoDelPedido(pedido, 1L);
+
+        ModelAndView mv = controladorPedido.eliminarProducto(1L, request, redirectAttributes);
+
+        verify(redirectAttributes).addFlashAttribute(eq("mensajeError"), startsWith("Error al eliminar el producto"));
+        assertEquals("redirect:/detalle-pedido", mv.getViewName());
     }
 
     @Test
-    public void queMuestreListaDePedidos() {
-        /*when(pedidoMock.getId()).thenReturn(1L);
-        //when(pedidoMock.getCantCopias()).thenReturn(10);
-        //when(pedidoMock.getMetrosTotales()).thenReturn("100.0");
-        //when(pedidoMock.getCostoServicio()).thenReturn(125.0);
-        when(pedidoMock.getEstado()).thenReturn(Estado.A_RETIRAR);
+    public void eliminarProducto_pedidoValido_productoEliminadoYMensajeExito() throws Exception {
+        when(servicioPedido.buscarPedidoEstadoPendiente(usuario)).thenReturn(pedido);
+        when(pedido.getEstado()).thenReturn(Estado.PENDIENTE);  // <-- Aquí el cambio
 
-        when(servicioPedidoMock.listarPedidosDelUsuario(any(Long.class)))
-                .thenReturn(List.of(pedidoMock));
+        // Comportamiento para capturar addFlashAttribute
+        doAnswer(invocation -> {
+            String key = invocation.getArgument(0);
+            String value = invocation.getArgument(1);
+            assertEquals("mensajeExito", key);
+            assertEquals("Producto eliminado correctamente.", value);
+            return null;
+        }).when(redirectAttributes).addFlashAttribute(anyString(), any());
 
-        ModelAndView modelAndView = controladorPedido.historialPedidos();
+        ModelAndView mv = controladorPedido.eliminarProducto(1L, request, redirectAttributes);
 
-        assertNotNull(modelAndView.getModel().get("pedidos").toString());
-        assertNotEquals("", modelAndView.getModel().get("pedidos").toString());*/
+        verify(servicioPedido).eliminarProductoDelPedido(pedido, 1L);
+        verify(servicioPedido).asociarProductoPedido(pedido);
+        verify(redirectAttributes).addFlashAttribute("mensajeExito", "Producto eliminado correctamente.");
+        assertEquals("redirect:/detalle-pedido", mv.getViewName());
     }
 
     @Test
-    public void queMuestreMensajeCuandoNoHayPedidos() {
-        /*ModelAndView modelAndView = controladorPedido.historialPedidos();
+    public void eliminarProducto_pedidoNoPendiente_mensajeError() {
+        pedido.setEstado(Estado.A_RETIRAR);
+        when(servicioPedido.buscarPedidoEstadoPendiente(usuario)).thenReturn(pedido);
 
-        when(servicioPedidoMock.listarPedidosDelUsuario(any(Long.class)))
-                .thenReturn(List.of());
+        doAnswer(invocation -> {
+            String key = invocation.getArgument(0);
+            String value = invocation.getArgument(1);
+            assertEquals("mensajeError", key);
+            assertEquals("No se puede eliminar el producto en este estado.", value);
+            return null;
+        }).when(redirectAttributes).addFlashAttribute(anyString(), any());
 
-        assertNotNull(modelAndView.getModel().get("mensajeSinPedidos").toString());*/
+        ModelAndView mv = controladorPedido.eliminarProducto(1L, request, redirectAttributes);
+
+        verify(servicioPedido, never()).eliminarProductoDelPedido(any(), anyLong());
+        verify(servicioPedido, never()).asociarProductoPedido(any());
+        verify(redirectAttributes).addFlashAttribute("mensajeError", "No se puede eliminar el producto en este estado.");
+        assertEquals("redirect:/detalle-pedido", mv.getViewName());
+    }
+
+    @Test
+    public void eliminarProducto_pedidoNull_mensajeError() {
+        when(servicioPedido.buscarPedidoEstadoPendiente(usuario)).thenReturn(null);
+
+        doAnswer(invocation -> {
+            String key = invocation.getArgument(0);
+            String value = invocation.getArgument(1);
+            assertEquals("mensajeError", key);
+            assertEquals("No se puede eliminar el producto en este estado.", value);
+            return null;
+        }).when(redirectAttributes).addFlashAttribute(anyString(), any());
+
+        ModelAndView mv = controladorPedido.eliminarProducto(1L, request, redirectAttributes);
+
+        verify(servicioPedido, never()).eliminarProductoDelPedido(any(), anyLong());
+        verify(servicioPedido, never()).asociarProductoPedido(any());
+        verify(redirectAttributes).addFlashAttribute("mensajeError", "No se puede eliminar el producto en este estado.");
+        assertEquals("redirect:/detalle-pedido", mv.getViewName());
+    }
+
+    @Test
+    public void eliminarProducto_excepcionAlEliminar_mensajeError() throws Exception {
+        when(servicioPedido.buscarPedidoEstadoPendiente(usuario)).thenReturn(pedido);
+        when(pedido.getEstado()).thenReturn(Estado.PENDIENTE); // mockear estado para entrar en la rama
+
+        doThrow(new RuntimeException("Error al eliminar")).when(servicioPedido).eliminarProductoDelPedido(pedido, 1L);
+
+        doAnswer(invocation -> {
+            String key = invocation.getArgument(0);
+            Object value = invocation.getArgument(1);
+            System.out.println("addFlashAttribute key=" + key + ", value=" + value);
+            assertEquals("mensajeError", key);
+            assertTrue(value.toString().contains("Error al eliminar"));
+            return null;
+        }).when(redirectAttributes).addFlashAttribute(anyString(), any());
+
+        ModelAndView mv = controladorPedido.eliminarProducto(1L, request, redirectAttributes);
+
+        verify(servicioPedido).eliminarProductoDelPedido(pedido, 1L);
+        verify(redirectAttributes).addFlashAttribute(eq("mensajeError"), contains("Error al eliminar"));
+        assertEquals("redirect:/detalle-pedido", mv.getViewName());
     }
 
 }
+

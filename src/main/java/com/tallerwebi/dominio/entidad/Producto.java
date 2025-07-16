@@ -35,6 +35,9 @@ public class Producto {
     @JoinColumn(name = "talle")
     private Talle talle;
 
+    private String imagenUrl;
+    private String imagenPrendaConDisenioUrl;
+
     public Long getId() {
         return id;
     }
@@ -99,6 +102,26 @@ public class Producto {
         this.tela = tela;
     }
 
+    public void setPedidos(Set<Pedido> pedidos) {
+        this.pedidos = pedidos;
+    }
+
+    public String getImagenUrl() {
+        return imagenUrl;
+    }
+
+    public void setImagenUrl(String imagenUrl) {
+        this.imagenUrl = imagenUrl;
+    }
+
+    public String getImagenPrendaConDisenioUrl() {
+        return imagenPrendaConDisenioUrl;
+    }
+
+    public void setImagenPrendaConDisenioUrl(String imagenPrendaConDisenioUrl) {
+        this.imagenPrendaConDisenioUrl = imagenPrendaConDisenioUrl;
+    }
+
     public void agregarPedido(Pedido pedido) {
         this.pedidos.add(pedido);
         pedido.getProductos().add(this);
@@ -106,13 +129,19 @@ public class Producto {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Producto producto = (Producto) o;
+        if (this.id == null || producto.id == null) {
+            // Si alguno no tiene id, no son iguales (es instancia nueva)
+            return false;
+        }
         return Objects.equals(id, producto.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return (id != null) ? Objects.hash(id) : System.identityHashCode(this);
     }
+
 }

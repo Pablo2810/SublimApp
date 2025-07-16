@@ -19,8 +19,6 @@
     </style>
 </head>
 <body>
-<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center"
-     th:insert="templates/nav :: nav"></div>
 
 <div class="container py-4">
 
@@ -35,16 +33,16 @@
                     </div>
                 </div>
             </div>
-
-            <div class="col-4">
-                <div class="card" style="width: 18rem;">
-                    <img th:src="@{/img/promociones.jpg}" class="card-img-top p-1" alt="Promociones">
-                    <div class="card-body">
-                        <a href="#" class="btn btn-primary w-100">ABM de promociones</a>
-                    </div>
-                </div>
-            </div>
-
+            <!--
+                        <div class="col-4">
+                            <div class="card" style="width: 18rem;">
+                                <img th:src="@{/img/promociones.jpg}" class="card-img-top p-1" alt="Promociones">
+                                <div class="card-body">
+                                    <a href="#" class="btn btn-primary w-100">ABM de promociones</a>
+                                </div>
+                            </div>
+                        </div>
+             -->
             <div class="col-4">
                 <div class="card" style="width: 18rem;">
                     <img th:src="@{/img/galeria_2.jpg}" class="card-img-top p-1" alt="Galería">
@@ -62,7 +60,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- NUEVA TARJETA: Estado de envío de telas -->
             <div class="col-4">
                 <div class="card" style="width: 18rem;">

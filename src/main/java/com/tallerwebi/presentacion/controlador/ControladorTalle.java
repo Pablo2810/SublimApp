@@ -57,7 +57,7 @@ public class ControladorTalle {
         ModelMap model = new ModelMap();
 
         if(medidas.getUnidad().equals("in")){
-            this.transformarPulgadasEnCentimetros(medidas);
+            medidas = servicioTalle.convertirPulgadasACentimetrosYRedondear(medidas);
         }
 
         Talle talleRecomendado = servicioTalle.recomendarTalle(medidas);
@@ -90,8 +90,4 @@ public class ControladorTalle {
                 .collect(Collectors.toList());
     }
 
-    private void transformarPulgadasEnCentimetros(DatosMedida medidas) {
-        medidas.setCintura(medidas.getCintura() * 2.54);
-        medidas.setPecho(medidas.getPecho() * 2.54);
-    }
 }

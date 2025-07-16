@@ -26,13 +26,11 @@ import java.util.List;
 public class ControladorAdmin {
 
     private final ServicioTela servicioTela;
-    private final ServicioTalle servicioTalle;
     private final ServicioPedido servicioPedido;
 
     @Autowired
-    public ControladorAdmin(ServicioTela servicioTela, ServicioTalle servicioTalle, ServicioPedido servicioPedido) {
+    public ControladorAdmin(ServicioTela servicioTela, ServicioPedido servicioPedido) {
         this.servicioTela = servicioTela;
-        this.servicioTalle = servicioTalle;
         this.servicioPedido = servicioPedido;
     }
 
@@ -104,60 +102,6 @@ public class ControladorAdmin {
         }
 
         return new ModelAndView("redirect:/admin/listar-telas");
-    }
-
-    // ABM Talles
-    @GetMapping("/listar-talles")
-    public ModelAndView listarTalles() {
-        ModelMap model = new ModelMap();
-        List<Talle> talles = servicioTalle.obtenerTalles();
-
-        model.put("mensajeSinTalles", "No hay talles registrados");
-        model.addAttribute("talles", talles);
-
-        return new ModelAndView("listar-talles", model);
-    }
-
-    @PostMapping({"/editar-talle", "/editar-talle/{id}"})
-    public ModelAndView editarOCrearTalle(@PathVariable(required = false) Long id,
-                                          @ModelAttribute DatosTalle datosTalle,
-                                          RedirectAttributes redirectAttributes) {
-
-        try {
-            servicioTalle.crearOActualizar(datosTalle);
-            String mensajeExito = id != null ? "Se edito el talle " + id : "Se creo el talle con exito";
-            redirectAttributes.addFlashAttribute("mensaje", mensajeExito);
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("mensajeError", "Ocurrio un error al crear o actualizar el talle");
-        }
-
-        return new ModelAndView("redirect:/admin/listar-talles");
-    }
-
-    @GetMapping({"/editar-talle", "/editar-talle/{id}"})
-    public ModelAndView editarOCrearTalle(@PathVariable(required = false) Long id) {
-        ModelMap model = new ModelMap();
-        Talle talle = new Talle();
-
-        if (id != null) {
-            talle = this.servicioTalle.obtenerTalle(id);
-        }
-
-        model.put("talle", talle);
-
-        return new ModelAndView("editar-talle", model);
-    }
-
-    @GetMapping("/borrar-talle/{id}")
-    public ModelAndView borrarTalle(@PathVariable() Long id, RedirectAttributes redirectAttributes) {
-        try {
-            servicioTalle.borrarTalle(id);
-            redirectAttributes.addFlashAttribute("mensaje", "Se borrado el talle" + id + "con exito");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("mensajeError", "Ocurrio un error al borrar el talle");
-        }
-
-        return new ModelAndView("redirect:/admin/listar-talles");
     }
 
     // Pedidos (listado y modificacion de estado)

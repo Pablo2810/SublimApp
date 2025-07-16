@@ -18,5 +18,11 @@ public interface ServicioTalle {
     Talle recomendarTalle(DatosMedida medidas);
 
     List<Talle> buscarTallesPorPais(String pais);
+
+    Boolean entraEnElRango(Talle talle, double cintura, double pecho);
+
+    double redondear(double valor);
+
+    DatosMedida convertirPulgadasACentimetrosYRedondear(DatosMedida medidas);
     // Talle buscarTallePorId(Long talleId);
 }

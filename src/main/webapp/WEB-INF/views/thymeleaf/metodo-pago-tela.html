@@ -5,26 +5,90 @@
     <title>Método de Pago</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
     <link rel="stylesheet" th:href="@{/css/main.css}" />
-    <link rel="stylesheet" th:href="@{/css/modoOscuro.css}"/>
     <style>
-        #sugerenciasDireccion {
-          position: absolute;
-          z-index: 1050;
+        html {
+            background-color: #06142e;
+        }
+        body {
+          font-family: "Lexend Deca", sans-serif;
+          background-color: #06142e;
+          color: white;
+        }
+        h2 {
+          text-align: center;
+          margin-top: 2rem;
+          margin-bottom: 1.5rem;
+          font-weight: 600;
+          color: white;
+        }
+        form.card {
+          max-width: 850px;
+          margin: 0 auto;
+          background-color: #fefefe;
+          color: #212529;
+          border-radius: 1rem;
+          padding: 2rem;
+          box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.2);
+        }
+        label.form-label, .form-check-label {
+          font-weight: 500;
+        }
+        .btn-group .btn {
+          font-weight: 500;
+        }
+        .alert-info {
+          background-color: #e7f1ff;
+          border: 1px solid #b6d4fe;
+          color: #084298;
+          border-radius: 0.5rem;
+        }
+        #resumenPago strong {
+          font-size: 1.1rem;
+        }
+        .btn-success {
           width: 100%;
-          max-height: 180px;
+          font-weight: 500;
+          font-size: 1.1rem;
+        }
+        .btn-secondary {
+          display: block;
+          width: fit-content;
+          margin: 1rem auto;
+        }
+        #contenedorDireccion {
+          margin-top: 1rem;
+        }
+        #sugerenciasDireccion {
+          background-color: white;
+          border: 1px solid #ced4da;
+          border-radius: 0.5rem;
           overflow-y: auto;
-          cursor: pointer;
+          z-index: 1050;
+          max-height: 180px;
+          width: 100%;
+        }
+        #sugerenciasDireccion li:hover {
+          background-color: #f8f9fa;
+        }
+        @media (max-width: 768px) {
+          form.card {
+            padding: 2rem 1rem;
+          }
+          .btn-success {
+            font-size: 1rem;
+          }
+          .form-check-inline {
+            display: block;
+            margin-bottom: 0.5rem;
+          }
         }
     </style>
 </head>
 <body class="p-0 m-0">
-<div class="sticky-top bg-dark d-flex justify-content-between py-3 px-5 align-items-center" th:insert="templates/nav :: nav"></div>
-
+<th:block th:replace="templates/nav :: nav"></th:block>
 <h2 class="mb-4">Seleccionar Método de Pago</h2>
 
-<form th:action="@{/confirmar-pago}" method="post" class="card p-4 shadow-sm position-relative" accept-charset="UTF-8">
-
-    <!-- Datos ocultos de la tela -->
+<form th:action="@{/confirmar-pago}" method="post" class="card shadow-sm position-relative" accept-charset="UTF-8">
     <input type="hidden" name="idTela" th:value="${idTela}" />
     <input type="hidden" name="color" th:value="${color}" />
     <input type="hidden" name="precio" th:value="${precio}" />
@@ -34,21 +98,20 @@
     <input type="hidden" id="tipoEnvio" name="tipoEnvio" value="LOCAL" />
     <input type="hidden" id="jsonDireccion" name="jsonDireccion" value="" />
 
-    <!-- Selección de moneda -->
+    <!-- Moneda -->
     <div class="mb-3">
-        <label class="form-label">Elegí la moneda de pago:</label><br>
-        <div class="btn-group" role="group" aria-label="Moneda de pago">
-            <input type="radio" class="btn-check" name="pagoEnDolares" id="pagoPesos" value="false" autocomplete="off" checked>
+        <label class="form-label">Moneda de pago:</label>
+        <div class="btn-group w-100" role="group">
+            <input type="radio" class="btn-check" name="pagoEnDolares" id="pagoPesos" value="false" checked>
             <label class="btn btn-outline-primary" for="pagoPesos">Pesos</label>
-
-            <input type="radio" class="btn-check" name="pagoEnDolares" id="pagoDolares" value="true" autocomplete="off">
+            <input type="radio" class="btn-check" name="pagoEnDolares" id="pagoDolares" value="true">
             <label class="btn btn-outline-primary" for="pagoDolares">Dólares</label>
         </div>
     </div>
 
     <!-- Método de pago -->
     <div class="mb-3">
-        <label class="form-label">Elegí un método de pago:</label><br>
+        <label class="form-label">Método de pago:</label>
         <div class="form-check">
             <input class="form-check-input" type="radio" name="metodoPago" value="debito" id="debito" required>
             <label class="form-check-label" for="debito">Débito</label>
@@ -59,9 +122,9 @@
         </div>
     </div>
 
-    <!-- Envio -->
+    <!-- Envío -->
     <div class="mb-3">
-        <label class="form-label">¿Querés retiro en local o envío a domicilio?</label><br>
+        <label class="form-label">Retiro o envío:</label>
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="opcionEnvio" id="opcionLocal" value="LOCAL" checked>
             <label class="form-check-label" for="opcionLocal">Retiro en local (Gratis)</label>
@@ -70,73 +133,75 @@
             <input class="form-check-input" type="radio" name="opcionEnvio" id="opcionEnvioDomicilio" value="ENVIO">
             <label class="form-check-label" for="opcionEnvioDomicilio">Envío a domicilio</label>
         </div>
-
-        <!-- Detalle de costos de envío -->
         <div class="text-muted mt-2" style="font-size: 0.875em;">
-            <p class="mb-1">Costos estimados de envío a domicilio:</p>
+            <p class="mb-1">Costos estimados:</p>
             <ul class="mb-0 ps-3">
                 <li><strong>CABA:</strong> $1000</li>
-                <li><strong>Interior del país:</strong> $2500</li>
+                <li><strong>Interior:</strong> $2500</li>
                 <li><strong>Exterior:</strong> $10000</li>
             </ul>
         </div>
     </div>
 
+    <!-- Dirección -->
     <div class="mb-3 position-relative" id="contenedorDireccion" style="display:none;">
-        <label for="direccionEnvio" class="form-label text-dark">Dirección completa de envío</label>
+        <label for="direccionEnvio" class="form-label text-dark">Dirección de envío</label>
         <input id="direccionEnvio" name="direccionEnvio" type="text" class="form-control" placeholder="Ej: Av. Córdoba 1234, CABA" autocomplete="off">
         <ul id="sugerenciasDireccion" class="list-group"></ul>
-        <div class="form-text">Especificá calle, número, ciudad y país.</div>
+        <div class="form-text">Incluí calle, número, ciudad y país.</div>
     </div>
 
-    <!-- Datos de la tarjeta -->
+    <!-- Datos tarjeta -->
     <div id="formulario-tarjeta" style="display: none;">
-        <div class="mb-3">
-            <label for="numeroTarjeta" class="form-label">Número de tarjeta</label>
-            <input type="text" class="form-control" name="numeroTarjeta" id="numeroTarjeta" pattern="\d{16}" placeholder="1234567812345678" required>
+        <div class="row">
+            <div class="mb-3 col-md-6">
+                <label for="numeroTarjeta" class="form-label">Número de tarjeta</label>
+                <input type="text" class="form-control" name="numeroTarjeta" id="numeroTarjeta" pattern="\d{16}" placeholder="1234567812345678" required>
+            </div>
+            <div class="mb-3 col-md-6">
+                <label for="cvv" class="form-label">CVV</label>
+                <input type="text" class="form-control" name="cvv" id="cvv" pattern="\d{3}" placeholder="123" required>
+            </div>
         </div>
-        <div class="mb-3">
-            <label for="nombreTitular" class="form-label">Nombre del titular</label>
-            <input type="text" class="form-control" name="nombreTitular" id="nombreTitular" required>
-        </div>
-        <div class="mb-3">
-            <label for="vencimiento" class="form-label">Fecha de vencimiento</label>
-            <input type="month" class="form-control" name="vencimiento" id="vencimiento" required>
-        </div>
-        <div class="mb-3">
-            <label for="cvv" class="form-label">CVV</label>
-            <input type="text" class="form-control" name="cvv" id="cvv" pattern="\d{3}" placeholder="123" required>
+        <div class="row">
+            <div class="mb-3 col-md-6">
+                <label for="nombreTitular" class="form-label">Nombre del titular</label>
+                <input type="text" class="form-control" name="nombreTitular" id="nombreTitular" required>
+            </div>
+            <div class="mb-3 col-md-6">
+                <label for="vencimiento" class="form-label">Fecha de vencimiento</label>
+                <input type="month" class="form-control" name="vencimiento" id="vencimiento" required>
+            </div>
         </div>
     </div>
 
-    <!-- Selector de cuotas (solo para crédito) -->
+    <!-- Cuotas -->
     <div class="mb-3" id="cuotas-container" style="display: none;">
-        <label for="cuotas" class="form-label">Elegí la cantidad de cuotas:</label>
+        <label for="cuotas" class="form-label">Cantidad de cuotas:</label>
         <select class="form-select" name="cuotas" id="cuotas">
             <option value="1">1 cuota (sin interés)</option>
-            <option value="2">2 cuotas (5% interés)</option>
-            <option value="3">3 cuotas (8% interés)</option>
-            <option value="6">6 cuotas (12% interés)</option>
-            <option value="12">12 cuotas (20% interés)</option>
+            <option value="2">2 cuotas (5%)</option>
+            <option value="3">3 cuotas (8%)</option>
+            <option value="6">6 cuotas (12%)</option>
+            <option value="12">12 cuotas (20%)</option>
         </select>
     </div>
 
-    <!-- Vista previa del total a pagar -->
+    <!-- Total -->
     <div class="alert alert-info" id="resumenPago" style="display: none;">
         <strong>Total estimado:</strong> <span id="totalResumen"></span><br>
         <span id="detalleCuotas"></span>
-        <div id="tipoCambioDolar" style="display:none; margin-top:8px; font-size:0.9em; color:#555;">
-            Tipo de cambio dólar blue: <strong id="valorDolar"></strong>
+        <div id="tipoCambioDolar" style="display:none; margin-top:8px; font-size:0.9em;">
+            Dólar blue: <strong id="valorDolar"></strong>
         </div>
     </div>
-
     <button type="submit" class="btn btn-success">Confirmar Pago</button>
 </form>
 
 <a th:href="@{/catalogo-telas}" class="btn btn-secondary mt-3">Cancelar</a>
 
 <div th:replace="templates/toasts :: toasts"></div>
-<footer th:insert="templates/footer :: footer"></footer>
+<footer style="background-color: #06142e;" th:insert="templates/footer :: footer"></footer>
 
 <script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
 <script th:inline="javascript">

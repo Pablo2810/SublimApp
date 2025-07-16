@@ -10,6 +10,7 @@ import com.tallerwebi.presentacion.controlador.ControladorProducto;
 import com.tallerwebi.presentacion.dto.DatosLogin;
 import com.tallerwebi.presentacion.dto.DatosPrenda;
 import com.tallerwebi.presentacion.dto.DatosProducto;
+import io.imagekit.sdk.models.results.Result;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,6 +36,8 @@ public class ControladorProductoTest {
     private ServicioProducto servicioProductoMock;
     private ServicioPedido servicioPedidoMock;
     private ServicioCotizacionDolar servicioCotizacionDolarMock;
+    private ServicioStorageImagen servicioStorageImagenMock;
+    private ServicioGeneradorImagenIA servicioGeneradorImagenIA;
     private HttpServletRequest requestMock;
     private HttpSession sessionMock;
     private RedirectAttributes redirectAttrs;
@@ -48,11 +51,12 @@ public class ControladorProductoTest {
         servicioProductoMock = mock(ServicioProducto.class);
         servicioPedidoMock = mock(ServicioPedido.class);
         servicioCotizacionDolarMock = mock(ServicioCotizacionDolar.class);
+        servicioStorageImagenMock = mock(ServicioStorageImagen.class);
         requestMock = mock(HttpServletRequest.class);
         sessionMock = mock(HttpSession.class);
         redirectAttrs = mock(RedirectAttributes.class);
         controladorProducto = new ControladorProducto(servicioProductoMock, servicioTalleMock, servicioPrendaMock,
-                servicioTelaMock, servicioArchivoMock, servicioPedidoMock, servicioCotizacionDolarMock);
+                servicioTelaMock, servicioArchivoMock, servicioPedidoMock, servicioCotizacionDolarMock, servicioGeneradorImagenIA, servicioStorageImagenMock);
     }
 
     private DatosProducto crearDatosProductoEjemplo() {
@@ -236,6 +240,10 @@ public class ControladorProductoTest {
         DatosProducto datosProducto = crearDatosProductoEjemplo();
         Usuario usuario = new Usuario();
         usuario.setId(1L);
+        Producto producto = new Producto();
+        producto.setId(1L);
+        Result mockResult = new Result();
+        mockResult.setUrl("https://imagekit.io/");
 
         when(requestMock.getSession()).thenReturn(sessionMock);
         when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(usuario);
@@ -243,7 +251,8 @@ public class ControladorProductoTest {
         when(servicioTalleMock.obtenerTalle(datosProducto.getTalleId())).thenReturn(new Talle());
         when(servicioTelaMock.obtenerTela(datosProducto.getTelaId())).thenReturn(new Tela());
         when(servicioArchivoMock.registrarArchivo(any())).thenReturn(new Archivo());
-        when(servicioProductoMock.registrarProducto(anyInt(), any(), any(), any(), any())).thenReturn(new Producto());
+        when(servicioProductoMock.registrarProducto(anyInt(), any(), any(), any(), any())).thenReturn(producto);
+        when(servicioStorageImagenMock.subirImagen(any(MultipartFile.class), anyString(), anyString())).thenReturn(mockResult);
         when(servicioPedidoMock.buscarPedidoEstadoPendiente(usuario)).thenReturn(new Pedido());
 
         doThrow(new StockInsuficiente())
@@ -262,6 +271,10 @@ public class ControladorProductoTest {
         DatosProducto datosProducto = crearDatosProductoEjemplo();
         Usuario usuario = new Usuario();
         usuario.setId(1L);
+        Producto producto = new Producto();
+        producto.setId(1L);
+        Result mockResult = new Result();
+        mockResult.setUrl("https://imagekit.io/");
 
         when(requestMock.getSession()).thenReturn(sessionMock);
         when(sessionMock.getAttribute("usuarioLogueado")).thenReturn(usuario);
@@ -269,7 +282,8 @@ public class ControladorProductoTest {
         when(servicioTalleMock.obtenerTalle(datosProducto.getTalleId())).thenReturn(new Talle());
         when(servicioTelaMock.obtenerTela(datosProducto.getTelaId())).thenReturn(new Tela());
         when(servicioArchivoMock.registrarArchivo(any())).thenReturn(new Archivo());
-        when(servicioProductoMock.registrarProducto(anyInt(), any(), any(), any(), any())).thenReturn(new Producto());
+        when(servicioProductoMock.registrarProducto(anyInt(), any(), any(), any(), any())).thenReturn(producto);
+        when(servicioStorageImagenMock.subirImagen(any(MultipartFile.class), anyString(), anyString())).thenReturn(mockResult);
         when(servicioPedidoMock.buscarPedidoEstadoPendiente(usuario)).thenReturn(new Pedido());
 
         doThrow(new TelaNoEncontrada())

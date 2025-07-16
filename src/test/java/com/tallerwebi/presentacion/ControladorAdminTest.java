@@ -23,7 +23,6 @@ public class ControladorAdminTest {
 
     private ControladorAdmin controladorAdmin;
     private ServicioTela servicioTela;
-    private ServicioTalle servicioTalle;
     private ServicioPedido servicioPedido;
     private RedirectAttributes redirectAttributes;
 
@@ -32,7 +31,7 @@ public class ControladorAdminTest {
     void init() {
         servicioTela = mock(ServicioTela.class);
         redirectAttributes = mock(RedirectAttributes.class);
-        controladorAdmin = new ControladorAdmin(servicioTela, servicioTalle, servicioPedido);
+        controladorAdmin = new ControladorAdmin(servicioTela, servicioPedido);
     }
 
     @Test
