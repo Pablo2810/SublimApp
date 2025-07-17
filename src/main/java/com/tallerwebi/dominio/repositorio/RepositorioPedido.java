@@ -27,4 +27,5 @@ public interface RepositorioPedido {
     List<Pedido> listarPedidosDelUsuarioNoPendiente(Long idUsuario);
 
     void eliminar(Pedido pedidoEncontrado);
+
 }

@@ -4,13 +4,17 @@ import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.repositorio.RepositorioPedido;
 import com.tallerwebi.dominio.repositorio.RepositorioProducto;
 import com.tallerwebi.dominio.repositorio.RepositorioTela;
+import com.tallerwebi.dominio.servicio.ServicioCotizacionDolar;
 import com.tallerwebi.dominio.servicio.ServicioEmail;
+import com.tallerwebi.dominio.servicio.ServicioMaquina;
 import com.tallerwebi.dominio.servicio.ServicioPedido;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeParseException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -19,18 +23,24 @@ import java.util.UUID;
 @Transactional
 public class ServicioPedidoImpl implements ServicioPedido {
 
-    RepositorioPedido repositorioPedido;
-    ServicioEmail servicioEmail;
-    RepositorioProducto repositorioProducto;
-    RepositorioTela repositorioTela;
+    private final RepositorioPedido repositorioPedido;
+    private final ServicioEmail servicioEmail;
+    private final RepositorioProducto repositorioProducto;
+    private final RepositorioTela repositorioTela;
+    private final ServicioCotizacionDolar servicioCotizacionDolar;
+    private final ServicioMaquina servicioMaquina;
 
     @Autowired
     public ServicioPedidoImpl(RepositorioPedido repositorioPedido, ServicioEmail servicioEmail,
-                              RepositorioProducto repositorioProducto, RepositorioTela repositorioTela) {
+                              RepositorioProducto repositorioProducto, RepositorioTela repositorioTela,
+                              ServicioCotizacionDolar servicioCotizacionDolar,
+                              ServicioMaquina servicioMaquina) {
         this.repositorioPedido = repositorioPedido;
         this.servicioEmail = servicioEmail;
         this.repositorioProducto = repositorioProducto;
         this.repositorioTela = repositorioTela;
+        this.servicioCotizacionDolar = servicioCotizacionDolar;
+        this.servicioMaquina = servicioMaquina;
     }
 
     @Override
@@ -38,11 +48,12 @@ public class ServicioPedidoImpl implements ServicioPedido {
         Double precioTotal = 0.0;
 
         for (Producto producto : pedido.getProductos()) {
-            precioTotal += producto.getPrecio();
+            precioTotal += producto.getPrecio() * producto.getCantidad();
         };
 
         return precioTotal / cotizacion;
     }
+
 
     @Override
     public void aplicarPromocion(Pedido pedido, Promocion promocion) {
@@ -51,14 +62,31 @@ public class ServicioPedidoImpl implements ServicioPedido {
     }
 
     @Override
-    public void generarPedidoCompleto(Long id, Moneda moneda, double cotizacion, String codigoPedido, LocalDate fechaCreacion, int diasEspera) {
+    public void generarPedidoCompleto(Long id, String tipoMonedaPago, double cotizacion, String codigoPedido, LocalDate fechaCreacion, int diasEspera) {
         Pedido pedido = obtenerPedido(id);
         pedido.setCodigoPedido(codigoPedido);
         pedido.setFechaCreacion(fechaCreacion);
         pedido.setFechaEntrega(LocalDate.now().plusDays(diasEspera));
-        pedido.setMonedaDePago(moneda);
-        pedido.setMontoTotal(calcularCostoTotal(pedido, cotizacion));
-        pedido.setMontoFinal(pedido.getMontoTotal());
+
+        // Como ya no usas enum Moneda, seteamos null o podés agregar un atributo String para guardar tipoMonedaPago
+        // pedido.setMonedaDePago(null);
+
+        // Si quieres mantener la info de moneda, te recomiendo crear en Pedido:
+        // private String monedaDePagoStr;
+        // con sus getters/setters, y acá hacer:
+        // pedido.setMonedaDePagoStr(tipoMonedaPago);
+
+        // Calculamos el monto total considerando la moneda
+        double montoTotal = calcularCostoTotal(pedido, cotizacion);
+        pedido.setMontoTotal(montoTotal);
+
+        // Si se paga en dólares, montoFinal es montoTotal dividido cotización, sino igual
+        if ("DOLAR".equalsIgnoreCase(tipoMonedaPago)) {
+            pedido.setMontoFinal(montoTotal / cotizacion);
+        } else {
+            pedido.setMontoFinal(montoTotal);
+        }
+
         repositorioPedido.actualizar(pedido);
     }
 
@@ -215,6 +243,108 @@ public class ServicioPedidoImpl implements ServicioPedido {
     @Override
     public void eliminarPedido(Pedido pedidoEncontrado) {
         repositorioPedido.eliminar(pedidoEncontrado);
+    }
+
+    @Transactional
+    @Override
+    public Pedido pagarPedido(Long pedidoId, Moneda moneda) {
+        Pedido pedido = repositorioPedido.buscarPorId(pedidoId); // asegurate que este método exista
+        if (pedido == null) {
+            throw new RuntimeException("Pedido no encontrado");
+        }
+
+        pedido.setMonedaDePago(moneda);
+        pedido.setEstado(Estado.EN_ESPERA);
+        repositorioPedido.actualizar(pedido);
+
+        return pedido;
+    }
+
+    @Transactional
+    @Override
+    public Pedido procesarPagoPedidoProductos(Long pedidoId,
+                                              boolean pagoEnDolares,
+                                              String metodoPago,
+                                              String opcionEnvioStr,
+                                              String direccionEnvio,
+                                              String numeroTarjeta,
+                                              String cvv,
+                                              String nombreTitular,
+                                              String vencimiento,
+                                              Integer cuotas) {
+        Pedido pedido = obtenerPedido(pedidoId);
+        if (pedido == null) throw new RuntimeException("Pedido no encontrado");
+
+        // Validar tipo de envío
+        TipoEnvio envio;
+        try {
+            envio = TipoEnvio.valueOf(opcionEnvioStr.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Tipo de envío inválido");
+        }
+
+        // Validar cuotas
+        if ("debito".equalsIgnoreCase(metodoPago)) {
+            cuotas = 1;
+        } else {
+            if (cuotas == null || !List.of(1, 2, 3, 6, 12).contains(cuotas)) {
+                throw new RuntimeException("Cantidad de cuotas inválida");
+            }
+        }
+
+        // Obtener cotización dólar
+        double cotizacion = 1.0;
+        if (pagoEnDolares) {
+            cotizacion = servicioCotizacionDolar.obtenerCotizacionDolar();
+        }
+
+        // Calcular monto productos y costo envío
+        double montoProductos = calcularCostoTotal(pedido, cotizacion);
+        double costoEnvio = envio.getCosto();
+
+        double montoFinal = montoProductos + costoEnvio;
+        if (pagoEnDolares) {
+            montoFinal = montoFinal / cotizacion;
+        }
+
+        // Setear datos en pedido
+        pedido.setTipoEnvio(envio);
+        pedido.setDireccionEnvio(direccionEnvio);
+        pedido.setMetodoPago(metodoPago);
+        pedido.setCuotas(cuotas);
+        pedido.setPagoEnDolares(pagoEnDolares);
+        pedido.setCotizacionDolar(pagoEnDolares ? cotizacion : 0.0);
+        pedido.setCostoEnvio(costoEnvio);
+        pedido.setDescripcionEnvio(envio.getDescripcion());
+        pedido.setTiempoEntrega(envio.getTiempoEntrega());
+        pedido.setMontoTotal(montoProductos);
+        pedido.setMontoFinal(montoFinal);
+
+        // Validar tarjeta (opcional, o lo hacés en controlador)
+        if (!numeroTarjeta.matches("\\d{16}")) throw new RuntimeException("Número de tarjeta inválido");
+        if (!cvv.matches("\\d{3}")) throw new RuntimeException("CVV inválido");
+        if (nombreTitular.trim().isEmpty()) throw new RuntimeException("Titular vacío");
+        try {
+            YearMonth fechaVenc = YearMonth.parse(vencimiento);
+            if (fechaVenc.isBefore(YearMonth.now())) throw new RuntimeException("Tarjeta vencida");
+        } catch (DateTimeParseException e) {
+            throw new RuntimeException("Fecha de vencimiento inválida");
+        }
+
+        // Cambiar estado a EN_ESPERA
+        if (!cambiarEstadoPedido(pedidoId, Estado.EN_ESPERA)) {
+            throw new RuntimeException("No se pudo cambiar el estado del pedido");
+        }
+
+        // Fechas y código
+        int diasEspera = servicioMaquina.calcularTiempoEspera();
+        pedido.setCodigoPedido(UUID.randomUUID().toString());
+        pedido.setFechaCreacion(LocalDate.now());
+        pedido.setFechaEntrega(LocalDate.now().plusDays(diasEspera));
+
+        repositorioPedido.actualizar(pedido);
+
+        return pedido;
     }
 
 }

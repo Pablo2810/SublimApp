@@ -92,52 +92,20 @@
                 <a th:href="@{/nuevo-pedido}" class="btn btn-light w-100">Sumar otro producto al carrito</a>
             </div>
 
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPago" th:if="${pedido.estado.name() == 'PENDIENTE'}">
-                Pagar pedido
-            </button>
+            <div class="w-25">
+                <a
+                        th:href="@{/metodo-pago-pedido(idPedido=${pedido.id})}"
+                        class="btn btn-primary w-100"
+                        th:if="${pedido.estado.name() == 'PENDIENTE'}">
+                    Pagar pedido
+                </a>
+            </div>
 
             <div class="w-25">
                 <a th:href="@{/historial-pedidos}" class="btn btn-secondary w-100">Ver lista de pedidos</a>
             </div>
         </section>
 
-        <div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="modalPagoLabel" aria-hidden="true" th:if="${pedido.estado.name() == 'PENDIENTE'}">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <form th:action="@{/pagar-pedido}" method="post" id="formulario">
-                        <input type="hidden" name="pedidoId" th:value="${pedido.id}" />
-                        <input type="hidden" name="precioTotal" id="precioTotalInput" />
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modalPagoLabel">¿En qué divisa pensás abonar?</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                        </div>
-                        <div class="modal-body">
-                            <h6 class="mb-4 text-center text-dark">
-                                Total a pagar: $(ARS) <span th:text="${#numbers.formatDecimal(pedido.montoTotal, 1, 'COMMA', 2, 'POINT')}">0.0</span>
-                            </h6>
-                            <div class="d-flex justify-content-around text-dark">
-                                <div class="form-check">
-                                    <input type="hidden" class="valor-cotizacion" th:value="1">
-                                    <input class="form-check-input" type="radio" name="moneda" value="PESOS_ARGENTINOS" checked />
-                                    <label class="form-check-label">ARG</label>
-                                </div>
-                                <div class="form-check">
-                                    <input type="hidden" class="valor-cotizacion" th:value="${cotizacionDolar}">
-                                    <input class="form-check-input" type="radio" name="moneda" value="DOLAR" />
-                                    <label class="form-check-label">USD <b th:text="${cotizacionDolar}">0.0</b></label>
-                                </div>
-
-                                <input type="hidden" name="cotizacion" id="cotizacion-input">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="button" id="completar-pago" class="btn btn-primary">Completar pago</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div th:if="${pedido == null}" class="d-flex container w-75 justify-content-around align-items-center mb-5 my-3">
@@ -154,38 +122,6 @@
 <script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/js/main.js}"></script>
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const btnCompletarPago = document.querySelector("#completar-pago");
-
-        btnCompletarPago.addEventListener("click", () => {
-            const monedaSeleccionada = document.querySelector("input[name='moneda']:checked");
-            const cotizacion = monedaSeleccionada.parentElement.querySelector(".valor-cotizacion").value;
-            const cotizacionInput = document.querySelector("#cotizacion-input");
-            const formulario = document.querySelector("#formulario");
-
-            if (cotizacion) {
-                cotizacionInput.value = Number(cotizacion);
-                formulario.submit();
-            }
-        });
-
-        const radios = document.querySelectorAll("input[name='moneda']");
-        const inputTotal = document.getElementById("precioTotalInput");
-
-        const actualizarPrecioTotal = () => {
-            const seleccionado = document.querySelector("input[name='moneda']:checked");
-            const precio = seleccionado.parentElement.querySelector(".valor-cotizacion").value;
-            inputTotal.value = precio;
-        };
-
-        radios.forEach(radio => {
-            radio.addEventListener("change", actualizarPrecioTotal);
-        });
-
-        actualizarPrecioTotal();
-    });
-</script>
-
 </body>
 </html>
+

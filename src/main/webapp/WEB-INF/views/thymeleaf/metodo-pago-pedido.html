@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Método de Pago</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <style>
+        html {
+            background-color: #06142e;
+        }
+        body {
+          font-family: "Lexend Deca", sans-serif;
+          background-color: #06142e;
+          color: white;
+        }
+        h2 {
+          text-align: center;
+          margin-top: 2rem;
+          margin-bottom: 1.5rem;
+          font-weight: 600;
+          color: white;
+        }
+        form.card {
+          max-width: 850px;
+          margin: 0 auto;
+          background-color: #fefefe;
+          color: #212529;
+          border-radius: 1rem;
+          padding: 2rem;
+          box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.2);
+        }
+        label.form-label, .form-check-label {
+          font-weight: 500;
+        }
+        .btn-group .btn {
+          font-weight: 500;
+        }
+        .alert-info {
+          background-color: #e7f1ff;
+          border: 1px solid #b6d4fe;
+          color: #084298;
+          border-radius: 0.5rem;
+        }
+        #resumenPago strong {
+          font-size: 1.1rem;
+        }
+        .btn-success {
+          width: 100%;
+          font-weight: 500;
+          font-size: 1.1rem;
+        }
+        .btn-secondary {
+          display: block;
+          width: fit-content;
+          margin: 1rem auto;
+        }
+        #contenedorDireccion {
+          margin-top: 1rem;
+        }
+        #sugerenciasDireccion {
+          background-color: white;
+          border: 1px solid #ced4da;
+          border-radius: 0.5rem;
+          overflow-y: auto;
+          z-index: 1050;
+          max-height: 180px;
+          width: 100%;
+        }
+        #sugerenciasDireccion li:hover {
+          background-color: #f8f9fa;
+          cursor: pointer;
+        }
+        @media (max-width: 768px) {
+          form.card {
+            padding: 2rem 1rem;
+          }
+          .btn-success {
+            font-size: 1rem;
+          }
+          .form-check-inline {
+            display: block;
+            margin-bottom: 0.5rem;
+          }
+        }
+    </style>
+</head>
+<body class="p-0 m-0">
+<th:block th:replace="templates/nav :: nav"></th:block>
+<h2 class="mb-4">Seleccionar Método de Pago</h2>
+
+<form th:action="@{/confirmar-pago-productos}" method="post" class="card shadow-sm position-relative" accept-charset="UTF-8">
+
+    <input type="hidden" name="idPedido" th:value="${pedido.id}" />
+
+    <!-- IMPORTANTES para el JS -->
+    <input type="hidden" name="precioUnitario" th:value="${precioUnitario}" />
+    <input type="hidden" name="cantidad" th:value="${cantidadTotal}" />
+
+    <!-- Moneda -->
+    <div class="mb-3">
+        <label class="form-label">Moneda de pago:</label>
+        <div class="btn-group w-100" role="group">
+            <input type="radio" class="btn-check" name="pagoEnDolares" id="pagoPesos" value="false"
+                   th:checked="${moneda != 'DOLARES'}" >
+            <label class="btn btn-outline-primary" for="pagoPesos">Pesos</label>
+            <input type="radio" class="btn-check" name="pagoEnDolares" id="pagoDolares" value="true"
+                   th:checked="${moneda == 'DOLARES'}" >
+            <label class="btn btn-outline-primary" for="pagoDolares">Dólares</label>
+        </div>
+    </div>
+
+    <!-- Método de pago -->
+    <div class="mb-3">
+        <label class="form-label">Método de pago:</label>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="metodoPago" value="debito" id="debito"
+                   th:checked="${metodoPago == 'debito'}" required>
+            <label class="form-check-label" for="debito">Débito</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="metodoPago" value="credito" id="credito"
+                   th:checked="${metodoPago == 'credito'}">
+            <label class="form-check-label" for="credito">Crédito</label>
+        </div>
+    </div>
+
+    <!-- Envío -->
+    <div class="mb-3">
+        <label class="form-label">Retiro o envío:</label>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="opcionEnvio" id="opcionLocal" value="LOCAL"
+                   th:checked="${opcionEnvio == null or opcionEnvio == 'LOCAL'}" >
+            <label class="form-check-label" for="opcionLocal">Retiro en local (Gratis)</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <!-- El valor aquí NO es "ENVIO" sino "CABA" como ejemplo; se debe setear dinámicamente por JS -->
+            <input class="form-check-input" type="radio" name="opcionEnvio" id="opcionEnvioDomicilio" value="CABA"
+                   th:checked="${opcionEnvio == 'CABA' or opcionEnvio == 'INTERIOR' or opcionEnvio == 'EXTERIOR'}" >
+            <label class="form-check-label" for="opcionEnvioDomicilio">Envío a domicilio</label>
+        </div>
+        <div class="text-muted mt-2" style="font-size: 0.875em;">
+            <p class="mb-1">Costos estimados:</p>
+            <ul class="mb-0 ps-3">
+                <li><strong>CABA:</strong> $1000</li>
+                <li><strong>Interior:</strong> $2500</li>
+                <li><strong>Exterior:</strong> $10000</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Dirección -->
+    <div class="mb-3 position-relative" id="contenedorDireccion" style="display:none;">
+        <label for="direccionEnvio" class="form-label text-dark">Dirección de envío</label>
+        <input id="direccionEnvio" name="direccionEnvio" type="text" class="form-control" placeholder="Ej: Av. Córdoba 1234, CABA" autocomplete="off"
+               th:value="${direccionEnvioSeleccionada}" />
+        <ul id="sugerenciasDireccion" class="list-group"></ul>
+        <div class="form-text">Incluí calle, número, ciudad y país.</div>
+    </div>
+
+    <input type="hidden" id="jsonDireccion" name="jsonDireccion" />
+    <input type="hidden" id="tipoEnvio" name="tipoEnvio" th:value="${opcionEnvio}" />
+
+    <!-- Datos tarjeta -->
+    <div id="formulario-tarjeta" style="display: none;">
+        <div class="row">
+            <div class="mb-3 col-md-6">
+                <label for="numeroTarjeta" class="form-label">Número de tarjeta</label>
+                <input type="text" class="form-control" name="numeroTarjeta" id="numeroTarjeta" pattern="\d{16}" placeholder="1234567812345678" required
+                       th:value="${numeroTarjeta}" />
+            </div>
+            <div class="mb-3 col-md-6">
+                <label for="cvv" class="form-label">CVV</label>
+                <input type="text" class="form-control" name="cvv" id="cvv" pattern="\d{3}" placeholder="123" required
+                       th:value="${cvv}" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="mb-3 col-md-6">
+                <label for="nombreTitular" class="form-label">Nombre del titular</label>
+                <input type="text" class="form-control" name="nombreTitular" id="nombreTitular" required
+                       th:value="${nombreTitular}" />
+            </div>
+            <div class="mb-3 col-md-6">
+                <label for="vencimiento" class="form-label">Fecha de vencimiento</label>
+                <input type="month" class="form-control" name="vencimiento" id="vencimiento" required
+                       th:value="${vencimiento}" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Cuotas -->
+    <div class="mb-3" id="cuotas-container" style="display: none;">
+        <label for="cuotas" class="form-label">Cantidad de cuotas:</label>
+        <select class="form-select" name="cuotas" id="cuotas" th:value="${cuotas}">
+            <option value="1" th:selected="${cuotas == 1}">1 cuota (sin interés)</option>
+            <option value="2" th:selected="${cuotas == 2}">2 cuotas (5%)</option>
+            <option value="3" th:selected="${cuotas == 3}">3 cuotas (8%)</option>
+            <option value="6" th:selected="${cuotas == 6}">6 cuotas (12%)</option>
+            <option value="12" th:selected="${cuotas == 12}">12 cuotas (20%)</option>
+        </select>
+    </div>
+
+    <!-- Resumen de pago -->
+    <div class="alert alert-info" id="resumenPago" style="display: none;">
+        <strong>Total estimado:</strong> <span id="totalResumen"></span><br>
+        <span id="detalleCuotas"></span>
+        <div id="tipoCambioDolar" style="display:none; margin-top:8px; font-size:0.9em;">
+            Dólar blue: <strong id="valorDolar"></strong>
+        </div>
+    </div>
+
+    <!-- Error -->
+    <div class="mt-3" th:if="${mensajeError != null}">
+        <p class="text-danger" th:text="${mensajeError}"></p>
+    </div>
+
+    <button type="submit" class="btn btn-success">Confirmar Pago</button>
+</form>
+
+<a th:href="@{/historial-pedidos}" class="btn btn-secondary mt-3">Cancelar</a>
+
+<div th:replace="templates/toasts :: toasts"></div>
+<footer style="background-color: #06142e;" th:insert="templates/footer :: footer"></footer>
+
+<script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+<script th:inline="javascript">
+    window.datosPago = { cotizacionDolar: [[${cotizacionDolar}]] };
+</script>
+<script th:src="@{/js/metodo-pago-producto.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

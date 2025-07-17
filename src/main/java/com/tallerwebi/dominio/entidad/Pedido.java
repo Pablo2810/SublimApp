@@ -40,6 +40,25 @@ public class Pedido {
     @ManyToMany
     private Set<Producto> productos = new HashSet<>();
 
+    @Enumerated(EnumType.STRING)
+    private TipoEnvio tipoEnvio;
+
+    private String direccionEnvio;  // si aplica
+
+    private String metodoPago; // crédito, débito...
+
+    private Integer cuotas;
+
+    private boolean pagoEnDolares;
+
+    private Double cotizacionDolar;
+
+    private Double costoEnvio;
+
+    private String descripcionEnvio;
+
+    private String tiempoEntrega;
+
     public Long getId() {
         return id;
     }
@@ -123,6 +142,33 @@ public class Pedido {
     }
 
     public void setProductos(Set<Producto> productos) { this.productos = productos; }
+
+    public TipoEnvio getTipoEnvio() { return tipoEnvio; }
+    public void setTipoEnvio(TipoEnvio tipoEnvio) { this.tipoEnvio = tipoEnvio; }
+
+    public String getDireccionEnvio() { return direccionEnvio; }
+    public void setDireccionEnvio(String direccionEnvio) { this.direccionEnvio = direccionEnvio; }
+
+    public String getMetodoPago() { return metodoPago; }
+    public void setMetodoPago(String metodoPago) { this.metodoPago = metodoPago; }
+
+    public Integer getCuotas() { return cuotas; }
+    public void setCuotas(Integer cuotas) { this.cuotas = cuotas; }
+
+    public boolean isPagoEnDolares() { return pagoEnDolares; }
+    public void setPagoEnDolares(boolean pagoEnDolares) { this.pagoEnDolares = pagoEnDolares; }
+
+    public Double getCotizacionDolar() { return cotizacionDolar; }
+    public void setCotizacionDolar(Double cotizacionDolar) { this.cotizacionDolar = cotizacionDolar; }
+
+    public Double getCostoEnvio() { return costoEnvio; }
+    public void setCostoEnvio(Double costoEnvio) { this.costoEnvio = costoEnvio; }
+
+    public String getDescripcionEnvio() { return descripcionEnvio; }
+    public void setDescripcionEnvio(String descripcionEnvio) { this.descripcionEnvio = descripcionEnvio; }
+
+    public String getTiempoEntrega() { return tiempoEntrega; }
+    public void setTiempoEntrega(String tiempoEntrega) { this.tiempoEntrega = tiempoEntrega; }
 
 
     @Override

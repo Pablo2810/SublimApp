@@ -24,7 +24,11 @@ public class RepositorioPedidoImpl implements RepositorioPedido {
 
     @Override
     public Pedido obtenerPedido(Long id) {
-        return this.sessionFactory.getCurrentSession().get(Pedido.class, id);
+        String hql = "SELECT p FROM Pedido p LEFT JOIN FETCH p.productos WHERE p.id = :id";
+        return (Pedido) sessionFactory.getCurrentSession()
+                .createQuery(hql)
+                .setParameter("id", id)
+                .uniqueResult();
     }
 
     @Override
@@ -95,4 +99,5 @@ public class RepositorioPedidoImpl implements RepositorioPedido {
                 .add(Restrictions.eq("id", id))
                 .uniqueResult();
     }
+
 }
