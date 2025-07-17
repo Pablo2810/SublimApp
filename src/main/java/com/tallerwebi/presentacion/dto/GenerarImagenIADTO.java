@@ -1,31 +1,17 @@
 package com.tallerwebi.presentacion.dto;
 
 public class GenerarImagenIADTO {
-    public String prompt;
-    public int structure_strength;
-    public int adherence;
-    public int hdr;
-    public String resolution;
-    public String aspect_ratio;
-    public String model;
-    public int creative_detailing;
-    public String engine;
-    public boolean fixed_generation;
-    public boolean filter_nsfw;
-
-    public GenerarImagenIADTO(String prompt, String model) {
-        this.prompt = prompt;
-        this.filter_nsfw = true;
-        this.fixed_generation = false;
-        this.engine = "automatic";
-        this.creative_detailing = 35;
-        this.model = model;
-        this.aspect_ratio = "square_1_1";
-        this.resolution = "1k";
-        this.hdr = 50;
-        this.adherence = 50;
-        this.structure_strength = 50;
-    }
+    private String prompt;
+    private int structure_strength;
+    private int adherence;
+    private int hdr;
+    private String resolution;
+    private String aspect_ratio;
+    private String model;
+    private int creative_detailing;
+    private String engine;
+    private boolean fixed_generation;
+    private boolean filter_nsfw;
 
     public String getPrompt() {
         return prompt;

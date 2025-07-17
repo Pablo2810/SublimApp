@@ -14,18 +14,10 @@ public class ResultadoObtenerImagenIA {
     }
 
     public static class Data {
-        public List<String> generated;
-        public String task_id;
-        public String status;
-        public List<Boolean> has_nsfw;
-
-        public List<String> getGenerated() {
-            return generated;
-        }
-
-        public void setGenerated(List<String> generated) {
-            this.generated = generated;
-        }
+        private String task_id;
+        private String status;
+        private List<String> generated;
+        private List<Boolean> has_nsfw;
 
         public String getTask_id() {
             return task_id;
@@ -43,6 +35,14 @@ public class ResultadoObtenerImagenIA {
             this.status = status;
         }
 
+        public List<String> getGenerated() {
+            return generated;
+        }
+
+        public void setGenerated(List<String> generated) {
+            this.generated = generated;
+        }
+
         public List<Boolean> getHas_nsfw() {
             return has_nsfw;
         }
@@ -52,3 +52,4 @@ public class ResultadoObtenerImagenIA {
         }
     }
 }
+

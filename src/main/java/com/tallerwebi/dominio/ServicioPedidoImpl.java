@@ -152,31 +152,26 @@ public class ServicioPedidoImpl implements ServicioPedido {
         try {
             Pedido pedido = obtenerPedido(id);
 
-            if (puedeCambiarElEstado(pedido.getEstado(), nuevoEstado)) {
-                repositorioPedido.cambiarEstadoPedido(pedido, nuevoEstado);
-                servicioEmail.enviarCorreoEstadoPedido(pedido.getUsuarioPedido().getEmail(), pedido,
-                        ServletUriComponentsBuilder
-                                .fromCurrentContextPath()
-                                .path("/historial-pedidos")
-                                .build()
-                                .toUriString());
-                return true;
-            }
+            repositorioPedido.cambiarEstadoPedido(pedido, nuevoEstado);
+            servicioEmail.enviarCorreoEstadoPedido(pedido.getUsuarioPedido().getEmail(), pedido,
+                    ServletUriComponentsBuilder
+                            .fromCurrentContextPath()
+                            .path("/historial-pedidos")
+                            .build()
+                            .toUriString());
+            return true;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return false;
     }
 
-    /*
-    Evalua que se pueda cambiar el estado del pedido
-    - una vez que el estado este en SUBLIMADO | EN_ESPERA | A_RETIRAR no puede volver a estar PENDIENTE
-    */
+    // Este método lo podés dejar si planeás validaciones extra
     private boolean puedeCambiarElEstado(Estado estadoAnterior, Estado nuevoEstado) {
         return estadoAnterior.equals(Estado.PENDIENTE) && !nuevoEstado.equals(Estado.PENDIENTE) ||
                 estadoAnterior.equals(Estado.EN_ESPERA) && nuevoEstado.equals(Estado.SUBLIMANDO) ||
                 estadoAnterior.equals(Estado.SUBLIMANDO) && nuevoEstado.equals(Estado.A_RETIRAR);
     }
+
 
     @Override
     public void cancelarPedido(Long id) {
