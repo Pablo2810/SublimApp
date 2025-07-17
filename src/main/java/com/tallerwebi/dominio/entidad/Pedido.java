@@ -25,9 +25,6 @@ public class Pedido {
 
     private Double montoFinal;
 
-    @Enumerated(EnumType.STRING)
-    private Moneda monedaDePago;
-
     private LocalDate fechaEntrega;
 
     @ManyToOne
@@ -43,9 +40,9 @@ public class Pedido {
     @Enumerated(EnumType.STRING)
     private TipoEnvio tipoEnvio;
 
-    private String direccionEnvio;  // si aplica
+    private String direccionEnvio;
 
-    private String metodoPago; // crédito, débito...
+    private String metodoPago;
 
     private Integer cuotas;
 
@@ -113,14 +110,6 @@ public class Pedido {
         this.montoFinal = montoFinal;
     }
 
-    public Moneda getMonedaDePago() {
-        return monedaDePago;
-    }
-
-    public void setMonedaDePago(Moneda monedaDePago) {
-        this.monedaDePago = monedaDePago;
-    }
-
     public LocalDate getFechaEntrega() {
         return fechaEntrega;
     }
@@ -155,7 +144,7 @@ public class Pedido {
     public Integer getCuotas() { return cuotas; }
     public void setCuotas(Integer cuotas) { this.cuotas = cuotas; }
 
-    public boolean isPagoEnDolares() { return pagoEnDolares; }
+    public boolean getPagoEnDolares() { return pagoEnDolares; }
     public void setPagoEnDolares(boolean pagoEnDolares) { this.pagoEnDolares = pagoEnDolares; }
 
     public Double getCotizacionDolar() { return cotizacionDolar; }

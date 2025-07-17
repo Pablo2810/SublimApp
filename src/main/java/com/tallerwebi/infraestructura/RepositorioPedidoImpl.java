@@ -4,6 +4,7 @@ import com.tallerwebi.dominio.entidad.Estado;
 import com.tallerwebi.dominio.entidad.Pedido;
 import com.tallerwebi.dominio.entidad.Usuario;
 import com.tallerwebi.dominio.repositorio.RepositorioPedido;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,11 @@ public class RepositorioPedidoImpl implements RepositorioPedido {
     @Override
     public void cambiarEstadoPedido(Pedido pedido, Estado nuevoEstado) {
         pedido.setEstado(nuevoEstado);
-        sessionFactory.getCurrentSession().merge(pedido);
+        Session session = sessionFactory.getCurrentSession();
+        session.merge(pedido);
+        session.flush();
     }
+
 
     @Override
     public List<Pedido> listarPedidosDelUsuario(Long idUsuario) {
@@ -89,8 +93,11 @@ public class RepositorioPedidoImpl implements RepositorioPedido {
 
     @Override
     public void actualizar(Pedido pedido) {
-        sessionFactory.getCurrentSession().merge(pedido);
+        Session session = sessionFactory.getCurrentSession();
+        session.merge(pedido);
+        session.flush();
     }
+
 
     @Override
     public Pedido buscarPorId(Long id) {

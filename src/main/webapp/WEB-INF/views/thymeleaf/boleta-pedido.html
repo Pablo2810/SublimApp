@@ -1,90 +1,133 @@
-<!-- BOLETA DE PEDIDO - HTML COMPLETO -->
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8" />
   <title>Boleta de Compra</title>
   <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
-  <link rel="stylesheet" th:href="@{/css/main.css}" />
+  <!-- CSS principal removido para evitar sobreescritura -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
   <style>
-    html { background-color: #06142e; }
-    body {
-      font-family: "Lexend Deca", sans-serif;
+    html, body {
       background-color: #06142e;
+      font-family: "Lexend Deca", sans-serif;
       color: #eee;
       padding: 1rem;
     }
-    h2 {
+
+    h1, h2 {
       text-align: center;
-      margin: 2rem 0 1.5rem;
       font-weight: 700;
       color: #f8f9fa;
-      letter-spacing: 1.2px;
     }
+
     #boleta {
-      max-width: 850px;
-      margin: 0 auto;
-      background-color: #f9f9f9;
-      color: #212529;
+      max-width: 900px;
+      margin: auto;
+      background-color: #fff;
+      color: #212529; /* Texto bien oscuro */
       border-radius: 1rem;
-      padding: 2.5rem 3rem;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-      font-size: 1.05rem;
-    }
-    #boleta p { margin-bottom: 0.7rem; }
-    #boleta strong { color: #2c3e50; font-weight: 600; }
-    .boleta-section {
-      margin-bottom: 1.8rem;
-      padding-bottom: 1.3rem;
-      border-bottom: 1px solid #ccc;
-    }
-    .boleta-section:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-    #total-final {
-      margin-top: 2rem;
       padding: 2rem;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+
+    #boleta h2 {
+      color: #343a40; /* Títulos secundarios más oscuros */
+    }
+
+    .boleta-section {
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 1rem;
+    }
+
+    .boleta-section i {
+      margin-right: 8px;
+      color: #0d6efd;
+    }
+
+    .boleta-section p {
+      margin-bottom: 0.6rem;
+      color: #212529; /* Texto más fuerte */
+    }
+
+    .boleta-section strong {
+      color: #000; /* Negrita bien marcada */
+    }
+
+    table.table {
+      margin-top: 1rem;
+      background-color: #fff;
+      color: #212529;
+    }
+
+    table.table th {
+      background-color: #f8f9fa;
+      color: #212529;
+    }
+
+    table.table td {
+      color: #212529;
+    }
+
+    #total-final {
       background-color: #e6f4ea;
-      border: 2px solid #28a745;
-      border-radius: 1rem;
+      color: #0a3622;
+      padding: 1.5rem;
       text-align: center;
-      color: #155724;
+      border-radius: 1rem;
+      margin-top: 2rem;
+      border: 2px solid #28a745;
+      font-weight: bold;
     }
-    #total-final h4 {
-      margin-bottom: 1rem;
-      font-weight: 700;
-    }
+
     #total-final h2 {
-      font-size: 3rem;
-      font-weight: 900;
+      font-size: 2rem;
+      color: #0a3622;
     }
-    #total-final small {
-      font-style: italic;
-      color: #3c763d;
+
+    .boleta-actions {
+      max-width: 900px;
+      margin: 2rem auto;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .boleta-actions .btn {
+      min-width: 160px;
     }
   </style>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
 </head>
-<body class="p-0 m-0">
+<body>
+
 <th:block th:replace="templates/nav :: nav"></th:block>
 
 <main class="container mt-5">
   <div id="boleta">
-    <h1 class="mb-4">Boleta del Pedido</h1>
+    <h1><i class="bi bi-receipt"></i> Boleta del Pedido</h1>
 
-    <div class="info boleta-section">
-      <p><strong>Código:</strong> <span th:text="${pedido.codigoPedido}"></span></p>
-      <p><strong>Fecha:</strong> <span th:text="${#dates.format(pedido.fechaCreacion, 'dd/MM/yyyy')} + ' hs'"></span></p>
-      <p><strong>Método de pago:</strong> <span th:text="${pedido.metodoPago}"></span></p>
-      <p><strong>Moneda:</strong> <span th:text="${pedido.monedaDePago == T(com.tallerwebi.dominio.entidad.Moneda).DOLAR ? 'Dólares' : 'Pesos'}"></span></p>
-      <p><strong>Estado:</strong> <span th:text="${pedido.estado.descripcion}"></span></p>
-      <p><strong>Entrega estimada:</strong> <span th:text="${#dates.format(pedido.fechaEntrega, 'dd/MM/yyyy')}"></span></p>
-      <p><strong>Usuario:</strong> <span th:text="${pedido.usuarioPedido.nombre}"></span></p>
+    <div class="boleta-section">
+      <p><i class="bi bi-hash"></i><strong>Código:</strong> <span th:text="${pedido.codigoPedido}"></span></p>
+      <p><i class="bi bi-calendar-check"></i><strong>Fecha de compra:</strong> <span th:text="${fechaCreacionFormateada} + ' hs'"></span></p>
+      <p><i class="bi bi-truck"></i><strong>Entrega estimada:</strong> <span th:text="${fechaEntregaFormateada}"></span></p>
+      <p><i class="bi bi-flag"></i><strong>Estado:</strong> <span th:text="${pedido.estado.descripcion}"></span></p>
     </div>
 
-    <h2 class="mt-4">Productos</h2>
+    <div class="boleta-section">
+      <p><i class="bi bi-credit-card"></i><strong>Método de pago:</strong> <span th:text="${pedido.metodoPago}"></span></p>
+      <p><i class="bi bi-currency-exchange"></i><strong>Moneda:</strong> <span th:text="${pagoEnDolares ? 'Dólares' : 'Pesos'}"></span></p>
+      <p><i class="bi bi-list-ol"></i><strong>Cuotas:</strong> <span th:text="${pedido.cuotas}"></span></p>
+      <p><i class="bi bi-geo-alt"></i><strong>Dirección:</strong> <span th:text="${pedido.direccionEnvio}"></span></p>
+      <p><i class="bi bi-box-seam"></i><strong>Descripción envío:</strong> <span th:text="${pedido.descripcionEnvio}"></span></p>
+      <p><i class="bi bi-truck-flatbed"></i><strong>Costo envío:</strong>
+        <span th:text="${#numbers.formatDecimal(pagoEnDolares ? pedido.costoEnvio / cotizacionDolar : pedido.costoEnvio, 1, 'POINT', 2, 'POINT')}"></span>
+        <span th:text="${pagoEnDolares ? 'USD' : 'ARS'}"></span>
+      </p>
+      <p><i class="bi bi-hourglass-split"></i><strong>Tiempo estimado de entrega:</strong> <span th:text="${pedido.tiempoEntrega}"></span></p>
+    </div>
+
+    <h2><i class="bi bi-boxes"></i> Productos</h2>
     <table class="table table-bordered">
       <thead>
       <tr>
@@ -92,7 +135,8 @@
         <th>Talle</th>
         <th>Tela</th>
         <th>Cantidad</th>
-        <th>Precio</th>
+        <th>Precio unitario</th>
+        <th>Subtotal</th>
       </tr>
       </thead>
       <tbody>
@@ -101,25 +145,56 @@
         <td th:text="${producto.talle.descripcion}"></td>
         <td th:text="${producto.tela.tipoTela}"></td>
         <td th:text="${producto.cantidad}"></td>
-        <td th:text="${producto.precio} + (pedido.monedaDePago == T(com.tallerwebi.dominio.entidad.Moneda).DOLAR ? ' USD' : ' ARS')"></td>
+        <td>
+          <span th:text="${#numbers.formatDecimal(pagoEnDolares ? producto.precio / cotizacionDolar : producto.precio, 1, 'POINT', 2, 'POINT')}"></span>
+          <span th:text="${pagoEnDolares ? 'USD' : 'ARS'}"></span>
+        </td>
+        <td>
+          <span th:text="${#numbers.formatDecimal(pagoEnDolares ? (producto.precio * producto.cantidad) / cotizacionDolar : producto.precio * producto.cantidad, 1, 'POINT', 2, 'POINT')}"></span>
+          <span th:text="${pagoEnDolares ? 'USD' : 'ARS'}"></span>
+        </td>
       </tr>
       </tbody>
     </table>
 
     <div id="total-final">
-      <h4>Total final</h4>
-      <h2 th:text="${pedido.montoFinal + (pedido.monedaDePago == T(com.tallerwebi.dominio.entidad.Moneda).DOLAR ? ' USD' : ' ARS')}"></h2>
+      <h4><i class="bi bi-cash-coin"></i> Total Final</h4>
+      <h2>
+        <span th:text="${#numbers.formatDecimal(pedido.montoFinal, 1, 'POINT', 2, 'POINT')}"></span>
+        <span th:text="${pagoEnDolares ? 'USD' : 'ARS'}"></span>
+      </h2>
       <small>(Incluye impuestos y costos de envío)</small>
     </div>
+  </div>
+
+  <div class="boleta-actions">
+    <button class="btn btn-outline-primary" onclick="imprimirBoleta()">
+      <i class="bi bi-printer"></i> Imprimir Boleta
+    </button>
+    <button class="btn btn-outline-success" onclick="descargarBoletaPDF()">
+      <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
+    </button>
+    <a th:href="@{/home.html}" class="btn btn-secondary">
+      <i class="bi bi-house-door"></i> Volver al Inicio
+    </a>
   </div>
 </main>
 
 <div th:replace="templates/toasts :: toasts"></div>
 <footer style="background-color: #06142e;" th:insert="templates/footer :: footer"></footer>
 
+<script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
 <script th:src="@{/js/main.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script>
+  function imprimirBoleta() {
+    window.print();
+  }
+
+  function descargarBoletaPDF() {
+    const element = document.getElementById('boleta');
+    html2pdf().from(element).save('boleta_compra.pdf');
+  }
+</script>
 </body>
 </html>
-
-
-

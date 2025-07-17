@@ -36,7 +36,14 @@ public class Producto {
     private Talle talle;
 
     private String imagenUrl;
+
     private String imagenPrendaConDisenioUrl;
+
+    private Double precioConvertido;
+
+    public Double getPrecioConvertido() { return precioConvertido; }
+
+    public void setPrecioConvertido(Double precioConvertido) { this.precioConvertido = precioConvertido; }
 
     public Long getId() {
         return id;

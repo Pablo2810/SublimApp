@@ -34,9 +34,6 @@ public interface ServicioPedido {
     void eliminarPedido(Pedido pedidoEncontrado);
 
     @Transactional
-    Pedido pagarPedido(Long pedidoId, Moneda moneda);
-
-    @Transactional
     Pedido procesarPagoPedidoProductos(Long pedidoId,
                                        boolean pagoEnDolares,
                                        String metodoPago,

@@ -15,7 +15,6 @@ public class ServicioEnvioImpl implements ServicioEnvio {
     @Override
     public TipoEnvio determinarTipoEnvio(String jsonDireccion) {
         if (jsonDireccion == null || jsonDireccion.isBlank()) {
-            // Sin dirección: retiro en local
             return TipoEnvio.LOCAL;
         }
 
@@ -24,22 +23,26 @@ public class ServicioEnvioImpl implements ServicioEnvio {
             JsonNode address = root.path("address");
 
             String city = address.path("city").asText("").toLowerCase();
-            if (city.isEmpty()) {
-                city = address.path("town").asText("").toLowerCase();
-            }
-            if (city.isEmpty()) {
-                city = address.path("village").asText("").toLowerCase();
-            }
+            if (city.isEmpty()) city = address.path("town").asText("").toLowerCase();
+            if (city.isEmpty()) city = address.path("village").asText("").toLowerCase();
+
             String state = address.path("state").asText("").toLowerCase();
+            String region = address.path("region").asText("").toLowerCase();  // <--- nuevo
             String country = address.path("country").asText("").toLowerCase();
 
             if (!"argentina".equals(country)) {
                 return TipoEnvio.EXTERIOR;
             }
 
-            String[] cabaStrings = {"capital federal", "caba", "ciudad autónoma de buenos aires"};
+            String[] cabaStrings = {
+                    "capital federal",
+                    "caba",
+                    "ciudad autónoma de buenos aires",
+                    "ciudad autonoma de buenos aires"
+            };
+
             for (String s : cabaStrings) {
-                if (state.contains(s) || city.contains(s)) {
+                if (state.contains(s) || city.contains(s) || region.contains(s)) {
                     return TipoEnvio.CABA;
                 }
             }
@@ -47,8 +50,8 @@ public class ServicioEnvioImpl implements ServicioEnvio {
             return TipoEnvio.INTERIOR;
 
         } catch (Exception e) {
-            // Si falla el parseo, asumimos retiro local para no bloquear el flujo
             return TipoEnvio.LOCAL;
         }
     }
+
 }

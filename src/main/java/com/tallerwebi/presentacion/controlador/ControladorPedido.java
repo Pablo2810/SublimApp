@@ -1,5 +1,7 @@
 package com.tallerwebi.presentacion.controlador;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.servicio.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
@@ -202,19 +205,21 @@ public class ControladorPedido {
             @RequestParam("pagoEnDolares") Boolean pagoEnDolares,
             @RequestParam("metodoPago") String metodoPago,
             @RequestParam(value = "cuotas", required = false) Integer cuotas,
-            @RequestParam("opcionEnvio") String opcionEnvioStr,
             @RequestParam(value = "direccionEnvio", required = false) String direccionEnvio,
             @RequestParam("numeroTarjeta") String numeroTarjeta,
             @RequestParam("cvv") String cvv,
             @RequestParam("nombreTitular") String nombreTitular,
             @RequestParam("vencimiento") String vencimiento,
-            RedirectAttributes redirectAttributes
+            @RequestParam("tipoEnvio") String tipoEnvioStr,
+            RedirectAttributes redirectAttributes,
+            Model model
     ) {
         try {
             if (pagoEnDolares == null) {
                 throw new RuntimeException("Debe seleccionar la moneda de pago.");
             }
-            // Validaciones
+
+            // Validaciones de tarjeta
             if (!numeroTarjeta.matches("\\d{16}"))
                 throw new RuntimeException("Número de tarjeta inválido.");
             if (!cvv.matches("\\d{3}"))
@@ -228,31 +233,69 @@ public class ControladorPedido {
             } catch (DateTimeParseException e) {
                 throw new RuntimeException("Fecha de vencimiento inválida.");
             }
+
             if (!metodoPago.equalsIgnoreCase("debito") && !metodoPago.equalsIgnoreCase("credito")) {
                 throw new RuntimeException("Método de pago inválido.");
             }
+
+            // Forzar cuotas a 1 si es débito
             if ("debito".equalsIgnoreCase(metodoPago)) {
                 cuotas = 1;
             } else if (cuotas == null || !List.of(1, 2, 3, 6, 12).contains(cuotas)) {
                 throw new RuntimeException("Cantidad de cuotas inválida.");
             }
 
-            // Validar envío
-            TipoEnvio opcionEnvio;
+            // Calcular tipo de envío basado en dirección
+            TipoEnvio tipoEnvioDetalles;
             try {
-                opcionEnvio = TipoEnvio.valueOf(opcionEnvioStr.toUpperCase());
+                tipoEnvioDetalles = TipoEnvio.valueOf(tipoEnvioStr.toUpperCase());
             } catch (IllegalArgumentException e) {
                 throw new RuntimeException("Tipo de envío inválido.");
             }
-            if (opcionEnvio != TipoEnvio.LOCAL && (direccionEnvio == null || direccionEnvio.trim().isEmpty())) {
+
+            // Validar dirección si el tipo de envío no es LOCAL
+            if (tipoEnvioDetalles != TipoEnvio.LOCAL &&
+                    (direccionEnvio == null || direccionEnvio.trim().isEmpty())) {
                 throw new RuntimeException("Debe ingresar una dirección válida para el envío.");
             }
 
-            Pedido pedido = servicioPedido.procesarPagoPedidoProductos(
+            // Obtener cotización dólar si paga en dólares
+            double cotizacion = 1.0;
+            if (pagoEnDolares) {
+                try {
+                    cotizacion = servicioCotizacionDolar.obtenerCotizacionDolar();
+                } catch (Exception e) {
+                    cotizacion = 1270.0; // fallback
+                }
+            }
+
+            Pedido pedido = servicioPedido.obtenerPedido(idPedido);
+            if (pedido == null) {
+                throw new RuntimeException("Pedido no encontrado.");
+            }
+
+            // Guardar dirección completa para boleta
+            if (tipoEnvioDetalles == TipoEnvio.LOCAL) {
+                redirectAttributes.addFlashAttribute("direccionCompleta", "Sucursal central - Av. Siempre Viva 742, Buenos Aires");
+            } else {
+                try {
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode direccionJson = mapper.readTree(direccionEnvio);
+                    String direccionCompleta = direccionJson.has("display_name")
+                            ? direccionJson.get("display_name").asText()
+                            : direccionEnvio;
+                    redirectAttributes.addFlashAttribute("direccionCompleta", direccionCompleta);
+                } catch (Exception e) {
+                    redirectAttributes.addFlashAttribute("direccionCompleta", direccionEnvio);
+                }
+            }
+
+            // Procesar pago y actualizar pedido con todos los datos
+            pedido = servicioPedido.procesarPagoPedidoProductos(
                     idPedido,
                     pagoEnDolares,
                     metodoPago,
-                    opcionEnvio.name(),
+                    tipoEnvioDetalles.name(),
                     direccionEnvio,
                     numeroTarjeta,
                     cvv,
@@ -261,12 +304,20 @@ public class ControladorPedido {
                     cuotas
             );
 
+            // Formatear fechas para la vista
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            String fechaCreacionFormateada = pedido.getFechaCreacion() != null ? pedido.getFechaCreacion().format(formatter) : "";
+            String fechaEntregaFormateada = pedido.getFechaEntrega() != null ? pedido.getFechaEntrega().format(formatter) : "";
+
+            redirectAttributes.addFlashAttribute("fechaCreacionFormateada", fechaCreacionFormateada);
+            redirectAttributes.addFlashAttribute("fechaEntregaFormateada", fechaEntregaFormateada);
             redirectAttributes.addFlashAttribute("pedido", pedido);
-            return "redirect:/boleta-pedido";
+            redirectAttributes.addFlashAttribute("cotizacionDolar", cotizacion);
+
+            return "redirect:/boleta-pedido?idPedido=" + pedido.getId();
 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("mensajeError", e.getMessage());
-            redirectAttributes.addFlashAttribute("opcionEnvio", opcionEnvioStr);
             redirectAttributes.addFlashAttribute("direccionEnvioSeleccionada", direccionEnvio);
             redirectAttributes.addFlashAttribute("metodoPago", metodoPago);
             redirectAttributes.addFlashAttribute("moneda", pagoEnDolares != null && pagoEnDolares ? "DOLARES" : "PESOS");
@@ -275,11 +326,37 @@ public class ControladorPedido {
     }
 
     @GetMapping("/boleta-pedido")
-    public String mostrarBoletaPedido(Model model) {
-        // Se accede a 'pedido' via flash attributes
-        if (!model.containsAttribute("pedido")) {
-            return "redirect:/historial-pedidos"; // o donde quieras
+    public String mostrarBoletaPedido(@RequestParam("idPedido") Long idPedido, Model model) {
+        Pedido pedido = servicioPedido.obtenerPedido(idPedido);
+        if (pedido == null) {
+            return "redirect:/error";
         }
+
+        boolean pagoEnDolares = pedido.getPagoEnDolares();
+        double cotizacionDolar = 1.0;
+
+        if (pagoEnDolares) {
+            cotizacionDolar = pedido.getCotizacionDolar() != null ? pedido.getCotizacionDolar() : 1.0;
+        }
+
+        // Convertir precios si se pagó en dólares para cada producto
+        for (Producto producto : pedido.getProductos()) {
+            double precioConvertido = pagoEnDolares
+                    ? producto.getPrecio() / cotizacionDolar
+                    : producto.getPrecio();
+            producto.setPrecioConvertido(precioConvertido);
+        }
+
+        model.addAttribute("pedido", pedido);
+        model.addAttribute("pagoEnDolares", pagoEnDolares);
+        model.addAttribute("cotizacionDolar", cotizacionDolar);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String fechaCreacionFormateada = pedido.getFechaCreacion() != null ? pedido.getFechaCreacion().format(formatter) : "";
+        String fechaEntregaFormateada = pedido.getFechaEntrega() != null ? pedido.getFechaEntrega().format(formatter) : "";
+        model.addAttribute("fechaCreacionFormateada", fechaCreacionFormateada);
+        model.addAttribute("fechaEntregaFormateada", fechaEntregaFormateada);
+
         return "boleta-pedido";
     }
 

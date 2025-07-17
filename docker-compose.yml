@@ -58,3 +58,6 @@ volumes:
 
 # 🛑 Para detener los contenedores manualmente:
 #  docker-compose down
+
+# Purgar el docker
+# docker system prune -a --volumes

@@ -142,7 +142,6 @@ function initAutocompleteDireccion() {
               sugerencias.innerHTML = '';
               sugerencias.style.display = 'none';
 
-              // Llamar backend para determinar tipo de envío real y setearlo
               fetch('/calcular-envio-pedido', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -153,7 +152,6 @@ function initAutocompleteDireccion() {
                 if (data.tipo) {
                   tipoEnvioInput.value = data.tipo;
 
-                  // Ajustar radio de envío para que coincida con el tipo obtenido
                   const envioRadio = document.querySelector(`input[name="opcionEnvio"][value="${data.tipo}"]`);
                   if (envioRadio) {
                     envioRadio.checked = true;
@@ -175,6 +173,48 @@ function initAutocompleteDireccion() {
           sugerencias.style.display = 'none';
         });
     }, 300);
+  });
+}
+
+// ------------------------------
+// Extra: calcular tipo envío si se sale del campo de dirección sin elegir sugerencia
+// ------------------------------
+function configurarCalculoEnvioManual() {
+  const direccionInput = document.getElementById("direccionEnvio");
+  const jsonDireccionInput = document.getElementById("jsonDireccion");
+  const tipoEnvioInput = document.getElementById("tipoEnvio");
+
+  direccionInput?.addEventListener("blur", () => {
+    const direccion = direccionInput.value.trim();
+
+    if (direccion.length >= 3) {
+      fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(direccion)}&format=json&addressdetails=1&limit=1`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.length > 0) {
+            jsonDireccionInput.value = JSON.stringify(data[0]);
+
+            fetch('/calcular-envio-pedido', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: `jsonDireccion=${encodeURIComponent(JSON.stringify(data[0]))}`
+            })
+            .then(res => res.json())
+            .then(data => {
+              if (data.tipo) {
+                tipoEnvioInput.value = data.tipo;
+
+                const envioRadio = document.querySelector(`input[name="opcionEnvio"][value="${data.tipo}"]`);
+                if (envioRadio) {
+                  envioRadio.checked = true;
+                  toggleCamposFormulario();
+                  actualizarResumenPago();
+                }
+              }
+            });
+          }
+        });
+    }
   });
 }
 
@@ -220,6 +260,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   envioRadios.forEach(radio => {
     radio.addEventListener('change', () => {
+      const tipoEnvioInput = document.getElementById("tipoEnvio");
+      tipoEnvioInput.value = radio.value;  // <-- ACTUALIZA el input hidden
+
       toggleCamposFormulario();
       actualizarResumenPago();
     });
@@ -231,5 +274,6 @@ document.addEventListener("DOMContentLoaded", () => {
   toggleCamposFormulario();
   actualizarResumenPago();
   initAutocompleteDireccion();
+  configurarCalculoEnvioManual();
   validarFormularioAntesDeEnviar();
 });

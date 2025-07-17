@@ -4,10 +4,7 @@ import com.tallerwebi.dominio.entidad.*;
 import com.tallerwebi.dominio.repositorio.RepositorioPedido;
 import com.tallerwebi.dominio.repositorio.RepositorioProducto;
 import com.tallerwebi.dominio.repositorio.RepositorioTela;
-import com.tallerwebi.dominio.servicio.ServicioCotizacionDolar;
-import com.tallerwebi.dominio.servicio.ServicioEmail;
-import com.tallerwebi.dominio.servicio.ServicioMaquina;
-import com.tallerwebi.dominio.servicio.ServicioPedido;
+import com.tallerwebi.dominio.servicio.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -29,18 +26,20 @@ public class ServicioPedidoImpl implements ServicioPedido {
     private final RepositorioTela repositorioTela;
     private final ServicioCotizacionDolar servicioCotizacionDolar;
     private final ServicioMaquina servicioMaquina;
+    private final ServicioEnvio servicioEnvio;
 
     @Autowired
     public ServicioPedidoImpl(RepositorioPedido repositorioPedido, ServicioEmail servicioEmail,
                               RepositorioProducto repositorioProducto, RepositorioTela repositorioTela,
                               ServicioCotizacionDolar servicioCotizacionDolar,
-                              ServicioMaquina servicioMaquina) {
+                              ServicioMaquina servicioMaquina, ServicioEnvio servicioEnvio) {
         this.repositorioPedido = repositorioPedido;
         this.servicioEmail = servicioEmail;
         this.repositorioProducto = repositorioProducto;
         this.repositorioTela = repositorioTela;
         this.servicioCotizacionDolar = servicioCotizacionDolar;
         this.servicioMaquina = servicioMaquina;
+        this.servicioEnvio = servicioEnvio;
     }
 
     @Override
@@ -51,9 +50,8 @@ public class ServicioPedidoImpl implements ServicioPedido {
             precioTotal += producto.getPrecio() * producto.getCantidad();
         };
 
-        return precioTotal / cotizacion;
+        return precioTotal;
     }
-
 
     @Override
     public void aplicarPromocion(Pedido pedido, Promocion promocion) {
@@ -152,13 +150,6 @@ public class ServicioPedidoImpl implements ServicioPedido {
     @Override
     public boolean cambiarEstadoPedido(Long id, Estado nuevoEstado) {
         try {
-            /* Desarrollo anterior, evaluar
-            Pedido pedido = repositorioPedido.buscarPorId(id);
-            pedido.setEstado(Estado.EN_ESPERA);
-            pedido.setFechaCreacion(LocalDate.now());
-            repositorioPedido.actualizar(pedido);
-            */
-
             Pedido pedido = obtenerPedido(id);
 
             if (puedeCambiarElEstado(pedido.getEstado(), nuevoEstado)) {
@@ -172,9 +163,8 @@ public class ServicioPedidoImpl implements ServicioPedido {
                 return true;
             }
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
-
         return false;
     }
 
@@ -247,21 +237,6 @@ public class ServicioPedidoImpl implements ServicioPedido {
 
     @Transactional
     @Override
-    public Pedido pagarPedido(Long pedidoId, Moneda moneda) {
-        Pedido pedido = repositorioPedido.buscarPorId(pedidoId); // asegurate que este método exista
-        if (pedido == null) {
-            throw new RuntimeException("Pedido no encontrado");
-        }
-
-        pedido.setMonedaDePago(moneda);
-        pedido.setEstado(Estado.EN_ESPERA);
-        repositorioPedido.actualizar(pedido);
-
-        return pedido;
-    }
-
-    @Transactional
-    @Override
     public Pedido procesarPagoPedidoProductos(Long pedidoId,
                                               boolean pagoEnDolares,
                                               String metodoPago,
@@ -272,10 +247,11 @@ public class ServicioPedidoImpl implements ServicioPedido {
                                               String nombreTitular,
                                               String vencimiento,
                                               Integer cuotas) {
+
         Pedido pedido = obtenerPedido(pedidoId);
         if (pedido == null) throw new RuntimeException("Pedido no encontrado");
 
-        // Validar tipo de envío
+        // Obtener tipo de envío según lo que seleccionó el usuario
         TipoEnvio envio;
         try {
             envio = TipoEnvio.valueOf(opcionEnvioStr.toUpperCase());
@@ -283,7 +259,7 @@ public class ServicioPedidoImpl implements ServicioPedido {
             throw new RuntimeException("Tipo de envío inválido");
         }
 
-        // Validar cuotas
+        // Validar cuotas según método de pago
         if ("debito".equalsIgnoreCase(metodoPago)) {
             cuotas = 1;
         } else {
@@ -292,35 +268,29 @@ public class ServicioPedidoImpl implements ServicioPedido {
             }
         }
 
-        // Obtener cotización dólar
+        // Obtener cotización del dólar
         double cotizacion = 1.0;
         if (pagoEnDolares) {
-            cotizacion = servicioCotizacionDolar.obtenerCotizacionDolar();
+            try {
+                cotizacion = servicioCotizacionDolar.obtenerCotizacionDolar();
+            } catch (Exception e) {
+                cotizacion = 1270.0; // fallback por si falla
+            }
         }
 
-        // Calcular monto productos y costo envío
+        // Calcular monto productos (en pesos)
         double montoProductos = calcularCostoTotal(pedido, cotizacion);
+
+        // Calcular costo de envío (en pesos)
         double costoEnvio = envio.getCosto();
 
-        double montoFinal = montoProductos + costoEnvio;
-        if (pagoEnDolares) {
-            montoFinal = montoFinal / cotizacion;
-        }
+        // Sumar productos + envío (en pesos)
+        double montoFinalPesos = montoProductos + costoEnvio;
 
-        // Setear datos en pedido
-        pedido.setTipoEnvio(envio);
-        pedido.setDireccionEnvio(direccionEnvio);
-        pedido.setMetodoPago(metodoPago);
-        pedido.setCuotas(cuotas);
-        pedido.setPagoEnDolares(pagoEnDolares);
-        pedido.setCotizacionDolar(pagoEnDolares ? cotizacion : 0.0);
-        pedido.setCostoEnvio(costoEnvio);
-        pedido.setDescripcionEnvio(envio.getDescripcion());
-        pedido.setTiempoEntrega(envio.getTiempoEntrega());
-        pedido.setMontoTotal(montoProductos);
-        pedido.setMontoFinal(montoFinal);
+        // Si el pago es en dólares, convertir el monto final a dólares
+        double montoFinal = pagoEnDolares ? (montoFinalPesos / cotizacion) : montoFinalPesos;
 
-        // Validar tarjeta (opcional, o lo hacés en controlador)
+        // Validar tarjeta (simple)
         if (!numeroTarjeta.matches("\\d{16}")) throw new RuntimeException("Número de tarjeta inválido");
         if (!cvv.matches("\\d{3}")) throw new RuntimeException("CVV inválido");
         if (nombreTitular.trim().isEmpty()) throw new RuntimeException("Titular vacío");
@@ -331,20 +301,27 @@ public class ServicioPedidoImpl implements ServicioPedido {
             throw new RuntimeException("Fecha de vencimiento inválida");
         }
 
-        // Cambiar estado a EN_ESPERA
-        if (!cambiarEstadoPedido(pedidoId, Estado.EN_ESPERA)) {
-            throw new RuntimeException("No se pudo cambiar el estado del pedido");
-        }
+        // Setear datos al pedido
+        pedido.setTipoEnvio(envio);
+        pedido.setDireccionEnvio(direccionEnvio);
+        pedido.setMetodoPago(metodoPago);
+        pedido.setCuotas(cuotas);
+        pedido.setPagoEnDolares(pagoEnDolares);
+        pedido.setCotizacionDolar(pagoEnDolares ? cotizacion : 0.0);
+        pedido.setCostoEnvio(costoEnvio);
+        pedido.setDescripcionEnvio(envio.getDescripcion());
+        pedido.setTiempoEntrega(envio.getTiempoEntrega());
+        pedido.setMontoTotal(montoProductos); // sin envío
+        pedido.setMontoFinal(montoFinal);     // total con envío
 
-        // Fechas y código
-        int diasEspera = servicioMaquina.calcularTiempoEspera();
+        // Seteo de estado y fechas
+        pedido.setEstado(Estado.EN_ESPERA);
         pedido.setCodigoPedido(UUID.randomUUID().toString());
         pedido.setFechaCreacion(LocalDate.now());
-        pedido.setFechaEntrega(LocalDate.now().plusDays(diasEspera));
+        pedido.setFechaEntrega(LocalDate.now().plusDays(servicioMaquina.calcularTiempoEspera()));
 
         repositorioPedido.actualizar(pedido);
 
         return pedido;
     }
-
 }
