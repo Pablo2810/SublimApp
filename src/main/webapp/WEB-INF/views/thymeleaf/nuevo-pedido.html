@@ -63,6 +63,25 @@
                 </div>
             </div>
 
+            <div class="w-100">
+                <div class="card" style="width: 18rem;">
+                    <img id="imagen-generada-box" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">Queres que la IA genere una imagen?</h5>
+                        <div class="card-text">
+                            <textarea id="prompt" rows="4" class="form-control" placeholder="Un gato manejando un formula 1"></textarea>
+                        </div>
+                        <div class="d-flex justify-content-between my-3">
+                            <select class="form-select w-auto" id="preferenciaModelo">
+                                <option selected value="realism">Realista</option>
+                                <option value="fluid">Creativo</option>
+                            </select>
+                            <button id="btn-generar-imagen" class="btn btn-outline-success flex-grow-1">Generar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Botón Enviar -->
             <div class="d-flex justify-content-center">
                 <button type="submit" class="btn btn-primary w-50">Enviar</button>
@@ -214,32 +233,35 @@
                 preferenciaModelo: preferenciamodelo
             });
 
-            // fetch(`/spring/generar-imagen?${parametros.toString()}`)
-            //     .then(response => response.json())
-            //     .then(resultado => {
-            //         if (resultado.task_id) {
-            //             const idProceso = resultado.task_id;
-            //         }
-            //     })
-            //     .catch(() => {
-            //         clearInterval(intervaloId);
-            //         document.querySelector("#error-generar-imagen").classList.replace("d-none", "visible")
-            //     })
             let intervaloId = null;
-            intervaloId = setInterval(() => {
-                fetch(`/spring/obtener-imagen-generada/046b6c7f-0b8a-43b9-b35d-6489e6daee91`)
-                    .then(response => response.json())
-                    .then(resultado => {
-                        if (resultado.data.status === "COMPLETED") {
 
-                            clearInterval(intervaloId);
-                        }
-                    })
-                    .catch(() => {
-                        clearInterval(intervaloId);
-                        document.querySelector("#error-generar-imagen").classList.replace("d-none", "visible")
-                    })
-            }, 1000);
+            fetch(`/spring/generar-imagen?${parametros.toString()}`)
+                .then(response => response.json())
+                .then(resultado => {
+                    console.log(resultado)
+                    if (resultado.data.task_id) {
+                        const idProceso = resultado.data.task_id;
+
+                        intervaloId = setInterval(() => {
+                            fetch(`/spring/obtener-imagen-generada/${idProceso}`)
+                                .then(response => response.json())
+                                .then(response => {
+                                    if (response.data.status === "COMPLETED") {
+                                        document.querySelector("#imagen-generada-box").src = response.data.generated[0];
+                                        clearInterval(intervaloId);
+                                    }
+                                })
+                                .catch(() => {
+                                    clearInterval(intervaloId);
+                                    document.querySelector("#error-generar-imagen").classList.replace("d-none", "visible")
+                                })
+                        }, 1000);
+                    }
+                })
+                .catch(() => {
+                    clearInterval(intervaloId);
+                    document.querySelector("#error-generar-imagen").classList.replace("d-none", "visible")
+                })
 
         });
 
